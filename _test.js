@@ -21,20 +21,20 @@ client.on('error', function (error) {
   }
 })
 
-client.on('registered', function(targets, noticeText) {
+client.on('registered', function (targets, noticeText) {
   console.log('Registration Completed')
   client.getServerStatistics()
 })
 
-client.on('serverStatsReceived', function(stats) {
+client.on('serverStatsReceived', function (stats) {
   console.log(stats)
 })
 
-client.on('notice', function(targets, noticeText) {
+client.on('notice', function (targets, noticeText) {
   //console.log('NOTICE: ' + noticeText)
 })
 
-client.on('clientInfo', function() {
+client.on('clientInfo', function () {
   //console.log('Server Name: ' + client.serverName)
   //console.log('Server Version: ' + client.serverVersion)
   //console.log('Server Available User Modes: ' + client.serverAvailableUserModes)

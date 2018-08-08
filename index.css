@@ -4,7 +4,7 @@ html, body
     margin: 0;
 }
 
-#network-list
+div#network-list
 {
     width: 200px;
     height: 100vh;
@@ -50,7 +50,7 @@ html, body
     cursor: pointer;
 }
 
-#channel-content
+div#channel-content
 {
     width: calc(100% - 401px);
     height: calc(100vh - 20px);
@@ -59,16 +59,16 @@ html, body
     font-size: 16px;
 }
 
-#messages
+div#messages
 {
-    height: calc(100vh - 40px);
+    height: calc(100vh - 47px);
     overflow-x: hidden;
     overflow-y: scroll;
     border-bottom: 1px solid black;
     padding: 10px;
 }
 
-#channel-content p
+div#channel-content p
 {
     margin-top: 3px;
     margin-bottom: 3px;
@@ -76,26 +76,33 @@ html, body
     margin-right: 0px
 }
 
-#chat-input
+p.message
 {
-    bottom: 0px;
+    /* TODO */
+}
+
+div#chat-input-container
+{
+    bottom: 2px;
     position: absolute;
     width: calc(100% - 401px);
 }
 
-#chat-input input
+input#chat-input
 {
-    width: calc(100% - 2px);
+    width: calc(100% - 12px);
     border: none;
-    margin-left: 2px;
+    padding-left: 6px;
+    font-family: 'Consolas', sans-serif;
+    font-size: 16px;
 }
 
-#chat-input input:focus
+input#chat-input:focus
 {
     outline: none;
 }
 
-#user-list
+div#user-list
 {
     width: 200px;
     height: calc(100vh - 5px);
@@ -114,7 +121,6 @@ html, body
     padding-right: 5px;
     font-family: 'Consolas', sans-serif;
     font-size: 16px;
-    font-weight: bold;
 }
 
 .user:hover

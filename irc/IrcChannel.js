@@ -1,6 +1,8 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
+const util = require('util')
+const EventEmitter = require('events').EventEmitter
 const IrcChannelUser = require('./IrcChannelUser.js')
 
 var IrcChannelType = {
@@ -73,5 +75,7 @@ IrcChannel.prototype.noticeReceived = function (source, targets, noticeText) {
 IrcChannel.prototype.usersListReceived = function () {
   this.emit('usersListReceived')
 }
+
+util.inherits(IrcChannel, EventEmitter)
 
 module.exports = IrcChannel

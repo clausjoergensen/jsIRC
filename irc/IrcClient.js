@@ -27,6 +27,7 @@ const regexISupportPrefix = '\((.*)\)(.*)'
 
 function IrcClient () {
   EventEmitter.call(this)
+  this.loggingEnabled = true // DEBUG
   this.socket = new net.Socket()
   this.socket.setEncoding('utf8')
   this.users = []
@@ -175,6 +176,10 @@ IrcClient.prototype.quit = function (comment = null) {
 }
 
 IrcClient.prototype.sendRawMessage = function (message) {
+  if (this.loggingEnabled) {
+    console.log('-> ' + message)
+  }
+
   this.socket.write(message + '\r\n')
 }
 
@@ -275,6 +280,10 @@ IrcClient.prototype.parseMessage = function (line) {
     }
   }
 
+  if (this.loggingEnabled) {
+    console.log('<- ' + line)
+  }
+
   this.readMessage({ 
     'client': this, 
     'prefix': prefix, 
@@ -318,7 +327,9 @@ IrcClient.prototype.writeMessage = function (prefix, command, parameters = []) {
     }
   }
 
-  //console.log('[DEBUG] ' + message)
+  if (this.loggingEnabled) {
+    console.log('-> ' + message)
+  }
 
   this.socket.write(message + '\r\n')
 }
@@ -351,9 +362,9 @@ IrcClient.prototype.processMessageJoin = function (message) {
   var channelList = message.parameters[0]
 
   for (var i = 0; i < channelList.length; i++) {
-    var channel = getChannelFromName(channelList[i])
+    var channel = this.getChannelFromName(channelList[i])
     if (sourceUser == this.localUser) {
-      localUser.joinChannel(channel)
+      this.localUser.joinChannel(channel)
     } else {
       channel.userJoined(new IrcChannelUser(sourceUser))
     }
@@ -366,9 +377,9 @@ IrcClient.prototype.processMessagePart = function (message) {
   var comment = message.parameters[0]
 
   for (var i = 0; i < channelList.length; i++) {
-    var channel = getChannelFromName(channelList[i])
+    var channel = this.getChannelFromName(channelList[i])
     if (sourceUser == this.localUser) {
-      localUser.partChannel(channel)
+      this.localUser.partChannel(channel)
     } else {
       channel.userParted(channel.getChannelUser(sourceUser), comment)
     }

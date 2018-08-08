@@ -2,9 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
         <link rel="stylesheet" type="text/css" href="index.css">
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins">
-        <script src="script.js"></script>
+        <script src="index.js"></script>
     </head>
     <body>
         <div id="irc">
@@ -26,14 +27,10 @@
             </div>
             <div id="channel-content">
                 <div id="messages">
-                    <!--
-                    <p class="message">[00:04] -Q- [#wow] Welcome to #wow, read the topic before asking questions. We are not affiliated with Blizzard. We do not support private servers, gold buying/selling, powerlevelling or anything else against Blizzard EULA/T&C.  Please do not even discuss any such on the channel, thankyou.</p>
-                    <p class="message">[06:04] &lt;MMO-Champion&gt; (MMOC Blue Tracker) [EU] Hotfixes: August 7, 2018 - https://blue.mmo-champion.com/topic/1097703-hotfixes-august-7-2018/</p>
-                    <p class="message">[06:04] &lt;Windcape&gt; Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin interdum, elit et lobortis sagittis, mi dolor dignissim ligula, sed condimentum purus enim tempor diam. Praesent eu maximus libero.</p>
-                    -->
+                    <!-- Filled via. JavaScript -->
                 </div>
-                <div id="chat-input">
-                    <input type="text">
+                <div id="chat-input-container">
+                    <input id="chat-input" type="text">
                 </div>
             </div>
             <div id="user-list">
