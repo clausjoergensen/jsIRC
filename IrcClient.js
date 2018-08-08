@@ -22,11 +22,6 @@ const regexNickNameId = `${regexNickName}(?:(?:!${regexUserName})?@${regexHostNa
 const regexUserNameId = `${regexUserName}(?:(?:%${regexHostName})?@${regexServerName}|%${regexUserName})`
 const regexISupportPrefix = '\((.*)\)(.*)'
 
-var IrcTargetMaskType = {
-  ServerMask: 0,
-  HostMask: 1
-}
-
 // ------------------- Public Functions  --------------------------------------
 
 function IrcClient () {
