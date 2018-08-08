@@ -12,6 +12,14 @@ var registrationInfo = {
 
 var client = new IrcClient()
 
+client.on('error', function (error) {
+  if (error.code == 'ECONNREFUSED') {
+    console.log(`Couldn't connect to ${error.address}:${error.port}`)
+  } else if (error.code == 'ECONNRESET') {
+    console.log(`Disconnected (Connection Reset)`)
+  }
+})
+
 client.on('registered', function(targets, noticeText) {
   //console.log('Registration Completed')
 })

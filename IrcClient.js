@@ -115,11 +115,14 @@ IrcClient.prototype.connect = function (hostName, port, registrationInfo) {
   this.socket.connect(port, hostName, this.connected.bind(this))
   this.socket.on('data', this.dataReceived.bind(this))
   this.socket.on('close', this.connectionClosed.bind(this))
+  this.socket.on('error', this.connectionError.bind(this))
 }
 
 // ------------------- Socket Operations  -------------------------------------
 
 IrcClient.prototype.connected = function () {
+  this.emit('connected')
+
   if (this.registrationInfo.password != null) {
     this.sendMessagePassword(this.registrationInfo.password)
   }
@@ -140,7 +143,11 @@ IrcClient.prototype.connected = function () {
 }
 
 IrcClient.prototype.connectionClosed = function () {
-  console.log('Connection Closed')
+  this.emit('disconnected')
+}
+
+IrcClient.prototype.connectionError = function(error) {
+  this.emit('error', error)
 }
 
 IrcClient.prototype.dataReceived = function (data) {
