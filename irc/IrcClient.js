@@ -223,13 +223,12 @@ IrcClient.prototype.dataReceived = function (data) {
   }
 
   var lines = str.split('\r\n')
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i]
+  lines.forEach(line => {
     if (line.length == 0) {
       return
     }
-    this.parseMessage(line)
-  }
+    this.parseMessage(line)    
+  })
 }
 
 // ------------------- Data Parsing  ------------------------------------------
@@ -361,14 +360,14 @@ IrcClient.prototype.processMessageJoin = function (message) {
   var sourceUser = message.source
   var channelList = message.parameters[0].split(',')
 
-  for (var i = 0; i < channelList.length; i++) {
+  channelList.forEach(channelName => {
     var channel = this.getChannelFromName(channelList[i])
     if (sourceUser == this.localUser) {
       this.localUser.joinChannel(channel)
     } else {
       channel.userJoined(new IrcChannelUser(sourceUser))
-    }
-  }
+    }    
+  })
 }
 
 // Process PART messages received from the server.
@@ -376,14 +375,14 @@ IrcClient.prototype.processMessagePart = function (message) {
   var sourceUser = message.source
   var comment = message.parameters[0]
 
-  for (var i = 0; i < channelList.length; i++) {
+  channelList.forEach(channelName => {
     var channel = this.getChannelFromName(channelList[i])
     if (sourceUser == this.localUser) {
       this.localUser.partChannel(channel)
     } else {
       channel.userParted(channel.getChannelUser(sourceUser), comment)
     }
-  }
+  })
 }
 
 // Process MODE messages received from the server.
@@ -420,17 +419,11 @@ IrcClient.prototype.processMessageInvite = function (message) {
 
 // Process PRIVMSG messages received from the server.
 IrcClient.prototype.processMessagePrivateMessage = function (message) {
-  var targets = []
   var targetNames = message.parameters[0].split(',')
-  for (var i = 0; i < targetNames.length; i++) {
-    targets.push(this.getMessageTarget(targetNames[i]))
-  }
-
   var messageText = message.parameters[1]
 
-  for (var i = 0; i < targets.length; i++) {
-    targets[i].messageReceived(message.source, targets, messageText)
-  }
+  var targets = targetNames.map(x => this.getMessageTarget(x))
+  targets.forEach(t => t.messageReceived(message.source, targets, messageText))
 }
 
 IrcClient.prototype.messageReceived = function (source, targets, noticeText) {
@@ -439,18 +432,11 @@ IrcClient.prototype.messageReceived = function (source, targets, noticeText) {
 
 // Process NOTICE messages received from the server.
 IrcClient.prototype.processMessageNotice = function (message) {
-  var targets = []
   var targetNames = message.parameters[0].split(',')
-
-  for (var i = 0; i < targetNames.length; i++) {
-    targets.push(this.getMessageTarget(targetNames[i]))
-  }
-
   var noticeText = message.parameters[1]
 
-  for (var i = 0; i < targets.length; i++) {
-    targets[i].noticeReceived(message.source, targets, noticeText)
-  }
+  var targets = targetNames.map(x => this.getMessageTarget(x))
+  targets.forEach(t => t.noticeReceived(message.source, targets, noticeText))
 }
 
 IrcClient.prototype.noticeReceived = function (source, targets, noticeText) {
@@ -713,10 +699,10 @@ IrcClient.prototype.processMessageReplyAway = function (message) {
 IrcClient.prototype.processMessageReplyIsOn = function (message) {
   var onlineUsers = []
   var onlineUserNames = message.parameters[1].split(' ')
-  for (var i = 0; i < onlineUserNames.length; i++) {
-    var onlineUser = this.getUserFromNickName(onlineUserNames[i])
-    onlineUser.isOnline = true
-  }
+  onlineUserNames.forEach(name => {
+    var onlineUser = this.getUserFromNickName(name)
+    onlineUser.isOnline = true    
+  })
 }
 
 // Process RPL_UNAWAY responses from the server.
@@ -780,8 +766,7 @@ IrcClient.prototype.processMessageReplyEndOfWhoIs = function (message) {
 IrcClient.prototype.processMessageReplyWhoIsChannels = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   var channelIds = message.parameters[2].split(' ')
-  for (var i = 0; i < channelIds.length; i++) {
-    var channelId = channelIds[i]
+  channelIds.forEach(channelId => {
     if (channelId.length == 0) {
       return
     }
@@ -789,8 +774,8 @@ IrcClient.prototype.processMessageReplyWhoIsChannels = function (message) {
     var channel = GetChannelFromName(lookup.identifier)
     if (channel.getChannelUser(user) == null) {
       channel.userJoined(new IrcChannelUser(user, lookup.mode))
-    }
-  }
+    }    
+  })
 }
 
 // Process RPL_LIST responses from the server.
@@ -872,7 +857,7 @@ IrcClient.prototype.processMessageReplyWhoReply = function (message) {
           channel.userJoined(channelUser)
       }
 
-      userModeFlags.forEach(function (c) {
+      userModeFlags.forEach(c => {
           var mode = channelUserModesPrefixes[c]
           if (mode != null) {
             channelUser.modeChanged(true, mode)
@@ -896,7 +881,7 @@ IrcClient.prototype.processMessageReplyNameReply = function (message) {
     channel.typeChanged(this.getChannelType(message.parameters[1][0]))
 
     var userIds = message.Parameters[3].split(' ')
-    userIds.forEach(function (userId) {
+    userIds.forEach(userId => {
         if (userId.Length == 0) {
           return
         }

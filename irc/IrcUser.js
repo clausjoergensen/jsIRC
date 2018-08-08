@@ -22,19 +22,16 @@ function IrcUser(client) {
 
 IrcUser.prototype.quit = function (comment) {
   var allChannelUsers = []
-  for (var i = 0; i < client.channels.length; i++) {
-    var channel = client.channels[i]
-    for (var u = 0; u < channel.users; u++) {
+  client.channels.forEach( function (channel) {
+    channel.users.forEach ( function(user) {
       var channelUser = channel.users[u]
       if (channelUser.user == this) {
         allChannelUsers.push(channelUser)
       }
-    }
-  }
+    })
+  })
 
-  for (var i = 0; i < allChannelUsers.length; i++) {
-    allChannelUsers.channel.userQuit(channelUser, comment)
-  }
+  allChannelUsers.forEach(u => u.userQuit(channelUser, comment))
 
   this.emit('quit', comment)
 }
