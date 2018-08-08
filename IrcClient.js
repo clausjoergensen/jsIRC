@@ -44,6 +44,7 @@ function IrcClient () {
   this.messageOfTheDay = null
   this.listedServerLinks = []
   this.listedChannels = []
+  this.listedStatsEntries = []
   this.messageProcessors = {
     'NICK': this.processMessageNick.bind(this),
     'QUIT': this.processMessageQuit.bind(this),
@@ -531,118 +532,244 @@ IrcClient.prototype.processMessageReplyBounceOrISupport = function (message) {
 
 // Process RPL_STATSLINKINFO responses from the server.
 IrcClient.prototype.processMessageStatsLinkInfo = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.Connection,
+    'message': message
+  })
 }
 
 // Process RPL_STATSCOMMANDS responses from the server.
 IrcClient.prototype.processMessageStatsCommands = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.Command,
+    'message': message
+  })
 }
 
 // Process RPL_STATSCLINE responses from the server.
 IrcClient.prototype.processMessageStatsCLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.AllowedServerConnect,
+    'message': message
+  })
 }
 
 // Process RPL_STATSNLINE responses from the server.
 IrcClient.prototype.processMessageStatsNLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.AllowedServerAccept,
+    'message': message
+  })
 }
 
 // Process RPL_STATSILINE responses from the server.
 IrcClient.prototype.processMessageStatsILine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.AllowedClient,
+    'message': message
+  })
 }
 
 // Process RPL_STATSKLINE responses from the server.
 IrcClient.prototype.processMessageStatsKLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.BannedClient,
+    'message': message
+  })
 }
 
 // Process RPL_STATSYLINE responses from the server.
 IrcClient.prototype.processMessageStatsYLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.ConnectionClass,
+    'message': message
+  })
 }
 
 // Process RPL_ENDOFSTATS responses from the server.
 IrcClient.prototype.processMessageEndOfStats = function (message) {
+  this.emit('serverStatsReceived', listedStatsEntries)
+  listedStatsEntries = []
 }
 
 // Process RPL_STATSLLINE responses from the server.
 IrcClient.prototype.processMessageStatsLLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.LeafDepth,
+    'message': message
+  })
 }
 
 // Process RPL_STATSUPTIME responses from the server.
 IrcClient.prototype.processMessageStatsUpTime = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.Uptime,
+    'message': message
+  })
 }
 
 // Process RPL_STATSOLINE responses from the server.
 IrcClient.prototype.processMessageStatsOLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.AllowedOperator,
+    'message': message
+  })
 }
 
 // Process RPL_STATSHLINE responses from the server.
 IrcClient.prototype.processMessageStatsHLine = function (message) {
+  listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.HubServer,
+    'message': message
+  })
 }
 
 // Process RPL_LUSERCLIENT responses from the server.
 IrcClient.prototype.processMessageLUserClient = function (message) {
+  var info = message.parameters[1]
+  var infoParts = info.split(' ')
+  var networkInfo = {
+    'visibleUsersCount': parseInt(infoParts[2]),
+    'invisibleUsersCount': parseInt(infoParts[5]),
+    'serversCount': parseInt(infoParts[8])
+  }
+
+  this.emit('networkInformationReceived', networkInfo)
 }
 
 // Process RPL_LUSEROP responses from the server.
 IrcClient.prototype.processMessageLUserOp = function (message) {
+  var networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
+  this.emit('networkInformationReceived', networkInfo)
 }
 
 // Process RPL_LUSERUNKNOWN responses from the server.
 IrcClient.prototype.processMessageLUserUnknown = function (message) {
+  var networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
+  this.emit('networkInformationReceived', networkInfo)
 }
 
 // Process RPL_LUSERCHANNELS responses from the server.
 IrcClient.prototype.processMessageLUserChannels = function (message) {
+  var networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
+  this.emit('networkInformationReceived', networkInfo)
 }
 
 // Process RPL_LUSERME responses from the server.
 IrcClient.prototype.processMessageLUserMe = function (message) {
+  var networkInfo = {}
+  var info = message.parameters[1]
+  var infoParts = info.split(' ')
+  
+  for (var i = 0; i < infoParts.length; i++) {
+    switch (infoParts[i].toLowerCase()) {
+      case 'user':
+      case 'users':
+        networkInfo['serverClientsCount'] = parseInt(infoParts[i - 1])
+        break
+      case 'server':
+      case 'servers':
+        networkInfo['serverServersCount'] = parseInt(infoParts[i - 1])
+        break
+      case 'service':
+      case 'services':
+        networkInfo['serverClientsCount'] = parseInt(infoParts[i - 1])
+        break
+    }
+  }
+
+  this.emit('networkInformationReceived', networkInfo)
 }
 
 // Process RPL_AWAY responses from the server.
 IrcClient.prototype.processMessageReplyAway = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  user.awayMessage = message.parameters[2]
+  user.isAway = true
 }
 
 // Process RPL_ISON responses from the server.
 IrcClient.prototype.processMessageReplyIsOn = function (message) {
+  var onlineUsers = []
+  var onlineUserNames = message.parameters[1].split(' ')
+  for (var i = 0; i < onlineUserNames.length; i++) {
+    var onlineUser = this.getUserFromNickName(onlineUserNames[i])
+    onlineUser.isOnline = true
+  }
 }
 
 // Process RPL_UNAWAY responses from the server.
 IrcClient.prototype.processMessageReplyUnAway = function (message) {
+  this.localUser.isAway = false
 }
 
 // Process RPL_NOWAWAY responses from the server.
 IrcClient.prototype.processMessageReplyNowAway = function (message) {
+  this.localUser.isAway = true
 }
 
 // Process RPL_WHOISUSER responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsUser = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  user.userName = message.parameters[2]
+  user.hostName = message.parameters[3]
+  user.realName = message.parameters[5]
 }
 
 // Process RPL_WHOISSERVER responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsServer = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  user.serverName = message.parameters[2]
+  user.serverInfo = message.parameters[3]
 }
 
 // Process RPL_WHOISOPERATOR responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsOperator = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  user.isOperator = true
 }
 
 // Process RPL_WHOWASUSER responses from the server.
 IrcClient.prototype.processMessageReplyWhoWasUser = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1], false)
+  user.userName = message.parameters[2]
+  user.hostName = message.parameters[3]
+  user.realName = message.parameters[5]
 }
 
 // Process RPL_ENDOFWHO responses from the server.
 IrcClient.prototype.processMessageReplyEndOfWho = function (message) {
+  var mask = message.parameters[1]
+  this.emit('whoReplyReceived', mask)
 }
 
 // Process RPL_WHOISIDLE responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsIdle = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  user.idleDuration = intParse(message.parameters[2])
 }
 
 // Process RPL_ENDOFWHOIS responses from the server.
 IrcClient.prototype.processMessageReplyEndOfWhoIs = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  this.emit('whoIsReplyReceived', user)
 }
 
 // Process RPL_WHOISCHANNELS responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsChannels = function (message) {
+  var user = this.getUserFromNickName(message.parameters[1])
+  var channelIds = message.parameters[2].split(' ')
+  for (var i = 0; i < channelIds.length; i++) {
+    var channelId = channelIds[i]
+    if (channelId.length == 0) {
+      return
+    }
+    var lookup = this.getUserModeAndIdentifier(channelId)
+    var channel = GetChannelFromName(lookup.identifier)
+    if (channel.getChannelUser(user) == null) {
+      channel.userJoined(new IrcChannelUser(user, lookup.mode))
+    }
+  }
 }
 
 // Process RPL_LIST responses from the server.
@@ -694,7 +821,7 @@ IrcClient.prototype.processMessageReplyNameReply = function (message) {
 // Process RPL_LINKS responses from the server.
 IrcClient.prototype.processMessageReplyLinks = function (message) {
   var hostName = message.parameters[1]
-  var infoParts = message.parameters[3].split(" ")
+  var infoParts = message.parameters[3].split(' ')
   var hopCount = parseInt(infoParts[0])
   var info = infoParts[1]
 
@@ -725,7 +852,7 @@ IrcClient.prototype.processMessageReplyMotd = function (message) {
 
 // Process RPL_MOTDSTART responses from the server.
 IrcClient.prototype.processMessageReplyMotdStart = function (message) {
-  this.messageOfTheDay = ""
+  this.messageOfTheDay = ''
 }
 
 // Process RPL_ENDOFMOTD responses from the server.
@@ -1117,6 +1244,41 @@ IrcClient.prototype.handleISupportParameter = function(name, value) {
 
 IrcClient.prototype.isChannelName = function (channelName) {
   return channelName.match(regexChannelName) != null
+}
+
+IrcClient.prototype.getUserModeAndIdentifier = function (identifier) {
+  var mode = identifier[0]
+  let channelUserMode = channelUserModesPrefixes(mode)
+  if (channelUserMode != null) {
+    return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
+  }
+  return { 'mode': null, 'identifier': identifier }
+}
+
+// These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
+var IrcServerStatisticalEntryCommonType = {
+  // An active connection to the server.
+  Connection: 1,
+  // A command supported by the server.
+  Command: 2,
+  // A server to which the local server may connect.
+  AllowedServerConnect: 3,
+  // A server from which the local server may accept connections.
+  AllowedServerAccept: 4,
+  // A client that may connect to the server.
+  AllowedClient: 5,
+  // A client that is banned from connecting to the server.
+  BannedClient: 6,
+  // A connection class defined by the server.
+  ConnectionClass: 7,
+  // The leaf depth of a server in the network.
+  LeafDepth: 8,
+  // The uptime of the server.
+  Uptime: 9,
+  // An operator on the server.
+  AllowedOperator: 10,
+  // A hub server within the network.
+  HubServer: 11
 }
 
 // ------------------- Module Configuration  ----------------------------------

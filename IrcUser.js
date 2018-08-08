@@ -10,6 +10,12 @@ function IrcUser(client) {
     this.userName = null
     this.realName = null
     this.userModes = []
+    this.idleDuration = null
+    this.isOperator = false
+    this.serverName = null
+    this.serverInfo = null
+    this.isAway = false
+    this.awayMessage = null
 }
 
 IrcUser.prototype.quit = function (comment) {
