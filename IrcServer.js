@@ -1,3 +1,5 @@
+// Copyright (c) 2018 Claus Jørgensen
+
 var util = require('util')
 var EventEmitter = require('events').EventEmitter
 

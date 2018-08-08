@@ -1,3 +1,5 @@
+// Copyright (c) 2018 Claus Jørgensen
+
 var net = require('net')
 var util = require('util')
 

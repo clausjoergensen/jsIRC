@@ -1,3 +1,5 @@
+// Copyright (c) 2018 Claus Jørgensen
+
 var IrcClient = require('./IrcClient.js')
 
 var registrationInfo = {
