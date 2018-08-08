@@ -21,11 +21,12 @@ client.on('error', function (error) {
 })
 
 client.on('registered', function(targets, noticeText) {
-  //console.log('Registration Completed')
+  console.log('Registration Completed')
+  client.getServerStatistics()
 })
 
-client.on('motd', function(motd) {
-  //console.log(motd)
+client.on('serverStatsReceived', function(stats) {
+  console.log(stats)
 })
 
 client.on('notice', function(targets, noticeText) {

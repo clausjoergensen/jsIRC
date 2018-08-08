@@ -532,94 +532,94 @@ IrcClient.prototype.processMessageReplyBounceOrISupport = function (message) {
 
 // Process RPL_STATSLINKINFO responses from the server.
 IrcClient.prototype.processMessageStatsLinkInfo = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.Connection,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.connection,
     'message': message
   })
 }
 
 // Process RPL_STATSCOMMANDS responses from the server.
 IrcClient.prototype.processMessageStatsCommands = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.Command,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.command,
     'message': message
   })
 }
 
 // Process RPL_STATSCLINE responses from the server.
 IrcClient.prototype.processMessageStatsCLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.AllowedServerConnect,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.allowedServerConnect,
     'message': message
   })
 }
 
 // Process RPL_STATSNLINE responses from the server.
 IrcClient.prototype.processMessageStatsNLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.AllowedServerAccept,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.allowedServerAccept,
     'message': message
   })
 }
 
 // Process RPL_STATSILINE responses from the server.
 IrcClient.prototype.processMessageStatsILine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.AllowedClient,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.allowedClient,
     'message': message
   })
 }
 
 // Process RPL_STATSKLINE responses from the server.
 IrcClient.prototype.processMessageStatsKLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.BannedClient,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.bannedClient,
     'message': message
   })
 }
 
 // Process RPL_STATSYLINE responses from the server.
 IrcClient.prototype.processMessageStatsYLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.ConnectionClass,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.connectionClass,
     'message': message
   })
 }
 
 // Process RPL_ENDOFSTATS responses from the server.
 IrcClient.prototype.processMessageEndOfStats = function (message) {
-  this.emit('serverStatsReceived', listedStatsEntries)
-  listedStatsEntries = []
+  this.emit('serverStatsReceived', this.listedStatsEntries)
+  this.listedStatsEntries = []
 }
 
 // Process RPL_STATSLLINE responses from the server.
 IrcClient.prototype.processMessageStatsLLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.LeafDepth,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.leafDepth,
     'message': message
   })
 }
 
 // Process RPL_STATSUPTIME responses from the server.
 IrcClient.prototype.processMessageStatsUpTime = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.Uptime,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.uptime,
     'message': message
   })
 }
 
 // Process RPL_STATSOLINE responses from the server.
 IrcClient.prototype.processMessageStatsOLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.AllowedOperator,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.allowedOperator,
     'message': message
   })
 }
 
 // Process RPL_STATSHLINE responses from the server.
 IrcClient.prototype.processMessageStatsHLine = function (message) {
-  listedStatsEntries.push({
-    'type': IrcServerStatisticalEntryCommonType.HubServer,
+  this.listedStatsEntries.push({
+    'type': IrcServerStatisticalEntryCommonType.hubServer,
     'message': message
   })
 }
@@ -1258,27 +1258,27 @@ IrcClient.prototype.getUserModeAndIdentifier = function (identifier) {
 // These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
 var IrcServerStatisticalEntryCommonType = {
   // An active connection to the server.
-  Connection: 1,
+  connection: 1,
   // A command supported by the server.
-  Command: 2,
+  command: 2,
   // A server to which the local server may connect.
-  AllowedServerConnect: 3,
+  allowedServerConnect: 3,
   // A server from which the local server may accept connections.
-  AllowedServerAccept: 4,
+  allowedServerAccept: 4,
   // A client that may connect to the server.
-  AllowedClient: 5,
+  allowedClient: 5,
   // A client that is banned from connecting to the server.
-  BannedClient: 6,
+  bannedClient: 6,
   // A connection class defined by the server.
-  ConnectionClass: 7,
+  connectionClass: 7,
   // The leaf depth of a server in the network.
-  LeafDepth: 8,
+  leafDepth: 8,
   // The uptime of the server.
-  Uptime: 9,
+  uptime: 9,
   // An operator on the server.
-  AllowedOperator: 10,
+  allowedOperator: 10,
   // A hub server within the network.
-  HubServer: 11
+  hubServer: 11
 }
 
 // ------------------- Module Configuration  ----------------------------------
