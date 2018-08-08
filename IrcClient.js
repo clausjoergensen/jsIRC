@@ -661,15 +661,7 @@ IrcClient.prototype.processMessageReplyTime = function (message) {
 
 // ------------------- Message Sending ----------------------------------------
 
-IrcClient.prototype.sendMessageJoin = function (channelName) {
-  this.writeMessage(null, 'JOIN', [channelName])
-}
-
-IrcClient.prototype.sendMessagePong = function (server, targetServer = null) {
-  this.writeMessage(null, 'PONG', [server, targetServer])
-}
-
-IrcClient.prototype.sendMessageNick =  function (password) {
+IrcClient.prototype.sendMessagePassword =  function (password) {
   this.writeMessage(null, 'PASS', [password])
 }
 
@@ -680,6 +672,179 @@ IrcClient.prototype.sendMessageNick =  function (nickName) {
 IrcClient.prototype.sendMessageUser =  function (userName, userMode, realName) {
   this.writeMessage(null, 'USER', [userName, userMode, '*', realName])
 }
+
+IrcClient.prototype.sendMessageService = function (nickName, distribution, description = '') {
+  this.writeMessage(null, 'SERVICE', [nickName, distribution, '0', '0', description])
+}
+
+IrcClient.prototype.sendMessageOper = function (userName, password) {
+  this.writeMessage(null, 'OPER', [userName, password])
+}
+
+IrcClient.prototype.sendMessageUserMode = function (nickName, modes = null) {
+  this.writeMessage(null, 'MODE', [nickName, modes])
+}
+
+IrcClient.prototype.sendMessageQuit = function (comment) {
+  this.writeMessage(null, 'QUIT', [comment])
+}
+
+IrcClient.prototype.sendMessageSQuit = function (targetServer, comment) {
+  this.writeMessage(null, 'SQUIT', [targetServer, comment])
+}
+
+IrcClient.prototype.sendMessageLeaveAll = function () {
+  this.writeMessage(null, 'JOIN', ['0'])
+}
+
+IrcClient.prototype.sendMessageJoin = function (channels, comment = null) {
+  this.writeMessage(null, 'JOIN', [channels.join(','), comment])
+}
+
+IrcClient.prototype.sendMessagePart = function (channels, comment = null) {
+  this.writeMessage(null, 'PART', [channels.join(','), comment])
+}
+
+IrcClient.prototype.sendMessageChannelMode = function (channel, modes = null, modeParameters = null) {
+  this.writeMessage(null, 'MODE', [channel, modes, modeParameters == null ? null : modeParameters.join(',')])
+}
+
+IrcClient.prototype.sendMessageTopic = function (channel, topic = null) {
+  this.writeMessage(null, 'TOPIC', [channel, topic])
+}
+
+IrcClient.prototype.sendMessageNames = function (channels = null, targetServer = null) {
+  this.writeMessage(null, 'NAMES', [channels == null ? null : channels.join(','), targetServer])
+}
+
+IrcClient.prototype.sendMessageList = function (channels = null, targetServer = null) {
+  this.writeMessage(null, 'LIST', [channels == null ? null : channels.join(','), targetServer])
+}
+
+IrcClient.prototype.sendMessageInvite = function (channel, nickName) {
+  this.writeMessage(null, 'INVITE', [nickName, channel])
+}
+
+IrcClient.prototype.sendMessageKick = function (channelName, nickNames, comment = null) {
+  this.writeMessage(null, 'KICK', [channelName, nickNames.join(','), comment])
+}
+
+IrcClient.prototype.sendMessagePrivateMessage = function (targets, text) {
+  this.writeMessage(null, 'PRIVMSG', [targets.join(','), text])
+}
+
+IrcClient.prototype.sendMessageNotice = function (targets, text) {
+  this.writeMessage(null, 'NOTICE', [targets.join(','), text])
+}
+
+IrcClient.prototype.sendMessageMotd = function (targetServer = null) {
+  this.writeMessage(null, 'MOTD', [targetServer])
+}
+
+IrcClient.prototype.sendMessageLUsers = function (serverMask = null, targetServer = null) {
+  this.writeMessage(null, 'LUSERS', [serverMask, targetServer])
+}
+
+IrcClient.prototype.sendMessageVersion = function (targetServer = null) {
+  this.writeMessage(null, 'VERSION', [targetServer])
+}
+
+IrcClient.prototype.sendMessageStats = function (query = null, targetServer = null) {
+  this.writeMessage(null, 'STATS', [query, targetServer])
+}
+
+IrcClient.prototype.sendMessageLinks = function (serverMask = null, targetServer = null) {
+  this.writeMessage(null, 'LINKS', [serverMask, targetServer])
+}
+
+IrcClient.prototype.sendMessageTime = function (targetServer = null) {
+  this.writeMessage(null, 'TIME', [targetServer])
+}
+
+IrcClient.prototype.sendMessageConnect = function (hostName, port, targetServer = null) {
+  this.writeMessage(null, 'CONNECT', [hostName, port.toString(), targetServer])
+}
+
+IrcClient.prototype.sendMessageTrace = function (targetServer = null) {
+  this.writeMessage(null, 'TRACE', [targetServer])
+}
+
+IrcClient.prototype.sendMessageAdmin = function (targetServer = null) {
+  this.writeMessage(null, 'ADMIN', [targetServer])
+}
+
+IrcClient.prototype.sendMessageInfo = function (targetServer = null) {
+  this.writeMessage(null, 'INFO', [targetServer])
+}
+
+IrcClient.prototype.sendMessageServiceList = function (mask = null, type = null) {
+  this.writeMessage(null, 'SERVLIST', [mask, type])
+}
+
+IrcClient.prototype.sendMessageSQuery = function (serviceName, text) {
+  this.writeMessage(null, 'SQUERY', [serviceName, text])
+}
+
+IrcClient.prototype.sendMessageKill =  function (nickName, comment) {
+  this.writeMessage(null, 'KILL', [nickName, comment])
+}
+
+IrcClient.prototype.sendMessageWhoWas =  function (nickNames, entriesCount = -1, targetServer = null) {
+  this.writeMessage(null, 'WHOWAS', [nickNames.join(','), entriesCount.toString(), targetServer])
+}
+
+IrcClient.prototype.sendMessageWhoIs = function (nickNameMasks, targetServer = null) {
+  this.writeMessage(null, 'WHOIS', [targetServer, nickNameMasks.join(',')])
+}
+
+IrcClient.prototype.sendMessageWho = function (mask = null, onlyOperators = false) {
+  this.writeMessage(null, 'WHO', [mask, onlyOperators ? 'o' : null])
+}
+
+IrcClient.prototype.sendMessageJoin = function (channelName) {
+  this.writeMessage(null, 'JOIN', [channelName])
+}
+
+IrcClient.prototype.sendMessagePing = function (server, targetServer = null) {
+  this.writeMessage(null, 'PING', [server, targetServer])
+}
+
+IrcClient.prototype.sendMessagePong = function (server, targetServer = null) {
+  this.writeMessage(null, 'PONG', [server, targetServer])
+}
+
+IrcClient.prototype.sendMessageAway =  function (text = null) {
+  this.writeMessage(null, 'AWAY', [text])
+}
+
+IrcClient.prototype.sendMessageRehash =  function () {
+  this.writeMessage(null, 'REHASH')
+}
+
+IrcClient.prototype.sendMessageDie =  function () {
+  this.writeMessage(null, 'DIE')
+}
+
+IrcClient.prototype.sendMessageRestart =  function () {
+  this.writeMessage(null, 'RESTART')
+}
+
+IrcClient.prototype.sendMessageUsers =  function (targetServer = null) {
+  this.writeMessage(null, 'USERS', [targetServer])
+}
+
+IrcClient.prototype.sendMessageWallops =  function (text) {
+  this.writeMessage(null, 'WALLOPS', [text])
+}
+
+IrcClient.prototype.sendMessageUserHost =  function (nickNames) {
+  this.writeMessage(null, 'USERHOST', nickNames)
+}
+
+IrcClient.prototype.sendMessageIsOn =  function (nickNames) {
+  this.writeMessage(null, 'ISON', nickNames)
+}
+
 
 // ------------------- Utils  -------------------------------------------------
 
