@@ -1,10 +1,10 @@
 {
-  "name": "jsirc",
+  "name": "jsIRC",
   "version": "0.0.1",
   "description": "JavaScript IRC Client",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "electron app.js",
+    "start": "electron .",
     "console": "node console.js"
   },
   "keywords": [
@@ -14,7 +14,6 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^2.0.6",
-    "electron-debug": "^2.0.0",
-    "electron-prebuilt": "^1.4.13"
+    "electron-debug": "^2.0.0"
   }
 }

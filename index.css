@@ -135,7 +135,8 @@ div#user-list
 
 .user:hover
 {
-    cursor: pointer;    
+    cursor: pointer;
+    background: #ddd;   
 }
 
 /* Imported from the Photon Library */

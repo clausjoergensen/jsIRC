@@ -1,12 +1,15 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
+const { remote } = require('electron')
+const { Menu } = remote
+
 const IrcClient = require('./irc/IrcClient.js')
 const strftime = require('./strftime.js')
 
 var client = new IrcClient()
 
-function addParagraph(text, source = null) {
+function addParagraph (text, source = null) {
   var senderName = ''
   
   if (source != null) {
@@ -29,7 +32,7 @@ function addParagraph(text, source = null) {
   messages.scrollTop = messages.scrollHeight
 }
 
-function addNetwork(serverName) {
+function addNetwork (serverName) {
   var networkContainer = document.createElement('div')
   networkContainer.classList.add('network')
   networkContainer.serverName = serverName
@@ -50,7 +53,7 @@ function addNetwork(serverName) {
   console.log(networkListContainer)
 }
 
-function addChannel(channel) {
+function addChannel (channel) {
   var channelContainer = document.createElement('div')
   channelContainer.classList.add('channel')
   channelContainer.channel = channel
@@ -62,20 +65,80 @@ function addChannel(channel) {
   channelListContainer.appendChild(channelContainer)
 }
 
-function focusInputField() {
+function focusInputField () {
   const input = document.getElementById('chat-input')
   input.focus()
 }
 
-function listenForEnter() {
+function listenForEnter () {
   const input = document.getElementById('chat-input')
   input.addEventListener("keyup", function(event) {
-    event.preventDefault();
+    event.preventDefault()
     if (event.keyCode === 13) {
       client.sendRawMessage(input.value)
       input.value = ''
     }
-  });
+  })
+}
+
+function setupContextMenu () {
+  const userMenuTemplate = [
+    { label: 'Info' },
+    { label: 'Whois' },
+    { label: 'Query' },
+    { type: 'separator' },
+    { label: 'Control', submenu: [
+      { label: 'Ignore' },
+      { label: 'Unignore' },
+      { label: 'Op' },
+      { label: 'Deop' },
+      { label: 'Voice' },
+      { label: 'Devoice' },
+      { label: 'Kick' },
+      { label: 'Kick (Why)' },
+      { label: 'Ban' },
+      { label: 'Ban, Kick' },
+      { label: 'Ban, Kick (Why)' }
+    ]}
+  ]
+
+  const serverMenuTemplate = [
+    { label: 'Lusers'},
+    { label: 'MOTD' },
+    { label: 'Time' },
+    { type: 'separator' },
+    { label: 'Quit' }
+  ]
+
+  const channelMenuTemplate = [
+    { label: 'Set Topic' },
+    { type: 'separator' },
+    { label: 'Leave Channel' }
+  ]
+
+  const serverMenu = Menu.buildFromTemplate(serverMenuTemplate)
+  const channelMenu = Menu.buildFromTemplate(channelMenuTemplate)
+  const userMenu = Menu.buildFromTemplate(userMenuTemplate)
+
+  var channels = Array.from(document.getElementsByClassName('channel')).forEach(x => {
+    x.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+      channelMenu.popup({ window: remote.getCurrentWindow() })
+    }, false)
+  })
+
+  Array.from(document.getElementsByClassName('user')).forEach(x => {
+    x.addEventListener('contextmenu', (e) => {
+      console.log('wtf???')
+      e.preventDefault()
+      userMenu.popup({ window: remote.getCurrentWindow() })
+    }, false)
+  })
+  
+  document.getElementById('channel-content').addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    serverMenu.popup({ window: remote.getCurrentWindow() })
+  }, false)
 }
 
 client.on('connectionError', function (error) {
@@ -137,4 +200,5 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
   focusInputField()
   listenForEnter()
+  setupContextMenu()
 })

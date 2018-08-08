@@ -27,7 +27,7 @@ const regexISupportPrefix = '\((.*)\)(.*)'
 
 function IrcClient () {
   EventEmitter.call(this)
-  this.loggingEnabled = true // DEBUG
+  this.loggingEnabled = false
   this.socket = new net.Socket()
   this.socket.setEncoding('utf8')
   this.users = []
