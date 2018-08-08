@@ -829,17 +829,83 @@ IrcClient.prototype.processMessageReplyInviting = function (message) {
 
 // Process RPL_VERSION responses from the server.
 IrcClient.prototype.processMessageReplyVersion = function (message) {
-  // TODO
+  var versionInfo = message.parameters[1]
+  var versionSplitIndex = versionInfo.lastIndexOf('.')
+  var version = versionInfo.substr(0, versionSplitIndex)
+  var debugLevel = versionInfo.substr(versionSplitIndex + 1)
+  var server = message.parameters[2]
+  var comments = message.parameters[3]
+
+  this.emit('serverVersionInfoReceived', { 
+    'version': version, 
+    'debugLevel': debugLevel, 
+    'server': server, 
+    'comments': comments 
+  })
 }
 
 // Process RPL_WHOREPLY responses from the server.
 IrcClient.prototype.processMessageReplyWhoReply = function (message) {
-  // TODO
+  var channel = message.parameters[1] == '*' ? null : this.getChannelFromName(message.parameters[1])
+  var user = this.getUserFromNickName(message.parameters[5])
+
+  var userName = message.parameters[2]
+  user.HostName = message.parameters[3]
+  user.ServerName = message.parameters[4]
+
+  var userModeFlags = message.parameters[6]
+  if (userModeFlags.includes('H')) {
+    user.IsAway = false;
+  }
+  else if (userModeFlags.includes('G')) {
+    user.IsAway = true;
+  }
+  
+  user.IsOperator = userModeFlags.includes('*')
+  
+  if (channel != null)
+  {
+      var channelUser = channel.getChannelUser(user)
+      if (channelUser == null)
+      {
+          channelUser = new IrcChannelUser(user)
+          channel.userJoined(channelUser)
+      }
+
+      userModeFlags.forEach(function (c) {
+          var mode = channelUserModesPrefixes[c]
+          if (mode != null) {
+            channelUser.modeChanged(true, mode)
+          } else {
+            return
+          }
+      })
+  }
+
+  var lastParamParts = message.parameters[7].split(' ')
+  user.HopCount = parseInt(lastParamParts[0])
+  if (lastParamParts.length > 1) {
+    user.RealName = lastParamParts[1]
+  }
 }
 
 // Process RPL_NAMEREPLY responses from the server.
 IrcClient.prototype.processMessageReplyNameReply = function (message) {
-  // TODO
+  var channel = this.getChannelFromName(message.parameters[2])
+  if (channel != null) {
+    channel.typeChanged(this.getChannelType(message.parameters[1][0]))
+
+    var userIds = message.Parameters[3].split(' ')
+    userIds.forEach(function (userId) {
+        if (userId.Length == 0) {
+          return
+        }
+
+        var userNickNameAndMode = this.getUserModeAndNickName(userId)
+        var user = this.getUserFromNickName(userNickNameAndMode.identity)
+        channel.userNameReply(new IrcChannelUser(user, userNickNameAndMode.mode))
+    })
+  }
 }
 
 // Process RPL_LINKS responses from the server.
