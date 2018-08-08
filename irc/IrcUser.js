@@ -22,8 +22,8 @@ function IrcUser(client) {
 
 IrcUser.prototype.quit = function (comment) {
   var allChannelUsers = []
-  client.channels.forEach( function (channel) {
-    channel.users.forEach ( function(user) {
+  client.channels.forEach(channel => {
+    channel.users.forEach(user => {
       var channelUser = channel.users[u]
       if (channelUser.user == this) {
         allChannelUsers.push(channelUser)
