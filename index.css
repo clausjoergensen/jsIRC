@@ -3,13 +3,18 @@ html, body
     padding: 0;
     margin: 0;
     font-family: system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", Helvetica, "Segoe UI", sans-serif;
-    background-color: orange;
+    height: 100%;
+}
+
+div.window-content
+{
+    height: calc(100vh - 35px);
 }
 
 div#network-list
 {
     width: 200px;
-    height: calc(100vh - 39px);
+    height: calc(100vh - 35px);
     float: left;
     background-color: #f5f5f4;
     display: table-cell;
@@ -56,10 +61,18 @@ div#network-list
     cursor: pointer;    
 }
 
+div#content-title
+{
+    background-color: #f5f5f4;
+    padding: 3px;
+    text-align: center;
+    border-bottom: 1px solid #F8F8F2;
+}
+
 div#channel-content
 {
     width: calc(100% - 401px);
-    height: calc(100vh - 39px);
+    height: calc(100vh - 78px);
     float: left;
     font-size: 10pt;
     background-color: white;
@@ -67,16 +80,15 @@ div#channel-content
 
 div#messages
 {
-    height: calc(100vh - 85px);
+    height: calc(100vh - 78px);
     overflow-x: hidden;
     overflow-y: scroll;
-    border-bottom: 1px solid #ddd;
     padding: 10px;
 }
 
 div#channel-content p
 {
-    margin-top: 3px;
+    margin-top: 0px;
     margin-bottom: 3px;
     margin-left: 0px;
     margin-right: 0px
@@ -87,17 +99,10 @@ p.message
     /* TODO */
 }
 
-div#chat-input-container
-{
-    bottom: 2px;
-    position: absolute;
-    width: calc(100% - 401px);
-}
-
 input#chat-input
 {
-    width: calc(100% - 12px);
-    border: none;
+    margin-left: 90px;
+    width: calc(100% - 210px);
     padding-left: 6px;
     font-size: 11pt;
 }
@@ -110,7 +115,7 @@ input#chat-input:focus
 div#user-list
 {
     width: 200px;
-    height: calc(100vh - 43px);
+    height: calc(100vh - 40px);
     float: right;
     border-left: 1px solid #ddd;
     padding-top: 5px;
@@ -265,7 +270,7 @@ div#user-list
 }
 
 .toolbar {
-  min-height: 22px;
+  min-height: 25px;
   box-shadow: inset 0 1px 0 #f5f4f5;
   background-color: #e8e6e8;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e8e6e8), color-stop(100%, #d1cfd1));
@@ -281,7 +286,6 @@ div#user-list
 }
 
 .toolbar-header {
-  padding-top: 2px;
   border-bottom: 1px solid #c2c0c2;
 }
 
@@ -297,6 +301,7 @@ div#user-list
   text-align: center;
   color: #555;
   cursor: default;
+  overflow: hidden;
 }
 
 .toolbar-borderless {
@@ -307,6 +312,7 @@ div#user-list
 .toolbar-actions {
   margin-top: 4px;
   margin-bottom: 3px;
+  padding-top: -5px;
   padding-right: 3px;
   padding-left: 3px;
   padding-bottom: 3px;
