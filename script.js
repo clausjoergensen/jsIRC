@@ -30,7 +30,9 @@ function addParagraph(text, source = null) {
   var p = document.createElement("p")
   p.innerText = formattedText
   
-  document.getElementById("messages").appendChild(p)
+  const messages = document.getElementById("messages")
+  messages.appendChild(p)
+  messages.scrollTop = messages.scrollHeight
 }
 
 var client = new IrcClient()
