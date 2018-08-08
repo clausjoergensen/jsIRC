@@ -4,8 +4,8 @@
   "description": "JavaScript IRC Client",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron index.js",
+    "test": "node test.js"
   },
   "keywords": [
     "irc"
@@ -13,6 +13,8 @@
   "author": "Claus Jørgensen",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^2.0.6"
+    "electron": "^2.0.6",
+    "electron-debug": "^2.0.0",
+    "electron-prebuilt": "^1.4.13"
   }
 }

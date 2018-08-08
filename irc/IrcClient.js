@@ -1,13 +1,14 @@
 // Copyright (c) 2018 Claus Jørgensen
+'use strict'
 
-var net = require('net')
-var util = require('util')
+const net = require('net')
+const util = require('util')
 
-var EventEmitter = require('events').EventEmitter
+const EventEmitter = require('events').EventEmitter
 
-var IrcUser = require('./IrcUser.js')
-var IrcChannel = require('./IrcChannel.js')
-var IrcServer = require('./IrcServer.js')
+const IrcUser = require('./IrcUser.js')
+const IrcChannel = require('./IrcChannel.js')
+const IrcServer = require('./IrcServer.js')
 
 const maxParamsCount = 15
 const defaultPort = 6667
@@ -192,6 +193,7 @@ IrcClient.prototype.connected = function () {
                        this.registrationInfo.realName)
 
   this.localUser = new IrcUser(this)
+  this.localUser.isLocalUser = true
   this.localUser.isOnline = true
   this.localUser.nickName = this.registrationInfo.nickName
   this.localUser.userName = this.registrationInfo.userName
@@ -205,7 +207,7 @@ IrcClient.prototype.connectionClosed = function () {
   this.emit('disconnected')
 }
 
-IrcClient.prototype.connectionError = function(error) {
+IrcClient.prototype.connectionError = function (error) {
   this.emit('error', error)
 }
 
@@ -226,7 +228,6 @@ IrcClient.prototype.dataReceived = function (data) {
 }
 
 // ------------------- Data Parsing  ------------------------------------------
-
 
 IrcClient.prototype.parseMessage = function (line) {
   var prefix = null
@@ -421,19 +422,28 @@ IrcClient.prototype.processMessagePrivateMessage = function (message) {
   }
 }
 
+IrcClient.prototype.messageReceived = function (source, targets, noticeText) {
+  this.emit('message', messageText, source)
+}
+
 // Process NOTICE messages received from the server.
 IrcClient.prototype.processMessageNotice = function (message) {
   var targets = []
   var targetNames = message.parameters[0].split(',')
+
   for (var i = 0; i < targetNames.length; i++) {
     targets.push(this.getMessageTarget(targetNames[i]))
   }
 
   var noticeText = message.parameters[1]
-  
+
   for (var i = 0; i < targets.length; i++) {
     targets[i].noticeReceived(message.source, targets, noticeText)
   }
+}
+
+IrcClient.prototype.noticeReceived = function (source, targets, noticeText) {
+  this.emit('notice', noticeText, source)
 }
 
 // Process PING messages received from the server.
@@ -808,14 +818,17 @@ IrcClient.prototype.processMessageReplyInviting = function (message) {
 
 // Process RPL_VERSION responses from the server.
 IrcClient.prototype.processMessageReplyVersion = function (message) {
+  // TODO
 }
 
 // Process RPL_WHOREPLY responses from the server.
 IrcClient.prototype.processMessageReplyWhoReply = function (message) {
+  // TODO
 }
 
 // Process RPL_NAMEREPLY responses from the server.
 IrcClient.prototype.processMessageReplyNameReply = function (message) {
+  // TODO
 }
 
 // Process RPL_LINKS responses from the server.
@@ -1081,6 +1094,10 @@ IrcClient.prototype.getMessageTarget = function (targetName) {
     throw 'targetName cannot be empty string.'
   }
 
+  if (targetName == '*') {
+    return this
+  }
+
   var channelName = null
   var channelNameMatch = targetName.match(regexChannelName)
   if (channelNameMatch != null) {
@@ -1208,9 +1225,9 @@ IrcClient.prototype.getChannelFromName = function (channelName) {
 }
 
 IrcClient.prototype.getUserFromNickName = function (nickName, isOnline = true) {
-  var existingUser = this.users.find(u => u.NickName == nickName)
+  var existingUser = this.users.find(u => u.nickName == nickName)
   if (existingUser != null) {
-    return existingUser.NickName
+    return existingUser
   }
   
   var newUser = new IrcUser(this)
@@ -1222,7 +1239,7 @@ IrcClient.prototype.getUserFromNickName = function (nickName, isOnline = true) {
   return newUser
 }
 
-IrcClient.prototype.handleISupportParameter = function(name, value) {
+IrcClient.prototype.handleISupportParameter = function (name, value) {
   if (name.toLowerCase() == 'prefix') {
     var prefixValueMatch = value.match(regexISupportPrefix)
     var prefixes = prefixValueMatch[2]
@@ -1232,12 +1249,12 @@ IrcClient.prototype.handleISupportParameter = function(name, value) {
       throw 'Message ISupport Prefix is Invalid.'
     }
 
-    channelUserModes = []
-    channelUserModes = modes.split('')
+    this.channelUserModes = []
+    this.channelUserModes = modes.split('')
 
-    channelUserModesPrefixes = {}
+    this.channelUserModesPrefixes = {}
     for (var i = 0; i < prefixes.length; i++) {
-      channelUserModesPrefixes[prefixes[i]] = modes[i]
+      this.channelUserModesPrefixes[prefixes[i]] = modes[i]
     }
   }
 }
@@ -1248,7 +1265,7 @@ IrcClient.prototype.isChannelName = function (channelName) {
 
 IrcClient.prototype.getUserModeAndIdentifier = function (identifier) {
   var mode = identifier[0]
-  let channelUserMode = channelUserModesPrefixes(mode)
+  let channelUserMode = this.channelUserModesPrefixes(mode)
   if (channelUserMode != null) {
     return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
   }

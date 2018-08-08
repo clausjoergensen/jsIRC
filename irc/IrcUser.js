@@ -1,4 +1,5 @@
 // Copyright (c) 2018 Claus Jørgensen
+'use strict'
 
 var util = require('util')
 var EventEmitter = require('events').EventEmitter
@@ -16,6 +17,7 @@ function IrcUser(client) {
     this.serverInfo = null
     this.isAway = false
     this.awayMessage = null
+    this.isLocalUser = false
 }
 
 IrcUser.prototype.quit = function (comment) {

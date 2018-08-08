@@ -4,7 +4,7 @@
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
 
-function IrcServer(hostName) {
+function IrcServer (hostName) {
     this.hostName = hostName
 }
 

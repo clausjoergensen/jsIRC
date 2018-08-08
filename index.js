@@ -1,43 +1,41 @@
 // Copyright (c) 2018 Claus Jørgensen
+'use strict'
 
-var IrcClient = require('./IrcClient.js')
+const electron = require('electron')
+const app = (process.type === 'renderer') ? electron.remote.app : electron.app
 
-var registrationInfo = {
-  'nickName': 'Rincewind',
-  'password': null,
-  'userName': 'Rincewind',
-  'realName': "Rincewind the Wizzard",
-  'userModes': []
+//require('electron-debug')()
+
+let mainWindow
+
+function onClosed() {
+  mainWindow = null
 }
 
-var client = new IrcClient()
+function createMainWindow() {
+  const browserWindow = new electron.BrowserWindow({
+    width: 1024,
+    height: 800
+  })
 
-client.on('error', function (error) {
-  if (error.code == 'ECONNREFUSED') {
-    console.log(`Couldn't connect to ${error.address}:${error.port}`)
-  } else if (error.code == 'ECONNRESET') {
-    console.log(`Disconnected (Connection Reset)`)
+  browserWindow.loadURL(`file://${__dirname}/index.html`)
+  browserWindow.on('closed', onClosed)
+
+  return browserWindow
+}
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
   }
 })
 
-client.on('registered', function(targets, noticeText) {
-  console.log('Registration Completed')
-  client.getServerStatistics()
+app.on('activate', () => {
+  if (!mainWindow) {
+    mainWindow = createMainWindow()
+  }
 })
 
-client.on('serverStatsReceived', function(stats) {
-  console.log(stats)
+app.on('ready', () => {
+  mainWindow = createMainWindow()
 })
-
-client.on('notice', function(targets, noticeText) {
-  //console.log('NOTICE: ' + noticeText)
-})
-
-client.on('clientInfo', function() {
-  //console.log('Server Name: ' + client.serverName)
-  //console.log('Server Version: ' + client.serverVersion)
-  //console.log('Server Available User Modes: ' + client.serverAvailableUserModes)
-  //console.log('Server Available Channel Modes: ' + client.serverAvailableChannelModes)
-})
-
-client.connect('127.0.0.1', 6667, registrationInfo)
