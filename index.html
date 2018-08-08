@@ -4,50 +4,76 @@
         <meta charset="utf-8">
         <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
         <link rel="stylesheet" type="text/css" href="index.css">
+        <link rel="stylesheet" type="text/css" href="css/icons.css">
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins">
         <script src="index.js"></script>
     </head>
     <body>
-        <div id="irc">
-            <div id="network-list">
-                <div class="network">QUAKENET</div>
-                <div class="channel-list">
-                    <div class="channel">#C#</div>
-                    <div class="channel">#hearthstone</div>
-                    <div class="channel">#wow</div>
-                    <div class="channel">#kalonline</div>
-                    <div class="channel">#javascript</div>
+        <header class="toolbar toolbar-header">
+            <div class="toolbar-actions">
+                <button class="btn btn-default">
+                    <span class="icon icon-flash icon-text"></span>Connect
+                </button>
+                <div class="btn-group">
+                    <button class="btn btn-default">
+                        <span class="icon icon-user"></span>
+                    </button>
+                    <button class="btn btn-default">
+                        <span class="icon icon-chat"></span>
+                    </button>
                 </div>
-                <div class="network">FREENODE</div>
-                <div class="channel-list">
-                    <div class="channel">#csharp</div>
-                    <div class="channel">#cpp</div>
-                    <div class="channel">#swift-lang</div>
-                </div>
+                <button class="btn btn-default btn-dropdown pull-right">
+                    <span class="icon icon-cog"></span>
+                </button>
             </div>
-            <div id="channel-content">
-                <div id="messages">
-                    <!-- Filled via. JavaScript -->
+        </header>
+        <div class="window-content">
+            <div id="irc">
+                <div id="network-list">
+                    <div class="network" id="network-irc.foonet.com">
+                        <p>Quakenet (Rincewind)</p>
+                        <div class="channel-list">
+                            <div class="channel" id="channel-#foobar">#help</div>
+                            <div class="channel" id="channel-#foobar">#fishbot</div>
+                            <div class="channel" id="channel-#foobar">#c#</div>
+                            <div class="channel" id="channel-#foobar">#hearthstone</div>
+                            <div class="channel" id="channel-#foobar">#wow</div>
+                        </div>
+                    </div>
+                    <div class="network" id="network-irc.foonet.com">
+                        <p>Freenode (Windcape)</p>
+                        <div class="channel-list">
+                            <div class="channel" id="channel-#foobar">#javascript</div>
+                            <div class="channel" id="channel-#foobar">#ruby</div>
+                            <div class="channel" id="channel-#foobar">#python</div>
+                            <div class="channel" id="channel-#foobar">#csharp</div>
+                            <div class="channel" id="channel-#foobar">#html</div>
+                        </div>
+                    </div>
                 </div>
-                <div id="chat-input-container">
-                    <input id="chat-input" type="text">
+                <div id="channel-content">
+                    <div id="messages">
+                    </div>                        
+                    <div id="chat-input-container">
+                        <input id="chat-input" type="text" value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent suscipit nec turpis sed auctor. Sed commodo elit a ante gravida blandit. Quisque lacus arcu, dictum vitae auctor in, porta at purus. ">
+                    </div>
                 </div>
-            </div>
-            <div id="user-list">
-                <div class="user">@A</div>
-                <div class="user">@Q</div>
-                <div class="user">@S</div>
-                <div class="user">@Apocryphal</div>
-                <div class="user">@cH40z-Lord</div>
-                <div class="user">@TinoDidriksen</div>
-                <div class="user">@Windcape</div>
-                <div class="user">+Kalroth</div>
-                <div class="user">+Lumpio-</div>
-                <div class="user">+Roerik</div>
-                <div class="user">+Scott`</div>
-                <div class="user">Rincewind</div>
-                <div class="user">Twoflower</div>
-                <div class="user">Ridicully</div>
+                <div id="user-list">
+                    <div class="user">@A</div>
+                    <div class="user">@Q</div>
+                    <div class="user">@S</div>
+                    <div class="user">@Apocryphal</div>
+                    <div class="user">@cH40z-Lord</div>
+                    <div class="user">@TinoDidriksen</div>
+                    <div class="user">@Windcape</div>
+                    <div class="user">+Kalroth</div>
+                    <div class="user">+Lumpio-</div>
+                    <div class="user">+Roerik</div>
+                    <div class="user">+Scott`</div>
+                    <div class="user">Rincewind</div>
+                    <div class="user">Twoflower</div>
+                    <div class="user">Ridicully</div>
+                </div>
             </div>
         </div>
     </body>

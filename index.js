@@ -29,6 +29,39 @@ function addParagraph(text, source = null) {
   messages.scrollTop = messages.scrollHeight
 }
 
+function addNetwork(serverName) {
+  var networkContainer = document.createElement('div')
+  networkContainer.classList.add('network')
+  networkContainer.serverName = serverName
+  networkContainer.id = 'network-' + serverName
+
+  var title = document.createElement('p')
+  title.innerText = serverName
+
+  var channelListContainer = document.createElement('div')
+  channelListContainer.classList.add('channel-list')
+
+  networkContainer.appendChild(title)
+  networkContainer.appendChild(channelListContainer)
+
+  var networkListContainer = document.getElementById('network-list')
+  networkListContainer.appendChild(networkContainer)
+
+  console.log(networkListContainer)
+}
+
+function addChannel(channel) {
+  var channelContainer = document.createElement('div')
+  channelContainer.classList.add('channel')
+  channelContainer.channel = channel
+  channelContainer.innerText = channel.name
+  channelContainer.id = 'channel-' + channel.name
+
+  var networtContainer = document.getElementById('network-' + channel.client.serverName)
+  var channelListContainer = networtContainer.children[1]
+  channelListContainer.appendChild(channelContainer)
+}
+
 function focusInputField() {
   const input = document.getElementById('chat-input')
   input.focus()
@@ -45,12 +78,24 @@ function listenForEnter() {
   });
 }
 
-client.on('error', function (error) {
+client.on('connectionError', function (error) {
   if (error.code == 'ECONNREFUSED') {
     addParagraph(`* Couldn't connect to ${error.address}:${error.port}`)
   } else if (error.code == 'ECONNRESET') {
     addParagraph(`* Disconnected (Connection Reset)`)
   }
+})
+
+client.on('error', function (errorMessage) {
+  addParagraph('* ' + errorMessage)
+})
+
+client.on('channelListReceived', function (channels) {
+  console.log('Channels', channels)
+})
+
+client.on('clientInfo', function () {
+  //addNetwork(client.serverName)
 })
 
 client.on('registered', function () {
@@ -59,6 +104,9 @@ client.on('registered', function () {
   })
   client.localUser.on('notice', function (noticeText, source) {
     addParagraph(noticeText, source) 
+  })
+  client.localUser.on('joinedChannel', function (channel) {
+    //addChannel(channel)
   })
 })
 

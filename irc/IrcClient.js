@@ -213,7 +213,7 @@ IrcClient.prototype.connectionClosed = function () {
 }
 
 IrcClient.prototype.connectionError = function (error) {
-  this.emit('error', error)
+  this.emit('connectionError', error)
 }
 
 IrcClient.prototype.dataReceived = function (data) {
@@ -359,7 +359,7 @@ IrcClient.prototype.processMessageQuit = function (message) {
 // Process JOIN messages received from the server.
 IrcClient.prototype.processMessageJoin = function (message) {
   var sourceUser = message.source
-  var channelList = message.parameters[0]
+  var channelList = message.parameters[0].split(',')
 
   for (var i = 0; i < channelList.length; i++) {
     var channel = this.getChannelFromName(channelList[i])
@@ -406,7 +406,7 @@ IrcClient.prototype.processMessageTopic = function (message) {
 
 // Process KICK messages received from the server.
 IrcClient.prototype.processMessageKick = function (message) {
-  var channelList = message.parameters[0]
+  var channelList = message.parameters[0].split(',')
   var userList = message.parameters[1]
   var comment = message.parameters[2]
 }

@@ -2,22 +2,23 @@ html, body
 {
     padding: 0;
     margin: 0;
+    font-family: system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", Helvetica, "Segoe UI", sans-serif;
+    background-color: orange;
 }
 
 div#network-list
 {
     width: 200px;
-    height: 100vh;
+    height: calc(100vh - 39px);
     float: left;
-    background-color: #282828;
+    background-color: #f5f5f4;
     display: table-cell;
 }
 
-.network
+.network p
 {
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-size: 18px;
+    color: #666666;
+    font-size: 10pt;
     margin: 10px;
 }
 
@@ -34,9 +35,8 @@ div#network-list
 
 .channel
 {
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-size: 12px;
+    color: black;
+    font-size: 10pt;
     border: 1px solid #F8F8F2;
     border-radius: 8px;
     margin-top: 5px;
@@ -46,25 +46,31 @@ div#network-list
 
 .channel:hover
 {
-    background-color: #666;
+    background-color: #dcdfe1;
     cursor: pointer;
+}
+
+.selected-channel
+{
+    background-color: #dcdfe1;
+    cursor: pointer;    
 }
 
 div#channel-content
 {
     width: calc(100% - 401px);
-    height: calc(100vh - 20px);
+    height: calc(100vh - 39px);
     float: left;
-    font-family: 'Consolas', sans-serif;
-    font-size: 16px;
+    font-size: 10pt;
+    background-color: white;
 }
 
 div#messages
 {
-    height: calc(100vh - 47px);
+    height: calc(100vh - 85px);
     overflow-x: hidden;
     overflow-y: scroll;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #ddd;
     padding: 10px;
 }
 
@@ -93,8 +99,7 @@ input#chat-input
     width: calc(100% - 12px);
     border: none;
     padding-left: 6px;
-    font-family: 'Consolas', sans-serif;
-    font-size: 16px;
+    font-size: 11pt;
 }
 
 input#chat-input:focus
@@ -105,12 +110,13 @@ input#chat-input:focus
 div#user-list
 {
     width: 200px;
-    height: calc(100vh - 5px);
+    height: calc(100vh - 43px);
     float: right;
-    border-left: 1px solid #282828;
+    border-left: 1px solid #ddd;
     padding-top: 5px;
     overflow-x: hidden;
     overflow-y: scroll;
+    background-color: #f5f5f4;
 }
 
 .user
@@ -119,11 +125,202 @@ div#user-list
     padding-bottom: 3px;
     padding-left: 10px;
     padding-right: 5px;
-    font-family: 'Consolas', sans-serif;
-    font-size: 16px;
+    font-size: 10pt;
 }
 
 .user:hover
 {
     cursor: pointer;    
+}
+
+/* Imported from the Photon Library */
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.btn {
+  display: inline-block;
+  padding: 3px 8px;
+  margin-bottom: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: default;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+  -webkit-app-region: no-drag;
+}
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.btn-mini {
+  padding: 2px 6px;
+}
+
+.btn-large {
+  padding: 6px 12px;
+}
+
+.btn-form {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.btn-default {
+  color: #333;
+  border-top-color: #c2c0c2;
+  border-right-color: #c2c0c2;
+  border-bottom-color: #a19fa1;
+  border-left-color: #c2c0c2;
+  background-color: #fcfcfc;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fcfcfc), color-stop(100%, #f1f1f1));
+  background-image: -webkit-linear-gradient(top, #fcfcfc 0%, #f1f1f1 100%);
+  background-image: linear-gradient(to bottom, #fcfcfc 0%, #f1f1f1 100%);
+}
+.btn-default:active {
+  background-color: #ddd;
+  background-image: none;
+}
+
+.btn .icon {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  color: #737475;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.btn .icon-text {
+  margin-right: 5px;
+}
+
+.btn-dropdown:after {
+  font-family: "entypo";
+  margin-left: 5px;
+  content: "";
+}
+
+.btn-group {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-app-region: no-drag;
+}
+.btn-group .btn {
+  position: relative;
+  float: left;
+}
+.btn-group .btn:focus, .btn-group .btn:active {
+  z-index: 2;
+}
+.btn-group .btn.active {
+  z-index: 3;
+}
+
+.btn-group .btn + .btn,
+.btn-group .btn + .btn-group,
+.btn-group .btn-group + .btn,
+.btn-group .btn-group + .btn-group {
+  margin-left: -1px;
+}
+.btn-group > .btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group > .btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+.btn-group .btn + .btn {
+  border-left: 1px solid #c2c0c2;
+}
+.btn-group .btn + .btn.active {
+  border-left: 0;
+}
+.btn-group .active {
+  color: #fff;
+  border: 1px solid transparent;
+  background-color: #6d6c6d;
+  background-image: none;
+}
+.btn-group .active .icon {
+  color: #fff;
+}
+
+.toolbar {
+  min-height: 22px;
+  box-shadow: inset 0 1px 0 #f5f4f5;
+  background-color: #e8e6e8;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e8e6e8), color-stop(100%, #d1cfd1));
+  background-image: -webkit-linear-gradient(top, #e8e6e8 0%, #d1cfd1 100%);
+  background-image: linear-gradient(to bottom, #e8e6e8 0%, #d1cfd1 100%);
+}
+.toolbar:before, .toolbar:after {
+  display: table;
+  content: " ";
+}
+.toolbar:after {
+  clear: both;
+}
+
+.toolbar-header {
+  padding-top: 2px;
+  border-bottom: 1px solid #c2c0c2;
+}
+
+.toolbar-footer {
+  border-top: 1px solid #c2c0c2;
+  -webkit-app-region: drag;
+}
+
+.title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: center;
+  color: #555;
+  cursor: default;
+}
+
+.toolbar-borderless {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.toolbar-actions {
+  margin-top: 4px;
+  margin-bottom: 3px;
+  padding-right: 3px;
+  padding-left: 3px;
+  padding-bottom: 3px;
+  -webkit-app-region: drag;
+}
+.toolbar-actions:before, .toolbar-actions:after {
+  display: table;
+  content: " ";
+}
+.toolbar-actions:after {
+  clear: both;
+}
+.toolbar-actions > .btn,
+.toolbar-actions > .btn-group {
+  margin-left: 4px;
+  margin-right: 4px;
 }
