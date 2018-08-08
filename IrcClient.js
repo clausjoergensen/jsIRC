@@ -228,8 +228,6 @@ IrcClient.prototype.readMessage = function (message, line) {
   var messageProcessor = this.messageProcessors[message.command]
   if (messageProcessor != null) {
     messageProcessor(message)
-  } else {
-    console.log(line)
   }
 }
 
