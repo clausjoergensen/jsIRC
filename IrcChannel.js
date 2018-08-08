@@ -56,7 +56,8 @@ IrcChannel.prototype.userKicked = function (channelUser, comment = null) {
   this.emit('kick', user)
 }
 
-IrcChannel.prototype.setTopic = function (newTopic) {
+IrcChannel.prototype.topicChanged = function (user, newTopic) {
+  this.topic = newTopic
   this.emit('topic', user)
 }
 
@@ -66,6 +67,10 @@ IrcChannel.prototype.messageReceived = function (source, targets, messageText) {
 
 IrcChannel.prototype.noticeReceived = function (source, targets, noticeText) {
   this.emit('notice', messageText, source)
+}
+
+IrcChannel.prototype.usersListReceived = function () {
+  this.emit('usersListReceived')
 }
 
 module.exports = IrcChannel

@@ -42,6 +42,8 @@ function IrcClient () {
   this.channelUserModes = []
   this.channelUserModesPrefixes = {}
   this.messageOfTheDay = null
+  this.listedServerLinks = []
+  this.listedChannels = []
   this.messageProcessors = {
     'NICK': this.processMessageNick.bind(this),
     'QUIT': this.processMessageQuit.bind(this),
@@ -116,6 +118,62 @@ IrcClient.prototype.connect = function (hostName, port, registrationInfo) {
   this.socket.on('data', this.dataReceived.bind(this))
   this.socket.on('close', this.connectionClosed.bind(this))
   this.socket.on('error', this.connectionError.bind(this))
+}
+
+IrcClient.prototype.disconnect = function () {
+  this.socket.disconnect()
+}
+
+IrcClient.prototype.listChannels = function (channelNames = null) {
+  this.sendMessageList(channelNames)
+}
+
+IrcClient.prototype.getMessageOfTheDay = function (targetServer = null) {
+  this.sendMessageMotd(targetServer)
+}
+
+IrcClient.prototype.getNetworkInfo = function (serverMask = null, targetServer = null) {
+  this.sendMessageLUsers(serverMask, targetServer)
+}
+
+IrcClient.prototype.getServerVersion = function (targetServer = null) {
+  this.sendMessageVersion(targetServer)
+}
+
+IrcClient.prototype.getServerStatistics = function (query = null, targetServer = null) {
+  this.sendMessageStats(query == null ? null : query, targetServer)
+}
+
+IrcClient.prototype.getServerLinks = function (serverMask = null, targetServer = null) {
+  this.sendMessageLinks(serverMask, targetServer)
+}
+
+IrcClient.prototype.getServerTime = function (targetServer = null) {
+  this.sendMessageTime(targetServer)
+}
+
+IrcClient.prototype.ping = function (targetServer = null) {
+  this.sendMessagePing(this.localUser.nickName, targetServer)
+}
+
+IrcClient.prototype.queryWho = function (mask = null, onlyOperators = false) {
+  this.sendMessageWho(mask, onlyOperators)
+}
+
+IrcClient.prototype.queryWhoIs = function (nickNameMasks) {
+  this.sendMessageWhoIs(nickNameMasks)
+}
+
+IrcClient.prototype.queryWhoWas = function (nickNames, entriesCount = -1) {
+  this.sendMessageWhoWas(nickNames, entriesCount)
+}
+
+IrcClient.prototype.quit = function (comment = null) {
+  this.sendMessageQuit(comment)
+}
+
+IrcClient.prototype.sendRawMessage = function (message) {
+  this.socket.write(message + '\r\n')
 }
 
 // ------------------- Socket Operations  -------------------------------------
@@ -589,22 +647,36 @@ IrcClient.prototype.processMessageReplyWhoIsChannels = function (message) {
 
 // Process RPL_LIST responses from the server.
 IrcClient.prototype.processMessageReplyList = function (message) {
+  var channelName = message.parameters[1]
+  var visibleUsersCount = parseInt(message.parameters[2])
+  var topic = message.parameters[3]
+
+  this.listedChannels.push({ 'channelName': channelName, 'visibleUsersCount': visibleUsersCount, 'topic': topic })
 }
 
 // Process RPL_LISTEND responses from the server.
 IrcClient.prototype.processMessageReplyListEnd = function (message) {
+  this.emit('channelListReceived', listedChannels)
+  this.listedChannels = []
 }
 
 // Process RPL_NOTOPIC responses from the server.
 IrcClient.prototype.processMessageReplyNoTopic = function (message) {
+  var channel = this.getChannelFromName(message.parameters[1])
+  channel.topicChanged(null, null)
 }
 
 // Process RPL_TOPIC responses from the server.
 IrcClient.prototype.processMessageReplyTopic = function (message) {
+  var channel = this.getChannelFromName(message.parameters[1])
+  channel.topicChanged(null, message.parameters[2])
 }
 
 // Process RPL_INVITING responses from the server.
 IrcClient.prototype.processMessageReplyInviting = function (message) {
+  var invitedUser = this.getUserFromNickName(message.parameters[1])
+  var channel = this.getChannelFromName(message.parameters[2])
+  channel.userInvited(invitedUser)
 }
 
 // Process RPL_VERSION responses from the server.
@@ -621,18 +693,29 @@ IrcClient.prototype.processMessageReplyNameReply = function (message) {
 
 // Process RPL_LINKS responses from the server.
 IrcClient.prototype.processMessageReplyLinks = function (message) {
+  var hostName = message.parameters[1]
+  var infoParts = message.parameters[3].split(" ")
+  var hopCount = parseInt(infoParts[0])
+  var info = infoParts[1]
+
+  this.listedServerLinks.Add({ 'hostName': hostName, 'hopCount': hopCount, 'info': info });
 }
 
 // Process RPL_ENDOFLINKS responses from the server.
 IrcClient.prototype.processMessageReplyEndOfLinks = function (message) {
+  this.emit('serverLinksListReceived', this.listedServerLinks)
+  this.listedServerLinks = []
 }
 
 // Process RPL_ENDOFNAMES responses from the server.
 IrcClient.prototype.processMessageReplyEndOfNames = function (message) {
+  var channel = this.getChannelFromName(message.parameters[1])
+  channel.usersListReceived()
 }
 
 // Process RPL_ENDOFWHOWAS responses from the server.
 IrcClient.prototype.processMessageReplyEndOfWhoWas = function (message) {
+  this.emit('whoWasReplyReceived', this.getUserFromNickName(message.parameters[1], false))
 }
 
 // Process RPL_MOTD responses from the server.
