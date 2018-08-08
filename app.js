@@ -2,8 +2,7 @@
 'use strict'
 
 const electron = require('electron')
-const app = (process.type === 'renderer') ? electron.remote.app : electron.app
-const  BrowserWindow = require('browser-window')
+const {app, BrowserWindow} = electron
 
 var mainWindow = null
 
@@ -21,7 +20,7 @@ app.on('ready', function() {
     'title-bar-style': 'hidden'
   })
 
-  mainWindow.loadUrl('file://' + __dirname + '/index.html')
+  mainWindow.loadURL('file://' + __dirname + '/index.html')
 
   mainWindow.on('closed', function() {
     mainWindow = null
