@@ -138,7 +138,7 @@ div.network-title
 
 input#chat-input
 {
-    margin-left: 92px;
+    margin-left: 39px;
     width: calc(100% - 210px);
     padding-left: 6px;
     font-size: 11pt;

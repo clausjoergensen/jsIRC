@@ -113,7 +113,8 @@ ClientUI.prototype.userJoinedChannel = function (channel) {
     this.displayChannelTopic(channel)
   })
 
-  this.addChannelToList(channel)  
+  this.addChannelToList(channel)
+  this.viewChannel(channel)
 }
 
 ClientUI.prototype.userPartedChannel = function (channel) {
@@ -201,10 +202,6 @@ ClientUI.prototype.addChannelToList = function (channel) {
 
   channelElement.addEventListener('click', (e) => {
     e.preventDefault()
-    Object.keys(this.navigationChannelViews).forEach((key, index) => {
-      this.navigationChannelViews[key].classList.remove('channel-selected')
-    })
-    channelElement.classList.add('channel-selected')
     this.viewChannel(channel)
   }, false)
 
@@ -225,6 +222,11 @@ ClientUI.prototype.viewServer = function () {
 }
 
 ClientUI.prototype.viewChannel = function (channel) {
+  Object.keys(this.navigationChannelViews).forEach((key, index) => {
+    this.navigationChannelViews[key].classList.remove('channel-selected')
+  })
+  this.navigationChannelViews[channel.name].classList.add('channel-selected')
+
   this.serverView.style.display = 'none'    
 
   if (this.selectedChannel != null) {
