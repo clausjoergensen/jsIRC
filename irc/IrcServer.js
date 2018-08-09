@@ -2,7 +2,8 @@
 'use strict'
 
 const util = require('util')
-const EventEmitter = require('events').EventEmitter
+const events = require('events')
+const { EventEmitter } = events
 
 function IrcServer (hostName) {
     this.hostName = hostName

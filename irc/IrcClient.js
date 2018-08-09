@@ -3,12 +3,14 @@
 
 const net = require('net')
 const util = require('util')
+const events = require('events')
 
-const EventEmitter = require('events').EventEmitter
+const { EventEmitter } = events
 
 const IrcUser = require('./IrcUser.js')
 const IrcChannel = require('./IrcChannel.js')
 const IrcServer = require('./IrcServer.js')
+const IrcChannelUser = require('./IrcChannelUser.js')
 
 const maxParamsCount = 15
 const defaultPort = 6667
@@ -361,7 +363,7 @@ IrcClient.prototype.processMessageJoin = function (message) {
   var channelList = message.parameters[0].split(',')
 
   channelList.forEach(channelName => {
-    var channel = this.getChannelFromName(channelList[i])
+    var channel = this.getChannelFromName(channelName)
     if (sourceUser == this.localUser) {
       this.localUser.joinChannel(channel)
     } else {
@@ -376,7 +378,7 @@ IrcClient.prototype.processMessagePart = function (message) {
   var comment = message.parameters[0]
 
   channelList.forEach(channelName => {
-    var channel = this.getChannelFromName(channelList[i])
+    var channel = this.getChannelFromName(channelName)
     if (sourceUser == this.localUser) {
       this.localUser.partChannel(channel)
     } else {
@@ -399,7 +401,7 @@ IrcClient.prototype.processMessageMode = function (message) {
 
 // Process TOPIC messages received from the server.
 IrcClient.prototype.processMessageTopic = function (message) {
-  var channelName = getChannelFromName(message.parameters[0])
+  var channel = this.getChannelFromName(message.parameters[0])
   channel.topicChanged(message.source, message.parameters[1])
 }
 
@@ -412,8 +414,8 @@ IrcClient.prototype.processMessageKick = function (message) {
 
 // Process INVITE messages received from the server.
 IrcClient.prototype.processMessageInvite = function (message) {
-  var user = getUserFromNickName(message.parameters[0])
-  var channel = getChannelFromName(message.parameters[1])
+  var user = this.getUserFromNickName(message.parameters[0])
+  var channel = this.getChannelFromName(message.parameters[1])
   user.inviteReceived(message.source, channel)
 }
 
@@ -480,9 +482,9 @@ IrcClient.prototype.processMessageReplyWelcome = function (message) {
   var hostMask = welcomeMessage[welcomeMessage.length - 1]
   
   var nickNameMatch = hostMask.match(regexNickNameId)
-  this.localUser.nickName = nickNameMatch[1] || localUser.NickName
-  this.localUser.userName = nickNameMatch[2] || localUser.UserName
-  this.localUser.hostName = nickNameMatch[3] || localUser.HostName
+  this.localUser.nickName = nickNameMatch[1] || localUser.nickName
+  this.localUser.userName = nickNameMatch[2] || localUser.userName
+  this.localUser.hostName = nickNameMatch[3] || localUser.hostName
   
   this.isRegistered = true
 
@@ -835,8 +837,8 @@ IrcClient.prototype.processMessageReplyWhoReply = function (message) {
   var user = this.getUserFromNickName(message.parameters[5])
 
   var userName = message.parameters[2]
-  user.HostName = message.parameters[3]
-  user.ServerName = message.parameters[4]
+  user.hostName = message.parameters[3]
+  user.serverName = message.parameters[4]
 
   var userModeFlags = message.parameters[6]
   if (userModeFlags.includes('H')) {
@@ -870,7 +872,7 @@ IrcClient.prototype.processMessageReplyWhoReply = function (message) {
   var lastParamParts = message.parameters[7].split(' ')
   user.HopCount = parseInt(lastParamParts[0])
   if (lastParamParts.length > 1) {
-    user.RealName = lastParamParts[1]
+    user.realName = lastParamParts[1]
   }
 }
 
@@ -880,14 +882,14 @@ IrcClient.prototype.processMessageReplyNameReply = function (message) {
   if (channel != null) {
     channel.typeChanged(this.getChannelType(message.parameters[1][0]))
 
-    var userIds = message.Parameters[3].split(' ')
+    var userIds = message.parameters[3].split(' ')
     userIds.forEach(userId => {
-        if (userId.Length == 0) {
+        if (userId.length == 0) {
           return
         }
 
-        var userNickNameAndMode = this.getUserModeAndNickName(userId)
-        var user = this.getUserFromNickName(userNickNameAndMode.identity)
+        var userNickNameAndMode = this.getUserModeAndIdentifier(userId)
+        var user = this.getUserFromNickName(userNickNameAndMode.identifier)
         channel.userNameReply(new IrcChannelUser(user, userNickNameAndMode.mode))
     })
   }
@@ -1152,7 +1154,7 @@ IrcClient.prototype.getMessageTarget = function (targetName) {
     throw 'targetName is null.'
   }
 
-  if (targetName.Length == 0) {
+  if (targetName.length == 0) {
     throw 'targetName cannot be empty string.'
   }
 
@@ -1205,16 +1207,16 @@ IrcClient.prototype.getMessageTarget = function (targetName) {
     if (user.UserName == null) {
       user.UserName = userName
     }
-    if (user.HostName == null) {
-      user.HostName = hostName
+    if (user.hostName == null) {
+      user.hostName = hostName
     }
     return user
   }
   
   if (userName != null) {
     var user = this.getUserFromNickName(nickName, true)
-    if (user.HostName == null) {
-      user.HostName = hostName
+    if (user.hostName == null) {
+      user.hostName = hostName
     }
     return user
   }
@@ -1277,9 +1279,9 @@ IrcClient.prototype.getServerFromHostName = function (hostName) {
 }
 
 IrcClient.prototype.getChannelFromName = function (channelName) {
-  var existingChannel = this.channels.find(c => c.Name == channelName)
+  var existingChannel = this.channels.find(c => c.name == channelName)
   if (existingChannel != null) {
-    return existingChannel.Name
+    return existingChannel
   }
   var newChannel = new IrcChannel(this, channelName)
   this.channels.push(newChannel)
@@ -1327,12 +1329,29 @@ IrcClient.prototype.isChannelName = function (channelName) {
 
 IrcClient.prototype.getUserModeAndIdentifier = function (identifier) {
   var mode = identifier[0]
-  let channelUserMode = this.channelUserModesPrefixes(mode)
+  let channelUserMode = this.channelUserModesPrefixes[mode]
   if (channelUserMode != null) {
     return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
   }
   return { 'mode': null, 'identifier': identifier }
 }
+
+IrcClient.prototype.getChannelType = function (type) {
+  switch (type) {
+    case '=':
+      return IrcChannelType.public
+      break
+    case '*':
+      return IrcChannelType.private
+      break
+    case '@':
+      return IrcChannelType.secret
+      break
+    default:
+      throw 'Invalid Channel Type'
+  }
+}
+
 
 // These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
 var IrcServerStatisticalEntryCommonType = {
@@ -1358,6 +1377,12 @@ var IrcServerStatisticalEntryCommonType = {
   allowedOperator: 10,
   // A hub server within the network.
   hubServer: 11
+}
+
+var IrcChannelType = {
+  public: 1,
+  private: 2,
+  secret: 3
 }
 
 // ------------------- Module Configuration  ----------------------------------

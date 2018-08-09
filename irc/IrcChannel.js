@@ -2,7 +2,8 @@
 'use strict'
 
 const util = require('util')
-const EventEmitter = require('events').EventEmitter
+const events = require('events')
+const { EventEmitter } = events
 const IrcChannelUser = require('./IrcChannelUser.js')
 
 var IrcChannelType = {
@@ -22,14 +23,12 @@ function IrcChannel (client, name) {
 }
 
 IrcChannel.prototype.getChannelUser = function (user) {
-  return this.users.find(u => u == user)
+  return this.users.find(u => u.user == user)
 }
 
 IrcChannel.prototype.userJoined = function (channelUser) {
   channelUser.channel = this
-
-  this.users.push(user)
-
+  this.users.push(channelUser)
   this.emit('userJoinedChannel', channelUser)
 }
 
@@ -38,7 +37,6 @@ IrcChannel.prototype.userParted = function (channelUser, comment) {
   if (idx != -1) {
     this.users.splice(idx)
   }
-
   this.emit('userLeftChannel', channelUser, comment)
 }
 
@@ -47,7 +45,6 @@ IrcChannel.prototype.userQuit = function (channnelUser, comment) {
   if (idx != -1) {
     this.users.splice(idx)
   }
-
   this.emit('userQuit', channelUser, comment)
 }
 
@@ -57,6 +54,11 @@ IrcChannel.prototype.userInvited = function (user) {
 
 IrcChannel.prototype.userKicked = function (channelUser, comment = null) {
   this.emit('kick', user)
+}
+
+IrcChannel.prototype.userNameReply = function(channelUser) {
+  channelUser.channel = this
+  this.users.push(channelUser)
 }
 
 IrcChannel.prototype.topicChanged = function (user, newTopic) {
@@ -74,6 +76,11 @@ IrcChannel.prototype.noticeReceived = function (source, targets, noticeText) {
 
 IrcChannel.prototype.usersListReceived = function () {
   this.emit('usersListReceived')
+}
+
+IrcChannel.prototype.typeChanged = function (type) {
+  this.type = type
+  this.emit('type', type)
 }
 
 util.inherits(IrcChannel, EventEmitter)

@@ -2,7 +2,8 @@
 'use strict'
 
 var util = require('util')
-var EventEmitter = require('events').EventEmitter
+const events = require('events')
+const { EventEmitter } = events
 
 function IrcUser(client) {
     this.client = client
