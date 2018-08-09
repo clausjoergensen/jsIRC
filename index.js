@@ -306,10 +306,12 @@ ClientUI.prototype.displayChannelTopic = function (channel) {
 
 ClientUI.prototype.displayChannelUsers = function (channel) {
   const channelTableView = this.channelViews[channel.name]
-  var userListElement = document.getElementsByClassName('users-panel')[0]
+  var userListElement = channelTableView.getElementsByClassName('users-panel')[0]
   while (userListElement.firstChild) {
     userListElement.removeChild(userListElement.firstChild);
   }
+
+  console.log('displayChannelUsers', channel)
 
   channel.users.forEach(channelUser => {
     var user = channelUser.user
