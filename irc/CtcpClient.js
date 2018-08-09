@@ -18,6 +18,7 @@ function CtcpClient (client) {
   this.client.on('connected', this.connected.bind(this))
   this.client.on('disconnected', this.disconnected.bind(this))
   this.messageProcessors = {
+    'ACTION': this.processMessageAction.bind(this),
     'VERSION': this.processMessageVersion.bind(this),
     'PING': this.processMessagePing.bind(this),
     'TIME': this.processMessageTime.bind(this),
@@ -105,6 +106,14 @@ CtcpClient.prototype.readMessage = function (e, isNotice) {
 }
 
 // - Message Processors
+
+CtcpClient.prototype.processMessageAction = function (message) {
+  if (message.isResponse) {
+    return
+  } 
+
+  this.emit('action', message.source, message.targets, message.data)
+}
 
 CtcpClient.prototype.processMessageVersion = function (message) {
   if (message.isResponse) {
