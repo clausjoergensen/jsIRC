@@ -107,6 +107,16 @@ IrcChannel.prototype.typeChanged = function (type) {
   this.emit('type', type)
 }
 
+IrcChannel.prototype.sendMessage = function (messageText) {
+  this.client.sendMessagePrivateMessage([this.name], messageText)
+  this.emit('message', this.client.localUser, messageText)
+}
+
+IrcChannel.prototype.sendNotice = function (noticeText) {
+  this.client.sendMessagePrivateMessage([this.name], noticeText)
+  this.emit('notice', this.client.localUser, noticeText)
+}
+
 util.inherits(IrcChannel, EventEmitter)
 
 module.exports = IrcChannel

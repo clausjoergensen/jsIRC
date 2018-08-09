@@ -189,6 +189,11 @@ input#chat-input:focus
     background: #ddd;   
 }
 
+.nav-unread
+{
+  color: red;
+}
+
 /* Imported from the Photon Library */
 
 .pull-left {

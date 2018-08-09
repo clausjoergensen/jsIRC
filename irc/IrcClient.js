@@ -124,7 +124,7 @@ IrcClient.prototype.connect = function (hostName, port, registrationInfo) {
   this.socket.on('close', this.connectionClosed.bind(this))
   this.socket.on('error', this.connectionError.bind(this))
 
-  this.emit('connecting')
+  this.emit('connecting', hostName, port)
   this.socket.connect(port, hostName, this.connected.bind(this))
 }
 
@@ -178,6 +178,14 @@ IrcClient.prototype.queryWhoWas = function (nickNames, entriesCount = -1) {
 
 IrcClient.prototype.quit = function (comment = null) {
   this.sendMessageQuit(comment)
+}
+
+IrcClient.prototype.sendMessage = function (target, messageText) {
+  this.sendMessagePrivateMessage([target], messageText)
+}
+
+IrcClient.prototype.sendNotice = function (target, noticeText) {
+  this.sendMessagePrivateMessage([target], noticeText)
 }
 
 IrcClient.prototype.sendRawMessage = function (message) {

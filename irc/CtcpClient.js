@@ -147,7 +147,7 @@ CtcpClient.prototype.processMessageVersion = function (message) {
 
 CtcpClient.prototype.processMessagePing = function (message) {
   if (message.isResponse) {
-    var now = Math.round(new Date().getTime() / 1000)
+    var now = new Date().getTime()
     var sendTime = parseInt(message.data)
     var pingTime = now - sendTime
     this.emit('ping', message.source, pingTime)

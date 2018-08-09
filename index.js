@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
   client.on('registered', () => {
     client.sendRawMessage('join :#C#')
-    client.sendRawMessage('join :#foo')
+    client.sendRawMessage('join :#hearthstone')
+    client.sendRawMessage('join :#wow')
   })
 })

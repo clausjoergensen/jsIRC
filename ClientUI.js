@@ -45,8 +45,8 @@ ClientUI.prototype.setupEventListeners = function() {
     this.addServerToList(this.client.serverName)
   })
 
-  this.client.on('connecting', () => {
-    this.displayServerMessage(null, '* Connecting to 127.0.0.1 (6667)')
+  this.client.on('connecting', (hostName, port) => {
+    this.displayServerMessage(null, `* Connecting to ${hostName} (${port})`)
   })
 
   this.client.on('registered', this.clientRegistered.bind(this))
@@ -65,6 +65,27 @@ ClientUI.prototype.setupEventListeners = function() {
     messageOfTheDay
       .split('\r\n')
       .forEach(l => this.displayServerMessage(null, l))
+  })
+
+  // CTCP Event Listeners
+  ctcpClient.on('ping', (source, pingTime) => {
+    this.displayServerAction(`[${source.nickName} PING reply]: ${pingTime} seconds.`)
+  })
+
+  ctcpClient.on('time', (source, dateTime) => {
+    this.displayServerAction(`[${source.nickName} TIME reply]: ${dateTime}.`)
+  })
+
+  ctcpClient.on('version', (source, versionInfo) => {
+    this.displayServerAction(`[${source.nickName} VERSION reply]: ${versionInfo}.`)
+  })
+
+  ctcpClient.on('finger', (source, info) => {
+    this.displayServerAction(`[${source.nickName} FINGER reply]: ${info}.`)
+  })
+
+  ctcpClient.on('clientInfo', (source, info) => {
+    this.displayServerAction(`[${source.nickName} CLIENTINFO reply]: ${info}.`)
   })
 
   // UI Event Listeners
@@ -175,8 +196,6 @@ ClientUI.prototype.addChannelToList = function (channel) {
   channelElement.innerText = channel.name
   
   const channelMenuTemplate = [
-    { label: 'Set Topic' },
-    { type: 'separator' },
     { label: 'Leave Channel', click: () => {
         channel.part()
       } 
@@ -209,9 +228,12 @@ ClientUI.prototype.viewServer = function () {
     this.channelViews[this.selectedChannel.name].style.display = 'none'
   }
 
+  this.selectedChannel = null
+
   Array.from(document.getElementsByClassName('network-title'))
     .forEach(e => e.classList.remove('network-title-selected'))
 
+  this.navigationServerView.firstChild.classList.remove('nav-unread')
   this.navigationServerView.firstChild.classList.add('network-title-selected')
 
   this.serverView.style.display = 'block'
@@ -225,6 +247,7 @@ ClientUI.prototype.viewChannel = function (channel) {
     this.navigationChannelViews[key].classList.remove('channel-selected')
   })
 
+  this.navigationChannelViews[channel.name].classList.remove('nav-unread')
   this.navigationChannelViews[channel.name].classList.add('channel-selected')
 
   this.serverView.style.display = 'none'    
@@ -272,6 +295,22 @@ ClientUI.prototype.nameFromSource = function (source) {
   return senderName
 }
 
+ClientUI.prototype.displayServerAction = function (text) {
+  var now = new Date()
+  var formattedText = `[${strftime('%H:%M', now)}] ${text}`
+
+  var paragraph = document.createElement('p')
+  paragraph.classList.add('server-message')
+  paragraph.innerText = formattedText
+  
+  this.serverView.appendChild(paragraph)
+  this.serverView.scrollTop = this.serverView.scrollHeight
+
+  if (this.serverView.style.display == 'none' && this.selectedChannel != null) {
+    this.navigationServerView.firstChild.classList.add('nav-unread')
+  }
+}
+
 ClientUI.prototype.displayServerMessage = function (source, text) {
   var senderName = this.nameFromSource(source)
   var now = new Date()
@@ -283,6 +322,25 @@ ClientUI.prototype.displayServerMessage = function (source, text) {
   
   this.serverView.appendChild(paragraph)
   this.serverView.scrollTop = this.serverView.scrollHeight
+
+  if (this.serverView.style.display == 'none') {
+    this.navigationServerView.firstChild.classList.add('unread')
+  }
+}
+
+ClientUI.prototype.displayChannelAction = function (channel, source, text) {
+  var senderName = '* ' + source.nickName
+  var now = new Date()
+  var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+  
+  var paragraph = document.createElement('p')
+  paragraph.classList.add('channel-message')
+  paragraph.innerText = formattedText
+  
+  const channelTableView = this.channelViews[channel.name]
+  const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
+  messageView.appendChild(paragraph)
+  messageView.scrollTop = messageView.scrollHeight  
 }
 
 ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
@@ -297,7 +355,13 @@ ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
   const channelTableView = this.channelViews[channel.name]
   const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
   messageView.appendChild(paragraph)
-  messageView.scrollTop = messageView.scrollHeight  
+  messageView.scrollTop = messageView.scrollHeight
+
+  this.navigationServerView.firstChild.classList.remove('nav-unread')
+
+  if (this.selectedChannel != channel) {
+    this.navigationChannelViews[channel.name].classList.add('nav-unread')
+  }
 }
 
 ClientUI.prototype.displayChannelTopic = function (channel) {
@@ -317,40 +381,50 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
     var user = channelUser.user
 
     const userMenuTemplate = [
-      { label: 'Info' },
-      { label: 'Whois' },
-      { label: 'Query' },
+      { label: 'Info', click: () => {
+          this.ctcpClient.finger([user.nickName])
+        }
+      },
+      { label: 'Whois', click: () => {
+          this.client.queryWhoIs([user.nickName])
+        } 
+      },
       { type: 'separator' },
-      { label: 'Control', submenu: [
-        { label: 'Ignore' },
-        { label: 'Unignore' },
-        { label: 'Op' },
-        { label: 'Deop' },
-        { label: 'Voice' },
-        { label: 'Devoice' },
-        { label: 'Kick' },
-        { label: 'Kick (Why)' },
-        { label: 'Ban' },
-        { label: 'Ban, Kick' },
-        { label: 'Ban, Kick (Why)' }
-      ]},
+      //{ label: 'Control', submenu: [
+      //  { label: 'Ignore' },
+      //  { label: 'Unignore' },
+      //  { label: 'Op' },
+      //  { label: 'Deop' },
+      //  { label: 'Voice' },
+      //  { label: 'Devoice' },
+      //  { label: 'Kick' },
+      //  { label: 'Kick (Why)' },
+      //  { label: 'Ban' },
+      //  { label: 'Ban, Kick' },
+      //  { label: 'Ban, Kick (Why)' }
+      //]},
       { label: 'CTCP', submenu: [
         { label: 'Ping', click: () => {
             this.ctcpClient.ping([user.nickName])
+            this.displayServerAction(`[${user.nickName} PING]`)
           } 
         },
         { label: 'Time', click: () => {
             this.ctcpClient.time([user.nickName])
+            this.displayServerAction(`[${user.nickName} TIME]`)
           } 
         },
         { label: 'Version', click: () => {
             this.ctcpClient.version([user.nickName])
+            this.displayServerAction(`[${user.nickName} VERSION]`)
           } 
         }
       ]},
       { type: 'separator' },
       { label: 'Slap', click: () => {
-          this.ctcpClient.action([channel.name], 'slaps Windcape around a bit with a large trout')
+          var slapMessage = 'slaps Windcape around a bit with a large trout'
+          this.ctcpClient.action([channel.name], slapMessage)
+          this.displayChannelAction(channel, this.client.localUser, slapMessage)
         } 
       }
     ]
@@ -382,7 +456,11 @@ ClientUI.prototype.focusInputField = function() {
 }
 
 ClientUI.prototype.sendUserInput = function (text) {
-  this.client.sendRawMessage(text)
+  if (this.selectedChannel != null) {
+    this.selectedChannel.sendMessage(text)
+  } else {
+    this.displayServerMessage(null, '* You are not on a channel')
+  }
 }
 
 module.exports = ClientUI
