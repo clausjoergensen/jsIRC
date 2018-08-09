@@ -5,10 +5,16 @@ const { remote } = require('electron')
 const { Menu } = remote
 
 const IrcClient = require('./irc/IrcClient.js')
+const CtcpClient = require('./irc/CtcpClient.js')
+const packageInfo = require('./package.json')
 const strftime = require('./strftime.js')
 
 var client = new IrcClient()
 client.loggingEnabled = true
+
+var ctcpClient = new CtcpClient(client)
+ctcpClient.clientName = packageInfo.name
+ctcpClient.clientVersion = packageInfo.version
 
 function addParagraph (text, source = null) {
   var senderName = ''
