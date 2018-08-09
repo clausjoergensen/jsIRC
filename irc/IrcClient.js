@@ -188,8 +188,6 @@ IrcClient.prototype.sendRawMessage = function (message) {
 // ------------------- Socket Operations  -------------------------------------
 
 IrcClient.prototype.connected = function () {
-  this.emit('connected')
-
   if (this.registrationInfo.password != null) {
     this.sendMessagePassword(this.registrationInfo.password)
   }
@@ -208,6 +206,8 @@ IrcClient.prototype.connected = function () {
   this.localUser.userModes = this.registrationInfo.userModes
 
   this.users.push(this.localUser)
+
+  this.emit('connected')
 }
 
 IrcClient.prototype.connectionClosed = function () {
@@ -661,7 +661,7 @@ IrcClient.prototype.processMessageLUserUnknown = function (message) {
 // Process RPL_LUSERCHANNELS responses from the server.
 IrcClient.prototype.processMessageLUserChannels = function (message) {
   var networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
-  this.emit('networkInformationReceived', networkInfo)
+  this.emit('networkInformation', networkInfo)
 }
 
 // Process RPL_LUSERME responses from the server.
@@ -687,7 +687,7 @@ IrcClient.prototype.processMessageLUserMe = function (message) {
     }
   }
 
-  this.emit('networkInformationReceived', networkInfo)
+  this.emit('networkInformation', networkInfo)
 }
 
 // Process RPL_AWAY responses from the server.
@@ -749,7 +749,7 @@ IrcClient.prototype.processMessageReplyWhoWasUser = function (message) {
 // Process RPL_ENDOFWHO responses from the server.
 IrcClient.prototype.processMessageReplyEndOfWho = function (message) {
   var mask = message.parameters[1]
-  this.emit('whoReplyReceived', mask)
+  this.emit('whoReply', mask)
 }
 
 // Process RPL_WHOISIDLE responses from the server.
@@ -761,7 +761,7 @@ IrcClient.prototype.processMessageReplyWhoIsIdle = function (message) {
 // Process RPL_ENDOFWHOIS responses from the server.
 IrcClient.prototype.processMessageReplyEndOfWhoIs = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
-  this.emit('whoIsReplyReceived', user)
+  this.emit('whoIsReply', user)
 }
 
 // Process RPL_WHOISCHANNELS responses from the server.
@@ -791,7 +791,7 @@ IrcClient.prototype.processMessageReplyList = function (message) {
 
 // Process RPL_LISTEND responses from the server.
 IrcClient.prototype.processMessageReplyListEnd = function (message) {
-  this.emit('channelListReceived', listedChannels)
+  this.emit('channelList', listedChannels)
   this.listedChannels = []
 }
 
@@ -823,7 +823,7 @@ IrcClient.prototype.processMessageReplyVersion = function (message) {
   var server = message.parameters[2]
   var comments = message.parameters[3]
 
-  this.emit('serverVersionInfoReceived', { 
+  this.emit('serverVersionInfo', { 
     'version': version, 
     'debugLevel': debugLevel, 
     'server': server, 
@@ -907,7 +907,7 @@ IrcClient.prototype.processMessageReplyLinks = function (message) {
 
 // Process RPL_ENDOFLINKS responses from the server.
 IrcClient.prototype.processMessageReplyEndOfLinks = function (message) {
-  this.emit('serverLinksListReceived', this.listedServerLinks)
+  this.emit('serverLinksList', this.listedServerLinks)
   this.listedServerLinks = []
 }
 
@@ -919,7 +919,7 @@ IrcClient.prototype.processMessageReplyEndOfNames = function (message) {
 
 // Process RPL_ENDOFWHOWAS responses from the server.
 IrcClient.prototype.processMessageReplyEndOfWhoWas = function (message) {
-  this.emit('whoWasReplyReceived', this.getUserFromNickName(message.parameters[1], false))
+  this.emit('whoWasReply', this.getUserFromNickName(message.parameters[1], false))
 }
 
 // Process RPL_MOTD responses from the server.

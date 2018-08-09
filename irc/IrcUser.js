@@ -50,11 +50,21 @@ IrcUser.prototype.inviteReceived = function (source, channel) {
 }
 
 IrcUser.prototype.messageReceived = function (source, targets, messageText) {
-  this.emit('message', messageText, source)
+  var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+  this.emit('previewMessage', previewMessageEventArgs)
+  
+  if (!previewMessageEventArgs.handled) {
+    this.emit('message', messageText, source)
+  }
 }
 
 IrcUser.prototype.noticeReceived = function (source, targets, noticeText) {
-  this.emit('notice', noticeText, source)
+  var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+  this.emit('previewNotice', previewNoticeEventArgs)
+  
+  if (!previewNoticeEventArgs.handled) {
+    this.emit('notice', noticeText, source)
+  }
 }
 
 util.inherits(IrcUser, EventEmitter)

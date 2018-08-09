@@ -153,7 +153,7 @@ client.on('error', function (errorMessage) {
   addParagraph('* ' + errorMessage)
 })
 
-client.on('channelListReceived', function (channels) {
+client.on('channelList', function (channels) {
   console.log('Channels', channels)
 })
 
