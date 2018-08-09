@@ -4,6 +4,7 @@
 var util = require('util')
 const events = require('events')
 const { EventEmitter } = events
+const IrcUtils = require('./IrcUtils.js')
 
 function IrcUser(client) {
     this.client = client
@@ -11,7 +12,7 @@ function IrcUser(client) {
     this.nickName = null
     this.userName = null
     this.realName = null
-    this.userModes = []
+    this.modes = []
     this.idleDuration = null
     this.isOperator = false
     this.serverName = null
@@ -25,7 +26,7 @@ IrcUser.prototype.quit = function (comment) {
   var allChannelUsers = []
   client.channels.forEach(channel => {
     channel.users.forEach(user => {
-      var channelUser = channel.users[u]
+      var channelUser = channel.users[user]
       if (channelUser.user == this) {
         allChannelUsers.push(channelUser)
       }
@@ -35,6 +36,11 @@ IrcUser.prototype.quit = function (comment) {
   allChannelUsers.forEach(u => u.userQuit(channelUser, comment))
 
   this.emit('quit', comment)
+}
+
+IrcUser.prototype.modesChanged = function (newModes) {
+  console.log('modesChanged', newModes)
+  this.modes = IrcUtils.updateModes(this.modes, newModes.split(''))
 }
 
 IrcUser.prototype.joinChannel = function (channel) {
@@ -58,7 +64,7 @@ IrcUser.prototype.messageReceived = function (source, targets, messageText) {
   this.emit('previewMessage', previewMessageEventArgs)
   
   if (!previewMessageEventArgs.handled) {
-    this.emit('message', messageText, source)
+    this.emit('message', source, targets, messageText)
   }
 }
 
@@ -67,7 +73,7 @@ IrcUser.prototype.noticeReceived = function (source, targets, noticeText) {
   this.emit('previewNotice', previewNoticeEventArgs)
   
   if (!previewNoticeEventArgs.handled) {
-    this.emit('notice', noticeText, source)
+    this.emit('notice', source, targets, noticeText)
   }
 }
 

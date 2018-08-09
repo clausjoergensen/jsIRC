@@ -5,6 +5,7 @@ const util = require('util')
 const events = require('events')
 const { EventEmitter } = events
 const IrcChannelUser = require('./IrcChannelUser.js')
+const IrcUtils = require('./IrcUtils.js')
 
 var IrcChannelType = {
   Unspecified: 0,
@@ -74,6 +75,18 @@ IrcChannel.prototype.userNameReply = function(channelUser) {
 IrcChannel.prototype.topicChanged = function (user, newTopic) {
   this.topic = newTopic
   this.emit('topic', user, newTopic)
+}
+
+IrcChannel.prototype.modesChanged = function (source, newModes, newModeParameters) {
+  console.log('IrcChannel.modesChanged')
+  this.modes = IrcUtils.updateModes(this.modes, 
+    newModes.split(''), 
+    newModeParameterssplit(''), 
+    client.channelUserModes, 
+    (add, mode, parameter) => {
+      var channelUser = this.users.find(u => u.user.nickName == modeParameter)
+      channelUser.modeChanged(add, mode)
+    })
 }
 
 IrcChannel.prototype.actionReceived = function (source, targets, messageText) {

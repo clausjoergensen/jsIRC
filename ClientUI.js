@@ -51,12 +51,12 @@ ClientUI.prototype.setupEventListeners = function() {
 
   this.client.on('registered', this.clientRegistered.bind(this))
 
-  this.client.on('disconnected', () => {
-    this.displayServerMessage(null, '* Disconnected')
+  this.client.on('disconnected', (reason) => {
+    this.displayServerMessage(null, `* Disconnected (${reason})`)
   })
 
   this.client.on('notice', (source, noticeText) => {
-    this.displayServerMessage(source, noticeText)
+    this.displayServerNotice(source, noticeText)
   })
 
   this.client.on('motd', messageOfTheDay => {
@@ -100,11 +100,11 @@ ClientUI.prototype.setupEventListeners = function() {
 }
 
 ClientUI.prototype.clientRegistered = function() {
-  this.client.localUser.on('message', (source, messageText) => {
+  this.client.localUser.on('message', (source, targets, messageText) => {
     this.displayServerMessage(source, messageText)
   })
-  this.client.localUser.on('notice', (source, noticeText) => {
-    this.displayServerMessage(source, noticeText)
+  this.client.localUser.on('notice', (source, targets, noticeText) => {
+    this.displayServerNotice(source, noticeText)
   })
   this.client.localUser.on('joinedChannel', this.localUserJoinedChannel.bind(this))
   this.client.localUser.on('partedChannel', this.localUserPartedChannel.bind(this))
@@ -283,19 +283,9 @@ ClientUI.prototype.leaveChannel = function (channel) {
   }
 }
 
-ClientUI.prototype.nameFromSource = function (source) {
-  var senderName = ''
-  if (source != null) {
-    if (source.nickName != null) {
-      senderName = `<${source.nickName}>`
-    } else if (source.hostName != null) {
-      senderName = source.hostName
-    }
-  }  
-  return senderName
-}
-
 ClientUI.prototype.displayServerAction = function (text) {
+  console.log(text)
+
   var now = new Date()
   var formattedText = `[${strftime('%H:%M', now)}] ${text}`
 
@@ -312,7 +302,40 @@ ClientUI.prototype.displayServerAction = function (text) {
 }
 
 ClientUI.prototype.displayServerMessage = function (source, text) {
-  var senderName = this.nameFromSource(source)
+  var senderName = ''
+  if (source != null) {
+    if (source.nickName != null) {
+      senderName = `<${source.nickName}>`
+    } else if (source.hostName != null) {
+      senderName = source.hostName
+    }
+  }  
+
+  var now = new Date()
+  var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+
+  var paragraph = document.createElement('p')
+  paragraph.classList.add('server-message')
+  paragraph.innerText = formattedText
+  
+  this.serverView.appendChild(paragraph)
+  this.serverView.scrollTop = this.serverView.scrollHeight
+
+  if (this.serverView.style.display == 'none') {
+    this.navigationServerView.firstChild.classList.add('unread')
+  }
+}
+
+ClientUI.prototype.displayServerNotice = function (source, text) {
+  var senderName = ''
+  if (source != null) {
+    if (source.nickName != null) {
+      senderName = ` - ${source.nickName} -`
+    } else if (source.hostName != null) {
+      senderName = source.hostName
+    }
+  }  
+
   var now = new Date()
   var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
 
@@ -344,7 +367,15 @@ ClientUI.prototype.displayChannelAction = function (channel, source, text) {
 }
 
 ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
-  var senderName = this.nameFromSource(source)
+  var senderName = ''
+  if (source != null) {
+    if (source.nickName != null) {
+      senderName = `<${source.nickName}>`
+    } else if (source.hostName != null) {
+      senderName = source.hostName
+    }
+  }  
+
   var now = new Date()
   var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
   
@@ -381,7 +412,27 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
     userListElement.removeChild(userListElement.firstChild);
   }
 
-  channel.users.forEach(channelUser => {
+  var sortedUsers = channel.users.sort((a, b) => {
+    if (a.modes.includes('@') && b.modes.includes('@')) {
+      return a.user.nickName.localeCompare(b.user.nickName)
+    } else if (a.modes.includes('@')) {
+      return -1
+    } else if (b.modes.includes('@')) {
+      return 1
+    }
+
+    if (a.modes.includes('+') && b.modes.includes('+')) {
+      return a.user.nickName.localeCompare(b.user.nickName)
+    } else if (a.modes.includes('+')) {
+      return -1
+    } else if (b.modes.includes('+')) {
+      return 1
+    }
+
+    return a.user.nickName.localeCompare(b.user.nickName)
+  })
+
+  sortedUsers.forEach(channelUser => {
     var user = channelUser.user
 
     const userMenuTemplate = [
@@ -447,7 +498,14 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
     icon.classList.add('icon-user')
     userElement.appendChild(icon)
     
-    var text = document.createTextNode(' ' + user.nickName)
+    var modePrefix = ''
+    if (channelUser.modes.includes('@')) {
+      modePrefix = '@'
+    } else if (channelUser.modes.includes('+')) {
+      modePrefix = '+'
+    }
+
+    var text = document.createTextNode(' ' + modePrefix + '' + user.nickName)
     userElement.appendChild(text)
     
     userListElement.appendChild(userElement)

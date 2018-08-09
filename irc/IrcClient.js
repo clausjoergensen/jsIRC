@@ -123,6 +123,7 @@ IrcClient.prototype.connect = function (hostName, port, registrationInfo) {
   this.socket.on('data', this.dataReceived.bind(this))
   this.socket.on('close', this.connectionClosed.bind(this))
   this.socket.on('error', this.connectionError.bind(this))
+  this.socket.on('disconnect', this.disconnected.bind(this))
 
   this.emit('connecting', hostName, port)
   this.socket.connect(port, hostName, this.connected.bind(this))
@@ -222,13 +223,17 @@ IrcClient.prototype.connected = function () {
   this.emit('connected')
 }
 
-IrcClient.prototype.connectionClosed = function () {
-  this.emit('disconnected')
+IrcClient.prototype.connectionClosed = function (reason) {
+  this.emit('disconnected', 'Connection Closed')
   this.localUser = null
 }
 
 IrcClient.prototype.connectionError = function (error) {
   this.emit('connectionError', error)
+}
+
+IrcClient.prototype.disconnected = function (reason) {
+  this.emit('disconnected', reason)
 }
 
 IrcClient.prototype.dataReceived = function (data) {
@@ -311,6 +316,8 @@ IrcClient.prototype.readMessage = function (message, line) {
   var messageProcessor = this.messageProcessors[message.command]
   if (messageProcessor != null) {
     messageProcessor(message)
+  } else {
+    console.log(`Unsupported command '${message.command}'`)
   }
 }
 
@@ -404,11 +411,15 @@ IrcClient.prototype.processMessagePart = function (message) {
 
 // Process MODE messages received from the server.
 IrcClient.prototype.processMessageMode = function (message) {
+  console.log('processMessageMode', message)
   var newModes = message.parameters[1]
   if (this.isChannelName(message.parameters[0])) {
-    //
+    var channel = this.getChannelFromName(message.parameters[0])
+    var modesAndParameters = this.getModeAndParameters(message.parameters.Skip(1))
+    this.emit('channelMode', channel, message.source, modesAndParameters.Item1, modesAndParameters.Item2)
+    channel.modesChanged(message.source, modesAndParameters.Item1, modesAndParameters.Item2)
   } else if (message.parameters[0] == this.localUser.nickName) {
-    //
+    this.localUser.modesChanged(message.parameters[1])
   } else {
     throw 'Cannot set User Mode.'
   }
@@ -425,6 +436,7 @@ IrcClient.prototype.processMessageKick = function (message) {
   var channelList = message.parameters[0].split(',')
   var userList = message.parameters[1]
   var comment = message.parameters[2]
+  // TODO
 }
 
 // Process INVITE messages received from the server.
@@ -452,8 +464,12 @@ IrcClient.prototype.processMessageNotice = function (message) {
   var targetNames = message.parameters[0].split(',')
   var noticeText = message.parameters[1]
 
-  var targets = targetNames.map(x => this.getMessageTarget(x))
-  targets.forEach(t => t.noticeReceived(message.source, targets, noticeText))
+  if (targetNames[0] == 'AUTH') {
+    this.emit('notice', message.source, noticeText)
+  } else {
+    var targets = targetNames.map(x => this.getMessageTarget(x))
+    targets.forEach(t => t.noticeReceived(message.source, targets, noticeText))
+  }
 }
 
 IrcClient.prototype.noticeReceived = function (source, targets, noticeText) {
@@ -497,9 +513,9 @@ IrcClient.prototype.processMessageReplyWelcome = function (message) {
   var hostMask = welcomeMessage[welcomeMessage.length - 1]
   
   var nickNameMatch = hostMask.match(regexNickNameId)
-  this.localUser.nickName = nickNameMatch[1] || localUser.nickName
-  this.localUser.userName = nickNameMatch[2] || localUser.userName
-  this.localUser.hostName = nickNameMatch[3] || localUser.hostName
+  this.localUser.nickName = nickNameMatch[1] || this.localUser.nickName
+  this.localUser.userName = nickNameMatch[2] || this.localUser.userName
+  this.localUser.hostName = nickNameMatch[3] || this.localUser.hostName
   
   this.isRegistered = true
 
@@ -790,7 +806,7 @@ IrcClient.prototype.processMessageReplyWhoIsChannels = function (message) {
     var lookup = this.getUserModeAndIdentifier(channelId)
     var channel = GetChannelFromName(lookup.identifier)
     if (channel.getChannelUser(user) == null) {
-      channel.userJoined(new IrcChannelUser(user, lookup.mode))
+      channel.userJoined(new IrcChannelUser(user, lookup.mode.split('')))
     }    
   })
 }
@@ -905,7 +921,7 @@ IrcClient.prototype.processMessageReplyNameReply = function (message) {
 
         var userNickNameAndMode = this.getUserModeAndIdentifier(userId)
         var user = this.getUserFromNickName(userNickNameAndMode.identifier)
-        channel.userNameReply(new IrcChannelUser(user, userNickNameAndMode.mode))
+        channel.userNameReply(new IrcChannelUser(user, userNickNameAndMode.mode.split('')))
     })
   }
 }
@@ -1348,7 +1364,7 @@ IrcClient.prototype.getUserModeAndIdentifier = function (identifier) {
   if (channelUserMode != null) {
     return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
   }
-  return { 'mode': null, 'identifier': identifier }
+  return { 'mode': '', 'identifier': identifier }
 }
 
 IrcClient.prototype.getChannelType = function (type) {
