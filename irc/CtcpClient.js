@@ -20,7 +20,9 @@ function CtcpClient (client) {
   this.messageProcessors = {
     'VERSION': this.processMessageVersion.bind(this),
     'PING': this.processMessagePing.bind(this),
-    'TIME': this.processMessageTime.bind(this)
+    'TIME': this.processMessageTime.bind(this),
+    'FINGER': this.processMessageFinger.bind(this),
+    'CLIENTINFO': this.processMessageClientInfo.bind(this)
   }
   this.clientVersion = '0.0.1'
   this.clientName = ''
@@ -135,6 +137,24 @@ CtcpClient.prototype.processMessageTime = function (message) {
   }
 }
 
+CtcpClient.prototype.processMessageFinger = function (message) {
+  if (message.isResponse) {
+    this.emit('finger', message.source, message.data)
+  } else {
+    var finger = `${this.client.registrationInfo.realName} (${this.client.registrationInfo.userName})`
+    this.sendMessageFinger([message.source.nickName], finger, true)
+  }
+}
+
+CtcpClient.prototype.processMessageClientInfo = function (message) {
+  if (message.isResponse) {
+    this.emit('clientInfo', message.source, message.data)
+  } else {
+    var supportedCommands = 'ACTION CLIENTINFO FINGER PING TIME VERSION'
+    this.sendMessageClientInfo([message.source.nickName], supportedCommands, true)
+  }
+}
+
 // - Message Sending
 
 CtcpClient.prototype.sendMessageAction = function (targets, text) {
@@ -151,6 +171,14 @@ CtcpClient.prototype.sendMessageVersion = function (targets, info, isResponse) {
 
 CtcpClient.prototype.sendMessagePing = function (targets, info, isResponse) {
   this.writeMessage(targets, 'PING', info, isResponse)
+}
+
+CtcpClient.prototype.sendMessageFinger = function (targets, info, isResponse) {
+  this.writeMessage(targets, 'FINGER', info, isResponse)
+}
+
+CtcpClient.prototype.sendMessageClientInfo = function (targets, info, isResponse) {
+  this.writeMessage(targets, 'CLIENTINFO', info, isResponse)
 }
 
 CtcpClient.prototype.writeMessage = function (targets, tag, data = null, isResponse = false) {

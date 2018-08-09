@@ -1204,8 +1204,8 @@ IrcClient.prototype.getMessageTarget = function (targetName) {
 
   if (nickName != null) {
     var user = this.getUserFromNickName(nickName, true)
-    if (user.UserName == null) {
-      user.UserName = userName
+    if (user.userName == null) {
+      user.userName = userName
     }
     if (user.hostName == null) {
       user.hostName = hostName

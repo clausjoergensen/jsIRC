@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
   client.connect('127.0.0.1', 6667, {
     'nickName': 'Rincewind',
     'password': null,
-    'userName': 'Rincewind',
+    'userName': 'rincewind@unseenuniversity.dw',
     'realName': 'Rincewind the Wizzard',
     'userModes': []
   })
