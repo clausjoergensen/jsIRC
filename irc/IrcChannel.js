@@ -29,7 +29,7 @@ IrcChannel.prototype.getChannelUser = function (user) {
 IrcChannel.prototype.userJoined = function (channelUser) {
   channelUser.channel = this
   this.users.push(channelUser)
-  this.emit('userJoinedChannel', channelUser)
+  this.emit('joinedChannel', channelUser)
 }
 
 IrcChannel.prototype.userParted = function (channelUser, comment) {
@@ -37,7 +37,7 @@ IrcChannel.prototype.userParted = function (channelUser, comment) {
   if (idx != -1) {
     this.users.splice(idx)
   }
-  this.emit('userLeftChannel', channelUser, comment)
+  this.emit('leftChannel', channelUser, comment)
 }
 
 IrcChannel.prototype.userQuit = function (channnelUser, comment) {
@@ -45,7 +45,7 @@ IrcChannel.prototype.userQuit = function (channnelUser, comment) {
   if (idx != -1) {
     this.users.splice(idx)
   }
-  this.emit('userQuit', channelUser, comment)
+  this.emit('quit', channelUser, comment)
 }
 
 IrcChannel.prototype.userInvited = function (user) {
@@ -66,16 +66,30 @@ IrcChannel.prototype.topicChanged = function (user, newTopic) {
   this.emit('topic', user)
 }
 
+IrcChannel.prototype.actionReceived = function (source, targets, messageText) {
+  this.emit('action', source, messageText)
+}
+
 IrcChannel.prototype.messageReceived = function (source, targets, messageText) {
-  this.emit('message', messageText, source)
+  var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+  this.emit('previewMessage', previewMessageEventArgs)
+  
+  if (!previewMessageEventArgs.handled) {
+    this.emit('message', source, messageText)
+  }
 }
 
 IrcChannel.prototype.noticeReceived = function (source, targets, noticeText) {
-  this.emit('notice', messageText, source)
+  var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+  this.emit('previewNotice', previewNoticeEventArgs)
+  
+  if (!previewNoticeEventArgs.handled) {
+    this.emit('notice', source, noticeText)
+  }
 }
 
 IrcChannel.prototype.usersListReceived = function () {
-  this.emit('usersListReceived')
+  this.emit('usersList')
 }
 
 IrcChannel.prototype.typeChanged = function (type) {

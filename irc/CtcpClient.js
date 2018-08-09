@@ -53,6 +53,8 @@ CtcpClient.prototype.connected = function () {
     return
   }
 
+  this.client.localUser.on('joinedChannel', this.joinedChannel.bind(this))
+  this.client.localUser.on('leftChannel', this.leftChannel.bind(this))
   this.client.localUser.on('previewMessage', this.previewMessage.bind(this))
   this.client.localUser.on('previewNotice', this.previewNotice.bind(this))
 }
@@ -62,47 +64,63 @@ CtcpClient.prototype.disconnected = function () {
     return
   }
 
+  this.client.localUser.off('joinedChannel', this.joinedChannel)
+  this.client.localUser.off('leftChannel', this.leftChannel)
   this.client.localUser.off('previewMessage', this.previewMessage)
   this.client.localUser.off('previewNotice', this.previewNotice)
 }
 
+CtcpClient.prototype.joinedChannel = function (channel) {
+  channel.on('previewMessage', this.previewMessage.bind(this))
+  channel.on('previewNotice', this.previewNotice.bind(this))
+}
+
+CtcpClient.prototype.leftChannel = function (channel) {
+  channel.off('previewMessage', this.previewMessage)
+  channel.off('previewNotice', this.previewNotice)
+}
+
 CtcpClient.prototype.previewMessage = function (e) {
-  this.readMessage(e, false)
+  e.handled = this.readMessage(e, false)
 }
 
 CtcpClient.prototype.previewNotice = function (e) {
-  this.readMessage(e, true)
+  e.handled = this.readMessage(e, true)
 }
 
-CtcpClient.prototype.readMessage = function (e, isNotice) { 
-  if (e.text[0] == taggedDataDelimeterChar && e.text[e.text.length - 1] == taggedDataDelimeterChar) {
-    var message = {
-      'source': e.source,
-      'targets': e.targets,
-      'isResponse': isNotice
-    }
-
-    var dequotedText = lowLevelDequote(ctcpDequote(e.text.substr(1, e.text.length - 2)))
-    var firstSpaceIndex = dequotedText.indexOf(' ')
-    if (firstSpaceIndex == -1) {
-        message['tag'] = dequotedText
-        message['data'] = null
-    }
-    else
-    {
-        message['tag'] = dequotedText.substr(0, firstSpaceIndex)
-        message['data'] = trimStart(':', dequotedText.substr(firstSpaceIndex + 1))
-    }
-
-    this.emit('rawMessage', message)
-
-    var messageProcessor = this.messageProcessors[message.tag]
-    if (messageProcessor != null) {
-      messageProcessor(message)
-    }
-
-    e.handled = true
+CtcpClient.prototype.readMessage = function (e, isNotice) {
+  if (!(e.text[0] == taggedDataDelimeterChar && e.text[e.text.length - 1] == taggedDataDelimeterChar)) {
+    return false
   }
+  
+  var message = {
+    'source': e.source,
+    'targets': e.targets,
+    'isResponse': isNotice
+  }
+
+  var dequotedText = lowLevelDequote(ctcpDequote(e.text.substr(1, e.text.length - 2)))
+  var firstSpaceIndex = dequotedText.indexOf(' ')
+  if (firstSpaceIndex == -1) {
+      message['tag'] = dequotedText
+      message['data'] = null
+  }
+  else
+  {
+      message['tag'] = dequotedText.substr(0, firstSpaceIndex)
+      message['data'] = trimStart(':', dequotedText.substr(firstSpaceIndex + 1))
+  }
+
+  this.emit('rawMessage', message)
+
+  var messageProcessor = this.messageProcessors[message.tag]
+  if (messageProcessor != null) {
+    messageProcessor(message)
+  } else {
+    console.log(`Unsupported CTCP Command '${message.tag}'`)
+  }
+
+  return true
 }
 
 // - Message Processors

@@ -11,7 +11,7 @@ const strftime = require('./irc/strftime.js')
 const packageInfo = require('./package.json')
 
 var client = new IrcClient()
-client.loggingEnabled = true
+client.loggingEnabled = false
 
 var ctcpClient = new CtcpClient(client)
 ctcpClient.clientName = packageInfo.name
@@ -191,25 +191,32 @@ client.on('clientInfo', function () {
 })
 
 client.on('registered', function () {
-  client.localUser.on('message', function (messageText, source) {
+  client.localUser.on('message', function (source, messageText) {
     addParagraph(messageText, source) 
   })
-  client.localUser.on('notice', function (noticeText, source) {
+  client.localUser.on('notice', function (source, noticeText) {
     addParagraph(noticeText, source) 
   })
   client.localUser.on('joinedChannel', function (channel) {
-    channel.on('message', function (messageText, source) {
+    channel.on('message', function (source, messageText) {
       addParagraph(messageText, source)
+    })
+    channel.on('action', function (source, messageText) {
+      addParagraph(`* ${source.nickName} ${messageText}`)
     })
     addChannel(channel)
   })
+  ctcpClient.on('action', function (source, targets, text) {
+    targets.forEach(t => t.actionReceived(source, targets, text))
+  })
+  client.sendRawMessage('join :#c#')
 })
 
 client.on('disconnected', function () {
   addParagraph('* Disconnected')
 })
 
-client.on('notice', function (noticeText, source) {
+client.on('notice', function (source, noticeText) {
   addParagraph(noticeText, source)
 })
 
