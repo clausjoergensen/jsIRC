@@ -8,6 +8,7 @@ const IrcClient = require('./irc/IrcClient.js')
 const strftime = require('./strftime.js')
 
 var client = new IrcClient()
+client.loggingEnabled = true
 
 function addParagraph (text, source = null) {
   var senderName = ''
@@ -38,7 +39,8 @@ function addNetwork (serverName) {
   networkContainer.serverName = serverName
   networkContainer.id = 'network-' + serverName
 
-  var title = document.createElement('p')
+  var title = document.createElement('div')
+  title.classList.add('network-title')
   title.innerText = serverName
 
   var channelListContainer = document.createElement('div')
@@ -49,8 +51,6 @@ function addNetwork (serverName) {
 
   var networkListContainer = document.getElementById('network-list')
   networkListContainer.appendChild(networkContainer)
-
-  console.log(networkListContainer)
 }
 
 function addChannel (channel) {
@@ -158,7 +158,7 @@ client.on('channelListReceived', function (channels) {
 })
 
 client.on('clientInfo', function () {
-  //addNetwork(client.serverName)
+  addNetwork(client.serverName)
 })
 
 client.on('registered', function () {
@@ -169,7 +169,10 @@ client.on('registered', function () {
     addParagraph(noticeText, source) 
   })
   client.localUser.on('joinedChannel', function (channel) {
-    //addChannel(channel)
+    channel.on('message', function (messageText, source) {
+      addParagraph(messageText, source)
+    })
+    addChannel(channel)
   })
 })
 
