@@ -85,29 +85,29 @@ ClientUI.prototype.clientRegistered = function() {
   this.client.localUser.on('notice', (source, noticeText) => {
     this.displayServerMessage(source, noticeText)
   })
-  this.client.localUser.on('joinedChannel', this.userJoinedChannel.bind(this))
-  this.client.localUser.on('partedChannel', this.userPartedChannel.bind(this))
+  this.client.localUser.on('joinedChannel', this.localUserJoinedChannel.bind(this))
+  this.client.localUser.on('partedChannel', this.localUserPartedChannel.bind(this))
 }
 
-ClientUI.prototype.userJoinedChannel = function (channel) {
+ClientUI.prototype.localUserJoinedChannel = function (channel) {
   channel.on('message', (source, messageText) => {
     this.displayChannelMessage(channel, source, messageText)
   })
-  channel.on('action', (source, messageText) => {
+
+  channel.on('action', (source, messageText) => { 
     this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
   })
-  channel.on('userList', () => {
-    this.displayChannelUsers(channel)
-  })
-  channel.on('topic', (source, topic) => {
-    this.displayChannelTopic(channel)
-  })
+
+  channel.on('topic', (source, topic) => { this.displayChannelTopic(channel) })
+  channel.on('userList', () => { this.displayChannelUsers(channel) })
+  channel.on('userJoinedChannel', (user) => { this.displayChannelUsers(channel) })
+  channel.on('userLeftChannel', (user) => { this.displayChannelUsers(channel) })
 
   this.addChannelToList(channel)
   this.viewChannel(channel)
 }
 
-ClientUI.prototype.userPartedChannel = function (channel) {
+ClientUI.prototype.localUserPartedChannel = function (channel) {
   this.leaveChannel(channel)  
 }
 

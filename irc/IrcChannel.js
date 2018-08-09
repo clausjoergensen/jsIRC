@@ -36,7 +36,7 @@ IrcChannel.prototype.userJoined = function (channelUser) {
   }
   channelUser.channel = this
   this.users.push(channelUser)
-  this.emit('joinedChannel', channelUser)
+  this.emit('userJoinedChannel', channelUser)
 }
 
 IrcChannel.prototype.userParted = function (channelUser, comment) {
@@ -44,7 +44,7 @@ IrcChannel.prototype.userParted = function (channelUser, comment) {
   if (idx != -1) {
     this.users.splice(idx)
   }
-  this.emit('leftChannel', channelUser, comment)
+  this.emit('userLeftChannel', channelUser, comment)
 }
 
 IrcChannel.prototype.userQuit = function (channnelUser, comment) {
@@ -52,15 +52,15 @@ IrcChannel.prototype.userQuit = function (channnelUser, comment) {
   if (idx != -1) {
     this.users.splice(idx)
   }
-  this.emit('quit', channelUser, comment)
+  this.emit('userQuit', channelUser, comment)
 }
 
 IrcChannel.prototype.userInvited = function (user) {
-  this.emit('invite', user)
+  this.emit('userInvite', user)
 }
 
 IrcChannel.prototype.userKicked = function (channelUser, comment = null) {
-  this.emit('kick', user)
+  this.emit('userKicked', user)
 }
 
 IrcChannel.prototype.userNameReply = function(channelUser) {
