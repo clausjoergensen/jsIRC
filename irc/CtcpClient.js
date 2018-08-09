@@ -29,21 +29,21 @@ function CtcpClient (client) {
   this.clientName = ''
 }
 
-CtcpClient.prototype.action = function (users, text) {
-  this.sendMessageAction(users.map(u => u.nickName), text)
+CtcpClient.prototype.action = function (targets, text) {
+  this.sendMessageAction(targets, text)
 }
 
-CtcpClient.prototype.time = function (users) {
-  this.sendMessageTime(users.map(u => u.nickName), null, false)
+CtcpClient.prototype.time = function (targets) {
+  this.sendMessageTime(targets, null, false)
 }
 
-CtcpClient.prototype.version = function (users) {
- this.sendMessageVersion(users.map(u => u.nickName), null, false) 
+CtcpClient.prototype.version = function (targets) {
+ this.sendMessageVersion(targets, null, false) 
 }
 
-CtcpClient.prototype.ping = function (users) {
+CtcpClient.prototype.ping = function (targets) {
   var now = new Date()
-  this.sendMessagePing(users.map(u => u.nickName), now.getTime(), false)
+  this.sendMessagePing(targets, now.getTime(), false)
 }
 
 // - Event Handlers

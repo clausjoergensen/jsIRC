@@ -110,24 +110,26 @@ function setupContextMenu () {
     { label: 'CTCP', submenu: [
       { label: 'Ping', click: function() {
           var user = client.getUserFromNickName('Windcape')
-          ctcpClient.ping([user])
+          ctcpClient.ping([user.nickName])
         } 
       },
       { label: 'Time', click: function() {
           var user = client.getUserFromNickName('Windcape')
-          ctcpClient.time([user])
+          ctcpClient.time([user.nickName])
         } 
       },
       { label: 'Version', click: function() {
         var user = client.getUserFromNickName('Windcape')
-          ctcpClient.version([user])
+          ctcpClient.version([user.nickName])
         } 
       }
     ]},
     { type: 'separator' },
     { label: 'Slap', click: function() {
-        var user = client.getUserFromNickName('Windcape')
-        ctcpClient.action([user], 'slaps Windcape around a bit with a large trout')
+        //var user = client.getUserFromNickName('Windcape')
+        //ctcpClient.action([user.nickName], 'slaps Windcape around a bit with a large trout')
+        var channel = client.getChannelFromName("#c#")
+        ctcpClient.action([channel.name], 'slaps Windcape around a bit with a large trout')
       } 
     }
   ]
