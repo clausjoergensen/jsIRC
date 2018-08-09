@@ -119,10 +119,13 @@ function IrcClient () {
 
 IrcClient.prototype.connect = function (hostName, port, registrationInfo) {
   this.registrationInfo = registrationInfo
-  this.socket.connect(port, hostName, this.connected.bind(this))
+
   this.socket.on('data', this.dataReceived.bind(this))
   this.socket.on('close', this.connectionClosed.bind(this))
   this.socket.on('error', this.connectionError.bind(this))
+
+  this.emit('connecting')
+  this.socket.connect(port, hostName, this.connected.bind(this))
 }
 
 IrcClient.prototype.disconnect = function () {
@@ -197,21 +200,23 @@ IrcClient.prototype.connected = function () {
                        this.getNumericUserMode(this.registrationInfo.userModes),
                        this.registrationInfo.realName)
 
-  this.localUser = new IrcUser(this)
-  this.localUser.isLocalUser = true
-  this.localUser.isOnline = true
-  this.localUser.nickName = this.registrationInfo.nickName
-  this.localUser.userName = this.registrationInfo.userName
-  this.localUser.realName = this.registrationInfo.userName
-  this.localUser.userModes = this.registrationInfo.userModes
+  var localUser = new IrcUser(this)
+  localUser.isLocalUser = true
+  localUser.isOnline = true
+  localUser.nickName = this.registrationInfo.nickName
+  localUser.userName = this.registrationInfo.userName
+  localUser.realName = this.registrationInfo.userName
+  localUser.userModes = this.registrationInfo.userModes
 
-  this.users.push(this.localUser)
+  this.localUser = localUser
+  this.users.push(localUser)
 
   this.emit('connected')
 }
 
 IrcClient.prototype.connectionClosed = function () {
   this.emit('disconnected')
+  this.localUser = null
 }
 
 IrcClient.prototype.connectionError = function (error) {
@@ -375,7 +380,8 @@ IrcClient.prototype.processMessageJoin = function (message) {
 // Process PART messages received from the server.
 IrcClient.prototype.processMessagePart = function (message) {
   var sourceUser = message.source
-  var comment = message.parameters[0]
+  var channelList = message.parameters[0].split(',')
+  var comment = message.parameters[1]
 
   channelList.forEach(channelName => {
     var channel = this.getChannelFromName(channelName)
@@ -429,7 +435,7 @@ IrcClient.prototype.processMessagePrivateMessage = function (message) {
 }
 
 IrcClient.prototype.messageReceived = function (source, targets, noticeText) {
-  this.emit('message', messageText, source)
+  this.emit('message', source, messageText)
 }
 
 // Process NOTICE messages received from the server.
@@ -442,7 +448,7 @@ IrcClient.prototype.processMessageNotice = function (message) {
 }
 
 IrcClient.prototype.noticeReceived = function (source, targets, noticeText) {
-  this.emit('notice', noticeText, source)
+  this.emit('notice', source, noticeText)
 }
 
 // Process PING messages received from the server.

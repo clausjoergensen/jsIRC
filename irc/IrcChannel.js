@@ -22,6 +22,10 @@ function IrcChannel (client, name) {
   this.users = []
 }
 
+IrcChannel.prototype.part = function (comment = null) {
+  this.client.sendMessagePart([this.name], comment)
+}
+
 IrcChannel.prototype.getChannelUser = function (user) {
   return this.users.find(u => u.user == user)
 }
@@ -63,7 +67,7 @@ IrcChannel.prototype.userNameReply = function(channelUser) {
 
 IrcChannel.prototype.topicChanged = function (user, newTopic) {
   this.topic = newTopic
-  this.emit('topic', user)
+  this.emit('topic', user, newTopic)
 }
 
 IrcChannel.prototype.actionReceived = function (source, targets, messageText) {
@@ -89,7 +93,7 @@ IrcChannel.prototype.noticeReceived = function (source, targets, noticeText) {
 }
 
 IrcChannel.prototype.usersListReceived = function () {
-  this.emit('usersList')
+  this.emit('userList')
 }
 
 IrcChannel.prototype.typeChanged = function (type) {

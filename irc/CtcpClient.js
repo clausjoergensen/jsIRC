@@ -49,25 +49,27 @@ CtcpClient.prototype.ping = function (targets) {
 // - Event Handlers
 
 CtcpClient.prototype.connected = function () {
-  if (this.client.localUser == null) {
+  var localUser = this.client.localUser
+  if (localUser == null) {
     return
   }
 
-  this.client.localUser.on('joinedChannel', this.joinedChannel.bind(this))
-  this.client.localUser.on('leftChannel', this.leftChannel.bind(this))
-  this.client.localUser.on('previewMessage', this.previewMessage.bind(this))
-  this.client.localUser.on('previewNotice', this.previewNotice.bind(this))
+  localUser.on('joinedChannel', this.joinedChannel.bind(this))
+  localUser.on('leftChannel', this.leftChannel.bind(this))
+  localUser.on('previewMessage', this.previewMessage.bind(this))
+  localUser.on('previewNotice', this.previewNotice.bind(this))
 }
 
 CtcpClient.prototype.disconnected = function () {
-  if (this.client.localUser == null) {
+/*  var localUser = this.client.localUser
+  if (localUser == null) {
     return
   }
 
-  this.client.localUser.off('joinedChannel', this.joinedChannel)
-  this.client.localUser.off('leftChannel', this.leftChannel)
-  this.client.localUser.off('previewMessage', this.previewMessage)
-  this.client.localUser.off('previewNotice', this.previewNotice)
+  localUser.off('joinedChannel', this.joinedChannel)
+  localUser.off('leftChannel', this.leftChannel)
+  localUser.off('previewMessage', this.previewMessage)
+  localUser.off('previewNotice', this.previewNotice)*/
 }
 
 CtcpClient.prototype.joinedChannel = function (channel) {

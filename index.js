@@ -4,6 +4,7 @@
 const { remote } = require('electron')
 const { Menu } = remote
 
+const Autolinker = require('autolinker') 
 const IrcClient = require('./irc/IrcClient.js')
 const CtcpClient = require('./irc/CtcpClient.js')
 const strftime = require('./irc/strftime.js')
@@ -13,220 +14,331 @@ const packageInfo = require('./package.json')
 var client = new IrcClient()
 client.loggingEnabled = false
 
-var ctcpClient = new CtcpClient(client)
-ctcpClient.clientName = packageInfo.name
-ctcpClient.clientVersion = packageInfo.version
+function ClientUI (client) {
+  this.client = client
 
-function addParagraph (text, source = null) {
-  var senderName = ''
+  this.ctcpClient = new CtcpClient(client)
+  this.ctcpClient.clientName = packageInfo.name
+  this.ctcpClient.clientVersion = packageInfo.version
+
+  this.serverView = this.createServerView()
+  this.channelViews = []
+  this.serverElementList = {}
+  this.channelElementList = {}
+  this.selectedChannel = null
+
+  this.setupEventListeners()
+}
+
+ClientUI.prototype.createServerView = function() {
+  var serverView = document.createElement('div')
+  serverView.classList.add('server-view')
+  document.getElementById('right-column').appendChild(serverView)
+  return serverView
+}
+
+ClientUI.prototype.setupEventListeners = function() {
+  // IRC Client Event Listeners
+  this.client.on('connectionError', error => {
+    if (error.code == 'ECONNREFUSED') {
+      this.displayServerMessage(null, `* Couldn't connect to ${error.address}:${error.port}`)
+    } else if (error.code == 'ECONNRESET') {
+      this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
+    }
+  })
+
+  this.client.on('error', errorMessage => {
+    this.displayServerMessage(null, '* ' + errorMessage)
+  })
+
+  this.client.on('clientInfo', () => {
+    this.addServerToList(client.serverName)
+  })
+
+  this.client.on('connecting', () => {
+    this.displayServerMessage(null, '* Connecting to 127.0.0.1 (6667)')
+  })
+
+  this.client.on('registered', this.clientRegistered.bind(this))
+
+  this.client.on('disconnected', () => {
+    this.displayServerMessage(null, '* Disconnected')
+  })
+
+  this.client.on('notice', (source, noticeText) => {
+    this.displayServerMessage(source, noticeText)
+  })
+
+  this.client.on('motd', messageOfTheDay => {
+    this.displayServerMessage(null, ` - ${client.serverName} Message of the Day - `)
+    
+    messageOfTheDay
+      .split('\r\n')
+      .forEach(l => this.displayServerMessage(null, l))
+  })
+
+  // UI Event Listeners
+  const chatInput = document.getElementById('chat-input')
+  chatInput.addEventListener('keyup', e => {
+    e.preventDefault()
+    if (e.keyCode === 13) {
+      this.sendUserInput(chatInput.value)
+      chatInput.value = ''
+    }
+  })
+}
+
+ClientUI.prototype.clientRegistered = function() {
+  this.client.localUser.on('message', (source, messageText) => {
+    this.displayServerMessage(source, messageText)
+  })
+  this.client.localUser.on('notice', (source, noticeText) => {
+    this.displayServerMessage(source, noticeText)
+  })
+  this.client.localUser.on('joinedChannel', this.userJoinedChannel.bind(this))
+  this.client.localUser.on('partedChannel', this.userPartedChannel.bind(this))
+}
+
+ClientUI.prototype.userJoinedChannel = function (channel) {
+  channel.on('message', (source, messageText) => {
+    this.displayChannelMessage(channel, source, messageText)
+  })
+  channel.on('action', (source, messageText) => {
+    this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
+  })
+  channel.on('userList', () => {
+    this.refreshChannelUsers(channel)
+  })
+  channel.on('topic', (source, topic) => {
+    this.refreshChannelTopic(channel)
+  })
+
+  this.serverView.style.display = 'none'
+  this.addChannelToList(channel)  
+}
+
+ClientUI.prototype.userPartedChannel = function (channel) {
+  this.leaveChannel(channel)  
+}
+
+ClientUI.prototype.addServerToList = function (serverName) {
+  var serverElement = document.createElement('div')
+  serverElement.classList.add('network')
+  serverElement.serverName = serverName
+
+  this.serverElementList[serverName] = serverElement
+
+  var title = document.createElement('div')
+  title.classList.add('network-title')
+  title.innerText = serverName
+
+  var channelListElement = document.createElement('div')
+  channelListElement.classList.add('channel-list')
+
+  serverElement.appendChild(title)
+  serverElement.appendChild(channelListElement)
+
+  var networkListElement = document.getElementById('network-list')
+  networkListElement.appendChild(serverElement)
+}
+
+ClientUI.prototype.addChannelToList = function (channel) {
+  var channelTableView = document.createElement('table')
+  channelTableView.cellSpacing = 0
+  channelTableView.cellPadding = 0
+  channelTableView.classList.add('channel-view')
   
+  var row = channelTableView.insertRow()  
+  var messagesCell = row.insertCell()
+  messagesCell.classList.add('messages-panel')
+  var usersCell = row.insertCell()
+  usersCell.classList.add('users-panel')
+
+  var channelView = document.createElement('div')
+  channelView.classList.add('channel-content-view')
+  messagesCell.appendChild(channelView)
+
+  var channelTitleView = document.createElement('div') 
+  channelTitleView.classList.add('channel-title-view')
+  channelView.appendChild(channelTitleView)
+  
+  var channelMessageView = document.createElement('div') 
+  channelMessageView.classList.add('channel-message-view')
+  channelView.appendChild(channelMessageView)
+  
+  this.channelViews[channel.name] = channelTableView
+  document.getElementById('right-column').appendChild(channelTableView)
+
+  var channelElement = document.createElement('div')
+  channelElement.classList.add('channel')
+  channelElement.classList.add('channel-selected')
+  channelElement.channel = channel
+  channelElement.innerText = channel.name
+  
+  const channelMenuTemplate = [
+    { label: 'Set Topic' },
+    { type: 'separator' },
+    { label: 'Leave Channel', click: function() {
+        channel.part()
+      } 
+    }
+  ]
+
+  const channelMenu = Menu.buildFromTemplate(channelMenuTemplate)
+
+  channelElement.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    channelMenu.popup({ window: remote.getCurrentWindow() })
+  }, false)
+
+  var serverElement = this.serverElementList[channel.client.serverName]
+  var channelListElement = serverElement.children[1]
+  channelListElement.appendChild(channelElement)
+}
+
+ClientUI.prototype.viewServer = function (server) {
+  if (this.selectedChannel != null) {
+    this.leaveChannel(this.selectedChannel)
+    this.selectedChannel = null
+  }
+}
+
+ClientUI.prototype.viewChannel = function (channel) {
+
+}
+
+ClientUI.prototype.leaveChannel = function (channel) {
+  var channelElement = this.channelElementList[channel.name]
+  channelElement.parentElement.removeChild(channelElement)
+}
+
+ClientUI.prototype.nameFromSource = function (source) {
+  var senderName = ''
   if (source != null) {
     if (source.nickName != null) {
       senderName = `<${source.nickName}>`
     } else if (source.hostName != null) {
       senderName = source.hostName
     }
-  }
+  }  
+  return senderName
+}
 
+ClientUI.prototype.displayServerMessage = function (source, text) {
+  var senderName = this.nameFromSource(source)
+  var now = new Date()
+  var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+
+  var paragraph = document.createElement('p')
+  paragraph.classList.add('server-message')
+  paragraph.innerText = formattedText
+  
+  this.serverView.appendChild(paragraph)
+  this.serverView.scrollTop = this.serverView.scrollHeight
+}
+
+ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
+  var senderName = this.nameFromSource(source)
   var now = new Date()
   var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
   
-  var p = document.createElement('p')
-  p.classList.add('message')
-  p.innerText = formattedText
+  var paragraph = document.createElement('p')
+  paragraph.classList.add('channel-message')
+  paragraph.innerText = formattedText
   
-  const messages = document.getElementById('messages')
-  messages.appendChild(p)
-  messages.scrollTop = messages.scrollHeight
+  const channelTableView = this.channelViews[channel.name]
+  const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
+  messageView.appendChild(paragraph)
+  messageView.scrollTop = messageView.scrollHeight  
 }
 
-function addNetwork (serverName) {
-  var networkContainer = document.createElement('div')
-  networkContainer.classList.add('network')
-  networkContainer.serverName = serverName
-  networkContainer.id = 'network-' + serverName
-
-  var title = document.createElement('div')
-  title.classList.add('network-title')
-  title.innerText = serverName
-
-  var channelListContainer = document.createElement('div')
-  channelListContainer.classList.add('channel-list')
-
-  networkContainer.appendChild(title)
-  networkContainer.appendChild(channelListContainer)
-
-  var networkListContainer = document.getElementById('network-list')
-  networkListContainer.appendChild(networkContainer)
+ClientUI.prototype.refreshChannelTopic = function (channel) {
+  const channelTableView = this.channelViews[channel.name]
+  const titleView = channelTableView.getElementsByClassName('channel-title-view')[0]
+  titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })
 }
 
-function addChannel (channel) {
-  var channelContainer = document.createElement('div')
-  channelContainer.classList.add('channel')
-  channelContainer.channel = channel
-  channelContainer.innerText = channel.name
-  channelContainer.id = 'channel-' + channel.name
+ClientUI.prototype.refreshChannelUsers = function (channel) {
+  const channelTableView = this.channelViews[channel.name]
+  var userListElement = document.getElementsByClassName('users-panel')[0]
+  while (userListElement.firstChild) {
+    userListElement.removeChild(userListElement.firstChild);
+  }
 
-  var networtContainer = document.getElementById('network-' + channel.client.serverName)
-  var channelListContainer = networtContainer.children[1]
-  channelListContainer.appendChild(channelContainer)
+  channel.users.forEach(channelUser => {
+    var user = channelUser.user
+
+    const userMenuTemplate = [
+      { label: 'Info' },
+      { label: 'Whois' },
+      { label: 'Query' },
+      { type: 'separator' },
+      { label: 'Control', submenu: [
+        { label: 'Ignore' },
+        { label: 'Unignore' },
+        { label: 'Op' },
+        { label: 'Deop' },
+        { label: 'Voice' },
+        { label: 'Devoice' },
+        { label: 'Kick' },
+        { label: 'Kick (Why)' },
+        { label: 'Ban' },
+        { label: 'Ban, Kick' },
+        { label: 'Ban, Kick (Why)' }
+      ]},
+      { label: 'CTCP', submenu: [
+        { label: 'Ping', click: function() {
+            ctcpClient.ping([user.nickName])
+          } 
+        },
+        { label: 'Time', click: function() {
+            ctcpClient.time([user.nickName])
+          } 
+        },
+        { label: 'Version', click: function() {
+            ctcpClient.version([user.nickName])
+          } 
+        }
+      ]},
+      { type: 'separator' },
+      { label: 'Slap', click: function() {
+          ctcpClient.action([channel.name], 'slaps Windcape around a bit with a large trout')
+        } 
+      }
+    ]
+
+    const userMenu = Menu.buildFromTemplate(userMenuTemplate)
+  
+    var userElement = document.createElement('div')
+    userElement.classList.add('user')
+    userElement.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+      userMenu.popup({ window: remote.getCurrentWindow() })
+    }, false)
+
+    var icon = document.createElement('span')
+    icon.classList.add('icon')
+    icon.classList.add('icon-user')
+    userElement.appendChild(icon)
+    
+    var text = document.createTextNode(' ' + user.nickName)
+    userElement.appendChild(text)
+    
+    userListElement.appendChild(userElement)
+  })
 }
 
-function focusInputField () {
+ClientUI.prototype.focusInputField = function() {
   const input = document.getElementById('chat-input')
   input.focus()
 }
 
-function listenForEnter () {
-  const input = document.getElementById('chat-input')
-  input.addEventListener("keyup", function(event) {
-    event.preventDefault()
-    if (event.keyCode === 13) {
-      client.sendRawMessage(input.value)
-      input.value = ''
-    }
-  })
+ClientUI.prototype.sendUserInput = function (text) {
+  this.client.sendRawMessage(text)
 }
-
-function setupContextMenu () {
-  const userMenuTemplate = [
-    { label: 'Info' },
-    { label: 'Whois' },
-    { label: 'Query' },
-    { type: 'separator' },
-    { label: 'Control', submenu: [
-      { label: 'Ignore' },
-      { label: 'Unignore' },
-      { label: 'Op' },
-      { label: 'Deop' },
-      { label: 'Voice' },
-      { label: 'Devoice' },
-      { label: 'Kick' },
-      { label: 'Kick (Why)' },
-      { label: 'Ban' },
-      { label: 'Ban, Kick' },
-      { label: 'Ban, Kick (Why)' }
-    ]},
-    { label: 'CTCP', submenu: [
-      { label: 'Ping', click: function() {
-          var user = client.getUserFromNickName('Windcape')
-          ctcpClient.ping([user.nickName])
-        } 
-      },
-      { label: 'Time', click: function() {
-          var user = client.getUserFromNickName('Windcape')
-          ctcpClient.time([user.nickName])
-        } 
-      },
-      { label: 'Version', click: function() {
-        var user = client.getUserFromNickName('Windcape')
-          ctcpClient.version([user.nickName])
-        } 
-      }
-    ]},
-    { type: 'separator' },
-    { label: 'Slap', click: function() {
-        //var user = client.getUserFromNickName('Windcape')
-        //ctcpClient.action([user.nickName], 'slaps Windcape around a bit with a large trout')
-        var channel = client.getChannelFromName("#c#")
-        ctcpClient.action([channel.name], 'slaps Windcape around a bit with a large trout')
-      } 
-    }
-  ]
-
-  const serverMenuTemplate = [
-    { label: 'Lusers'},
-    { label: 'MOTD' },
-    { label: 'Time' },
-    { type: 'separator' },
-    { label: 'Quit' }
-  ]
-
-  const channelMenuTemplate = [
-    { label: 'Set Topic' },
-    { type: 'separator' },
-    { label: 'Leave Channel' }
-  ]
-
-  const serverMenu = Menu.buildFromTemplate(serverMenuTemplate)
-  const channelMenu = Menu.buildFromTemplate(channelMenuTemplate)
-  const userMenu = Menu.buildFromTemplate(userMenuTemplate)
-
-  var channels = Array.from(document.getElementsByClassName('channel')).forEach(x => {
-    x.addEventListener('contextmenu', (e) => {
-      e.preventDefault()
-      channelMenu.popup({ window: remote.getCurrentWindow() })
-    }, false)
-  })
-
-  Array.from(document.getElementsByClassName('user')).forEach(x => {
-    x.addEventListener('contextmenu', (e) => {
-      e.preventDefault()
-      userMenu.popup({ window: remote.getCurrentWindow() })
-    }, false)
-  })
-  
-  document.getElementById('channel-content').addEventListener('contextmenu', (e) => {
-    e.preventDefault()
-    serverMenu.popup({ window: remote.getCurrentWindow() })
-  }, false)
-}
-
-client.on('connectionError', function (error) {
-  if (error.code == 'ECONNREFUSED') {
-    addParagraph(`* Couldn't connect to ${error.address}:${error.port}`)
-  } else if (error.code == 'ECONNRESET') {
-    addParagraph(`* Disconnected (Connection Reset)`)
-  }
-})
-
-client.on('error', function (errorMessage) {
-  addParagraph('* ' + errorMessage)
-})
-
-client.on('channelList', function (channels) {
-  console.log('Channels', channels)
-})
-
-client.on('clientInfo', function () {
-  addNetwork(client.serverName)
-})
-
-client.on('registered', function () {
-  client.localUser.on('message', function (source, messageText) {
-    addParagraph(messageText, source) 
-  })
-  client.localUser.on('notice', function (source, noticeText) {
-    addParagraph(noticeText, source) 
-  })
-  client.localUser.on('joinedChannel', function (channel) {
-    channel.on('message', function (source, messageText) {
-      addParagraph(messageText, source)
-    })
-    channel.on('action', function (source, messageText) {
-      addParagraph(`* ${source.nickName} ${messageText}`)
-    })
-    addChannel(channel)
-  })
-  client.sendRawMessage('join :#c#')
-})
-
-client.on('disconnected', function () {
-  addParagraph('* Disconnected')
-})
-
-client.on('notice', function (source, noticeText) {
-  addParagraph(noticeText, source)
-})
-
-client.on('motd', function (messageOfTheDay) {
-  addParagraph(` - ${client.serverName} Message of the Day - `)
-  var lines = messageOfTheDay.split('\r\n')
-  lines.forEach(l => addParagraph(l))
-})
 
 document.addEventListener('DOMContentLoaded', function (event) {
-  addParagraph('* Connecting to 127.0.0.1 (6667)')
+  const ui = new ClientUI(client)
 
   client.connect('127.0.0.1', 6667, {
     'nickName': 'Rincewind',
@@ -235,8 +347,4 @@ document.addEventListener('DOMContentLoaded', function (event) {
     'realName': 'Rincewind the Wizzard',
     'userModes': []
   })
-
-  focusInputField()
-  listenForEnter()
-  setupContextMenu()
 })
