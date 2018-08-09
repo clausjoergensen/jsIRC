@@ -367,7 +367,11 @@ ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
 ClientUI.prototype.displayChannelTopic = function (channel) {
   const channelTableView = this.channelViews[channel.name]
   const titleView = channelTableView.getElementsByClassName('channel-title-label')[0]
-  titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })
+  if (channel.topic == null) {
+    titleView.innerHTML = '(No Channel Topic)'
+  } else {
+    titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })    
+  }
 }
 
 ClientUI.prototype.displayChannelUsers = function (channel) {
