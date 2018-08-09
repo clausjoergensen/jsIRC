@@ -5,6 +5,7 @@ const net = require('net')
 const util = require('util')
 const events = require('events')
 const { EventEmitter } = events
+const strftime = require('./strftime.js')
 
 const taggedDataDelimeterChar = String.fromCharCode(0x01)
 const lowLevelQuotingEscapeChar = String.fromCharCode(0x10)
@@ -17,7 +18,9 @@ function CtcpClient (client) {
   this.client.on('connected', this.connected.bind(this))
   this.client.on('disconnected', this.disconnected.bind(this))
   this.messageProcessors = {
-    'VERSION': this.processMessageVersion.bind(this)
+    'VERSION': this.processMessageVersion.bind(this),
+    'PING': this.processMessagePing.bind(this),
+    'TIME': this.processMessageTime.bind(this)
   }
   this.clientVersion = '0.0.1'
   this.clientName = ''
@@ -36,8 +39,8 @@ CtcpClient.prototype.version = function (users) {
 }
 
 CtcpClient.prototype.ping = function (users) {
-  var date = new Date()
-  this.sendMessagePing(users.map(u => u.nickName), date.getTime(), false)
+  var now = new Date()
+  this.sendMessagePing(users.map(u => u.nickName), now.getTime(), false)
 }
 
 // - Event Handlers
@@ -108,6 +111,27 @@ CtcpClient.prototype.processMessageVersion = function (message) {
   } else {
     var versionInfo = `${this.clientName} ${this.clientVersion}`
     this.sendMessageVersion([message.source.nickName], versionInfo, true)
+  }
+}
+
+CtcpClient.prototype.processMessagePing = function (message) {
+  if (message.isResponse) {
+    var now = Math.round(new Date().getTime() / 1000)
+    var sendTime = parseInt(message.data)
+    var pingTime = now - sendTime
+    this.emit('ping', message.source, pingTime)
+  } else {
+    this.sendMessagePing([message.source.nickName], message.data, true)
+  }
+}
+
+CtcpClient.prototype.processMessageTime = function (message) {
+  if (message.isResponse) {
+    var dateTime = message.data
+    this.emit('time', message.source, dateTime)
+  } else {
+    var now = Date()
+    this.sendMessageTime([message.source.nickName], now.toLocaleString(), true)
   }
 }
 

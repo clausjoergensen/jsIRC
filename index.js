@@ -6,8 +6,9 @@ const { Menu } = remote
 
 const IrcClient = require('./irc/IrcClient.js')
 const CtcpClient = require('./irc/CtcpClient.js')
+const strftime = require('./irc/strftime.js')
+
 const packageInfo = require('./package.json')
-const strftime = require('./strftime.js')
 
 var client = new IrcClient()
 client.loggingEnabled = true
@@ -105,7 +106,30 @@ function setupContextMenu () {
       { label: 'Ban' },
       { label: 'Ban, Kick' },
       { label: 'Ban, Kick (Why)' }
-    ]}
+    ]},
+    { label: 'CTCP', submenu: [
+      { label: 'Ping', click: function() {
+          var user = client.getUserFromNickName('Windcape')
+          ctcpClient.ping([user])
+        } 
+      },
+      { label: 'Time', click: function() {
+          var user = client.getUserFromNickName('Windcape')
+          ctcpClient.time([user])
+        } 
+      },
+      { label: 'Version', click: function() {
+        var user = client.getUserFromNickName('Windcape')
+          ctcpClient.version([user])
+        } 
+      }
+    ]},
+    { type: 'separator' },
+    { label: 'Slap', click: function() {
+        var user = client.getUserFromNickName('Windcape')
+        ctcpClient.action([user], 'slaps Windcape around a bit with a large trout')
+      } 
+    }
   ]
 
   const serverMenuTemplate = [
@@ -135,7 +159,6 @@ function setupContextMenu () {
 
   Array.from(document.getElementsByClassName('user')).forEach(x => {
     x.addEventListener('contextmenu', (e) => {
-      console.log('wtf???')
       e.preventDefault()
       userMenu.popup({ window: remote.getCurrentWindow() })
     }, false)
