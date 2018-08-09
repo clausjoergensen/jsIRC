@@ -130,7 +130,7 @@ CtcpClient.prototype.processMessageAction = function (message) {
     return
   } 
 
-  this.emit('action', message.source, message.targets, message.data)
+  message.targets.forEach(t => t.actionReceived(message.source, message.targets, message.data))
 }
 
 CtcpClient.prototype.processMessageVersion = function (message) {

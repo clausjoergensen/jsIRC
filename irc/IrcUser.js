@@ -49,6 +49,10 @@ IrcUser.prototype.inviteReceived = function (source, channel) {
   this.emit('invite', channel, source)
 }
 
+IrcUser.prototype.actionReceived = function (source, targets, messageText) {
+  this.emit('action', source, messageText)
+}
+
 IrcUser.prototype.messageReceived = function (source, targets, messageText) {
   var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
   this.emit('previewMessage', previewMessageEventArgs)

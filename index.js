@@ -206,9 +206,6 @@ client.on('registered', function () {
     })
     addChannel(channel)
   })
-  ctcpClient.on('action', function (source, targets, text) {
-    targets.forEach(t => t.actionReceived(source, targets, text))
-  })
   client.sendRawMessage('join :#c#')
 })
 
