@@ -28,16 +28,22 @@ div#network-list
     user-select: none;
 }
 
-div.network-title
+.network-title
 {
     color: #666666;
     font-size: 10pt;
     padding: 10px;
 }
 
-.network:hover
+.network-title-selected
+{
+    background-color: #dcdfe1;  
+}
+
+.network-title:hover
 {
     cursor: pointer;
+    background-color: #dcdfe1;
 }
 
 .channel-list

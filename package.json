@@ -17,6 +17,7 @@
     "electron-debug": "^2.0.0"
   },
   "dependencies": {
-    "autolinker": "^1.7.1"
+    "autolinker": "^1.7.1",
+    "strftime": "^0.10.0"
   }
 }
