@@ -31,6 +31,9 @@ IrcChannel.prototype.getChannelUser = function (user) {
 }
 
 IrcChannel.prototype.userJoined = function (channelUser) {
+  if (this.users.indexOf(channelUser) != -1) {
+    return
+  }
   channelUser.channel = this
   this.users.push(channelUser)
   this.emit('joinedChannel', channelUser)
@@ -61,6 +64,9 @@ IrcChannel.prototype.userKicked = function (channelUser, comment = null) {
 }
 
 IrcChannel.prototype.userNameReply = function(channelUser) {
+  if (this.users.indexOf(channelUser) != -1) {
+    return
+  }
   channelUser.channel = this
   this.users.push(channelUser)
 }

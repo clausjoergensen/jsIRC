@@ -23,18 +23,18 @@ function ClientUI (client) {
 
   this.serverView = this.createServerView()
   this.channelViews = []
-  this.serverElementList = {}
-  this.channelElementList = {}
+  this.navigationServerViews = {}
+  this.navigationChannelViews = {}
   this.selectedChannel = null
 
   this.setupEventListeners()
 }
 
-ClientUI.prototype.createServerView = function() {
+ClientUI.prototype.createServerView = function () {
   var serverView = document.createElement('div')
   serverView.classList.add('server-view')
   document.getElementById('right-column').appendChild(serverView)
-  return serverView
+  return serverView  
 }
 
 ClientUI.prototype.setupEventListeners = function() {
@@ -107,13 +107,12 @@ ClientUI.prototype.userJoinedChannel = function (channel) {
     this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
   })
   channel.on('userList', () => {
-    this.refreshChannelUsers(channel)
+    this.displayChannelUsers(channel)
   })
   channel.on('topic', (source, topic) => {
-    this.refreshChannelTopic(channel)
+    this.displayChannelTopic(channel)
   })
 
-  this.serverView.style.display = 'none'
   this.addChannelToList(channel)  
 }
 
@@ -122,11 +121,11 @@ ClientUI.prototype.userPartedChannel = function (channel) {
 }
 
 ClientUI.prototype.addServerToList = function (serverName) {
-  var serverElement = document.createElement('div')
-  serverElement.classList.add('network')
-  serverElement.serverName = serverName
+  var serverNavigationElement = document.createElement('div')
+  serverNavigationElement.classList.add('network')
+  serverNavigationElement.serverName = serverName
 
-  this.serverElementList[serverName] = serverElement
+  this.navigationServerViews[serverName] = serverNavigationElement
 
   var title = document.createElement('div')
   title.classList.add('network-title')
@@ -135,15 +134,21 @@ ClientUI.prototype.addServerToList = function (serverName) {
   var channelListElement = document.createElement('div')
   channelListElement.classList.add('channel-list')
 
-  serverElement.appendChild(title)
-  serverElement.appendChild(channelListElement)
+  serverNavigationElement.appendChild(title)
+  serverNavigationElement.appendChild(channelListElement)
 
   var networkListElement = document.getElementById('network-list')
-  networkListElement.appendChild(serverElement)
+  networkListElement.appendChild(serverNavigationElement)
+
+  title.addEventListener('click', (e) => {
+    e.preventDefault()
+    this.viewServer()
+  }, false)
 }
 
 ClientUI.prototype.addChannelToList = function (channel) {
   var channelTableView = document.createElement('table')
+  channelTableView.style.display = 'none'
   channelTableView.cellSpacing = 0
   channelTableView.cellPadding = 0
   channelTableView.classList.add('channel-view')
@@ -162,6 +167,10 @@ ClientUI.prototype.addChannelToList = function (channel) {
   channelTitleView.classList.add('channel-title-view')
   channelView.appendChild(channelTitleView)
   
+  var channelTitleLabel = document.createElement('div') 
+  channelTitleLabel.classList.add('channel-title-label')
+  channelTitleView.appendChild(channelTitleLabel)
+
   var channelMessageView = document.createElement('div') 
   channelMessageView.classList.add('channel-message-view')
   channelView.appendChild(channelMessageView)
@@ -171,7 +180,6 @@ ClientUI.prototype.addChannelToList = function (channel) {
 
   var channelElement = document.createElement('div')
   channelElement.classList.add('channel')
-  channelElement.classList.add('channel-selected')
   channelElement.channel = channel
   channelElement.innerText = channel.name
   
@@ -191,25 +199,63 @@ ClientUI.prototype.addChannelToList = function (channel) {
     channelMenu.popup({ window: remote.getCurrentWindow() })
   }, false)
 
-  var serverElement = this.serverElementList[channel.client.serverName]
+  channelElement.addEventListener('click', (e) => {
+    e.preventDefault()
+    Object.keys(this.navigationChannelViews).forEach((key, index) => {
+      this.navigationChannelViews[key].classList.remove('channel-selected')
+    })
+    channelElement.classList.add('channel-selected')
+    this.viewChannel(channel)
+  }, false)
+
+  var serverElement = this.navigationServerViews[channel.client.serverName]
+
   var channelListElement = serverElement.children[1]
   channelListElement.appendChild(channelElement)
+
+  this.navigationChannelViews[channel.name] = channelElement
 }
 
-ClientUI.prototype.viewServer = function (server) {
+ClientUI.prototype.viewServer = function () {
   if (this.selectedChannel != null) {
-    this.leaveChannel(this.selectedChannel)
-    this.selectedChannel = null
+    this.navigationChannelViews[this.selectedChannel.name].classList.remove('channel-selected')
+    this.channelViews[this.selectedChannel.name].style.display = 'none'
   }
+  this.serverView.style.display = 'block'
 }
 
 ClientUI.prototype.viewChannel = function (channel) {
+  this.serverView.style.display = 'none'    
 
+  if (this.selectedChannel != null) {
+    this.channelViews[this.selectedChannel.name].style.display = 'none'
+  }
+  
+  this.channelViews[channel.name].style.display = 'table'
+  this.selectedChannel = channel
+  
+  this.displayChannelTopic(channel)
+  this.displayChannelUsers(channel)
 }
 
 ClientUI.prototype.leaveChannel = function (channel) {
-  var channelElement = this.channelElementList[channel.name]
+  var channelElement = this.navigationChannelViews[channel.name]
   channelElement.parentElement.removeChild(channelElement)
+  delete this.navigationChannelViews[channel.name]
+
+  var channelView = this.channelViews[channel.name]
+  channelView.parentElement.removeChild(channelView)
+  delete this.channelViews[channel.name]
+  
+  if (Object.keys(this.channelViews).length == 0) {
+    this.selectedChannel = null
+    this.viewServer()
+  } else if (this.selectedChannel == channel) {
+    this.selectedChannel = null
+    // show previous channel
+  } else {
+    // show previous channel
+  }
 }
 
 ClientUI.prototype.nameFromSource = function (source) {
@@ -252,13 +298,13 @@ ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
   messageView.scrollTop = messageView.scrollHeight  
 }
 
-ClientUI.prototype.refreshChannelTopic = function (channel) {
+ClientUI.prototype.displayChannelTopic = function (channel) {
   const channelTableView = this.channelViews[channel.name]
-  const titleView = channelTableView.getElementsByClassName('channel-title-view')[0]
+  const titleView = channelTableView.getElementsByClassName('channel-title-label')[0]
   titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })
 }
 
-ClientUI.prototype.refreshChannelUsers = function (channel) {
+ClientUI.prototype.displayChannelUsers = function (channel) {
   const channelTableView = this.channelViews[channel.name]
   var userListElement = document.getElementsByClassName('users-panel')[0]
   while (userListElement.firstChild) {
@@ -346,5 +392,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
     'userName': 'rincewind@unseenuniversity.dw',
     'realName': 'Rincewind the Wizzard',
     'userModes': []
+  })
+
+  client.on('registered', () => {
+    client.sendRawMessage('join :#C#')
+    client.sendRawMessage('join :#foo')
   })
 })

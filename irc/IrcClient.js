@@ -387,6 +387,7 @@ IrcClient.prototype.processMessagePart = function (message) {
     var channel = this.getChannelFromName(channelName)
     if (sourceUser == this.localUser) {
       this.localUser.partChannel(channel)
+      this.channels.splice(this.channels.indexOf(channel))
     } else {
       channel.userParted(channel.getChannelUser(sourceUser), comment)
     }
