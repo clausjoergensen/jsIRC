@@ -15,6 +15,13 @@ const IrcUser = require('./IrcUser.js')
  */
 module.exports = class IrcLocalUser extends IrcUser {
 
+  /*
+   * Initializes a new instance of the IrcLocalUser class.
+   *
+   * @access internal
+   * @param {IrcClient} client The IrcClient instance.
+   * @constructor
+  */
   constructor (client) {
     super(client, true)
     this._modes = []
