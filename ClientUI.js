@@ -20,6 +20,10 @@ function ClientUI (client, ctcpClient) {
 
   this.setupEventListeners()
   this.focusInputField()
+
+  window.onfocus = () => {
+    this.focusInputField()
+  }
 }
 
 ClientUI.prototype.createServerView = function () {
