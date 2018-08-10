@@ -311,8 +311,6 @@ module.exports = class IrcUser extends EventEmitter {
   }
 
   noticeReceived (source, targets, noticeText) {
-    console.log(this)
-    
     var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
     this.emit('previewNotice', previewNoticeEventArgs)
     
