@@ -15,15 +15,15 @@ const IrcChannelUser = require('./IrcChannelUser.js')
 const maxParamsCount = 15
 const defaultPort = 6667
 
-const regexNickName = '([^!@]+)'
-const regexUserName = '([^!@]+)'
-const regexHostName = '([^%@]+)'
-const regexChannelName = '([#+!&].+)'
-const regexTargetMask = '([$#].+)'
-const regexServerName = '([^%@]+?\.[^%@]*)'
-const regexNickNameId = `${regexNickName}(?:(?:!${regexUserName})?@${regexHostName})?`
-const regexUserNameId = `${regexUserName}(?:(?:%${regexHostName})?@${regexServerName}|%${regexUserName})`
-const regexISupportPrefix = '\((.*)\)(.*)'
+const regexNickName = new RegExp(/([^!@]+)/)
+const regexUserName = new RegExp(/([^!@]+)/)
+const regexHostName = new RegExp(/([^%@]+)/)
+const regexChannelName = new RegExp(/([#+!&].+)/)
+const regexTargetMask = new RegExp(/([$#].+)/)
+const regexServerName = new RegExp(/([^%@]+?\.[^%@]*)/)
+const regexNickNameId = new RegExp(/([^!@]+)(?:(?:!([^!@]+))?@([^%@]+))?/)
+const regexUserNameId = new RegExp(/([^!@]+)(?:(?:%[^%@]+)?@([^%@]+?\.[^%@]*)|%([^!@]+))/)
+const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 
 // ------------------- Public Functions  --------------------------------------
 
@@ -43,8 +43,8 @@ function IrcClient () {
   this.serverAvailableUserModes = []
   this.serverAvailableChannelModes = []
   this.serverSupportedFeatures = {}
-  this.channelUserModes = []
-  this.channelUserModesPrefixes = {}
+  this.channelUserModes = ['o', 'v']
+  this.channelUserModesPrefixes = { '@': 'o', '+': 'v' }
   this.messageOfTheDay = null
   this.listedServerLinks = []
   this.listedChannels = []
@@ -179,6 +179,14 @@ IrcClient.prototype.queryWhoWas = function (nickNames, entriesCount = -1) {
 
 IrcClient.prototype.quit = function (comment = null) {
   this.sendMessageQuit(comment)
+}
+
+IrcClient.prototype.joinChannel = function(channelName) {
+  this.sendMessageJoin([channelName])
+}
+
+IrcClient.prototype.setNickName = function (nickName) {
+  this.sendMessageNick(nickName)
 }
 
 IrcClient.prototype.sendMessage = function (target, messageText) {
@@ -317,7 +325,9 @@ IrcClient.prototype.readMessage = function (message, line) {
   if (messageProcessor != null) {
     messageProcessor(message)
   } else {
-    console.log(`Unsupported command '${message.command}'`)
+    if (this.loggingEnabled) {
+      console.log(`Unsupported command '${message.command}'`)
+    }
   }
 }
 
@@ -362,6 +372,7 @@ IrcClient.prototype.processMessageNick = function (message) {
   var sourceUser = message.source
   var newNickName = message.parameters[0]
   sourceUser.nickName = newNickName
+  sourceUser.emit('nickName', newNickName)
 }
 
 // Process QUIT messages received from the server.
@@ -411,13 +422,28 @@ IrcClient.prototype.processMessagePart = function (message) {
 
 // Process MODE messages received from the server.
 IrcClient.prototype.processMessageMode = function (message) {
-  console.log('processMessageMode', message)
+  function getModeAndParameters(messageParameters) {
+    var modes = ''
+    var modeParameters = []
+    messageParameters.forEach(p => {
+      if (p == null) { return }
+      if (p.length != 0) {
+        if (p[0] == '+' || p[0] == '-') {
+            modes += p
+        } else {
+            modeParameters.push(p)
+        }
+      }
+    })
+    return { 'modes': modes.split(''), 'parameters': modeParameters}
+  }
+
   var newModes = message.parameters[1]
   if (this.isChannelName(message.parameters[0])) {
     var channel = this.getChannelFromName(message.parameters[0])
-    var modesAndParameters = this.getModeAndParameters(message.parameters.Skip(1))
-    this.emit('channelMode', channel, message.source, modesAndParameters.Item1, modesAndParameters.Item2)
-    channel.modesChanged(message.source, modesAndParameters.Item1, modesAndParameters.Item2)
+    var modesAndParameters = getModeAndParameters(message.parameters.slice(1))
+    channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
+    this.emit('channelMode', channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
   } else if (message.parameters[0] == this.localUser.nickName) {
     this.localUser.modesChanged(message.parameters[1])
   } else {
@@ -1015,8 +1041,8 @@ IrcClient.prototype.sendMessageLeaveAll = function () {
   this.writeMessage(null, 'JOIN', ['0'])
 }
 
-IrcClient.prototype.sendMessageJoin = function (channels, comment = null) {
-  this.writeMessage(null, 'JOIN', [channels.join(','), comment])
+IrcClient.prototype.sendMessageJoin = function (channels) {
+  this.writeMessage(null, 'JOIN', [channels.join(',')])
 }
 
 IrcClient.prototype.sendMessagePart = function (channels, comment = null) {
@@ -1349,7 +1375,7 @@ IrcClient.prototype.handleISupportParameter = function (name, value) {
 
     this.channelUserModesPrefixes = {}
     for (var i = 0; i < prefixes.length; i++) {
-      this.channelUserModesPrefixes[prefixes[i]] = modes[i]
+      this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
     }
   }
 }

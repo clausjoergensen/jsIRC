@@ -25,22 +25,21 @@ function IrcUser(client) {
 IrcUser.prototype.quit = function (comment) {
   var allChannelUsers = []
   client.channels.forEach(channel => {
-    channel.users.forEach(user => {
-      var channelUser = channel.users[user]
+    channel.users.forEach(channelUser => {
       if (channelUser.user == this) {
         allChannelUsers.push(channelUser)
       }
     })
   })
 
-  allChannelUsers.forEach(u => u.userQuit(channelUser, comment))
+  allChannelUsers.forEach(cu => cu.channel.userQuit(cu, comment))
 
   this.emit('quit', comment)
 }
 
 IrcUser.prototype.modesChanged = function (newModes) {
-  console.log('modesChanged', newModes)
   this.modes = IrcUtils.updateModes(this.modes, newModes.split(''))
+  this.emit('modes)')
 }
 
 IrcUser.prototype.joinChannel = function (channel) {

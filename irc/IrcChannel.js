@@ -48,7 +48,7 @@ IrcChannel.prototype.userParted = function (channelUser, comment) {
   this.emit('userLeftChannel', channelUser, comment)
 }
 
-IrcChannel.prototype.userQuit = function (channnelUser, comment) {
+IrcChannel.prototype.userQuit = function (channelUser, comment) {
   var idx = this.users.indexOf(channelUser)
   if (idx != -1) {
     this.users.splice(idx)
@@ -78,13 +78,12 @@ IrcChannel.prototype.topicChanged = function (user, newTopic) {
 }
 
 IrcChannel.prototype.modesChanged = function (source, newModes, newModeParameters) {
-  console.log('IrcChannel.modesChanged')
   this.modes = IrcUtils.updateModes(this.modes, 
-    newModes.split(''), 
-    newModeParameterssplit(''), 
+    newModes,
+    newModeParameters,
     client.channelUserModes, 
     (add, mode, parameter) => {
-      var channelUser = this.users.find(u => u.user.nickName == modeParameter)
+      var channelUser = this.users.find(u => u.user.nickName == parameter)
       channelUser.modeChanged(add, mode)
     })
 }

@@ -15,9 +15,9 @@ IrcChannelUser.prototype.modeChanged = function (add, mode) {
   if (add) {
     this.modes.push(mode)
   } else {
-    this.modes.splice(modes.indexOf(mode))
+    this.modes.splice(this.modes.indexOf(mode))
   }
-  this.emit('modesChanged')
+  this.emit('modes')
 }
 
 util.inherits(IrcChannelUser, EventEmitter)

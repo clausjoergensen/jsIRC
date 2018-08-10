@@ -4,6 +4,7 @@
 const { remote } = require('electron')
 const { Menu } = remote
 
+const IrcChannelUser = require('./irc/IrcChannelUser.js') 
 const Autolinker = require('autolinker') 
 const strftime = require('strftime')
 
@@ -413,19 +414,19 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
   }
 
   var sortedUsers = channel.users.sort((a, b) => {
-    if (a.modes.includes('@') && b.modes.includes('@')) {
+    if (a.modes.includes('o') && b.modes.includes('o')) {
       return a.user.nickName.localeCompare(b.user.nickName)
-    } else if (a.modes.includes('@')) {
+    } else if (a.modes.includes('o')) {
       return -1
-    } else if (b.modes.includes('@')) {
+    } else if (b.modes.includes('o')) {
       return 1
     }
 
-    if (a.modes.includes('+') && b.modes.includes('+')) {
+    if (a.modes.includes('v') && b.modes.includes('v')) {
       return a.user.nickName.localeCompare(b.user.nickName)
-    } else if (a.modes.includes('+')) {
+    } else if (a.modes.includes('v')) {
       return -1
-    } else if (b.modes.includes('+')) {
+    } else if (b.modes.includes('v')) {
       return 1
     }
 
@@ -498,18 +499,29 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
     icon.classList.add('icon-user')
     userElement.appendChild(icon)
     
-    var modePrefix = ''
-    if (channelUser.modes.includes('@')) {
-      modePrefix = '@'
-    } else if (channelUser.modes.includes('+')) {
-      modePrefix = '+'
-    }
-
-    var text = document.createTextNode(' ' + modePrefix + '' + user.nickName)
+    var text = document.createTextNode(' ' + channelUser.modePrefix() + '' + user.nickName)
     userElement.appendChild(text)
+    
+    user.once('nickName', () => {  
+      this.displayChannelUsers(channel)
+    })
+
+    channelUser.once('modes', () => {
+      this.displayChannelUsers(channel)
+    })
     
     userListElement.appendChild(userElement)
   })
+}
+
+IrcChannelUser.prototype.modePrefix = function () {
+  var modePrefix = ''
+  if (this.modes.includes('o')) {
+    return '@'
+  } else if (this.modes.includes('v')) {
+    return '+'
+  }
+  return ''
 }
 
 ClientUI.prototype.focusInputField = function() {
@@ -517,11 +529,47 @@ ClientUI.prototype.focusInputField = function() {
   input.focus()
 }
 
+ClientUI.prototype.sendAction = function (text) {
+  var firstSpace = text.substring(1).indexOf(' ')
+  var action = text.substring(1, firstSpace + 1)
+  var content = text.substring(1).substr(firstSpace + 1)
+
+  if (firstSpace == -1) {
+    action = text.substring(1)
+    content = ''
+  }
+
+  console.log(action.toLowerCase())
+  switch (action.toLowerCase()) {
+    case 'join':
+      this.client.joinChannel(content)
+      break;
+    case 'part':
+      this.selectedChannel.part()
+      break;
+    case 'me':
+      if (this.selectedChannel != null) {
+        this.ctcpClient.action([this.selectedChannel.name], content)
+        this.displayChannelAction(this.selectedChannel, this.client.localUser, content)
+      } else {
+        this.displayServerMessage(null, '* Cannot use /me in this view.')
+      }
+      break;
+    case 'nick':
+      this.client.setNickName(content)
+      break;
+  }
+}
+
 ClientUI.prototype.sendUserInput = function (text) {
-  if (this.selectedChannel != null) {
-    this.selectedChannel.sendMessage(text)
+  if (text[0] == '/') {
+    this.sendAction(text)
   } else {
-    this.displayServerMessage(null, '* You are not on a channel')
+    if (this.selectedChannel != null) {
+      this.selectedChannel.sendMessage(text)
+    } else {
+      this.displayServerMessage(null, '* You are not on a channel')
+    }
   }
 }
 
