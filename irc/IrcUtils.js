@@ -1,8 +1,23 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
+/**
+ * @class
+ *
+ * Utilities for IRC
+ */
 module.exports = class IrcUtils {
 
+  /**
+   * Updates collection of modes from specified mode string.
+   *
+   * The mode string is of form `( "+" | "-" ) ( mode character )+`.
+   *
+   * @public
+   * @static
+   * @param {IrcUser} user The IrcUser for which to look.
+   * @return {IrcChannelUser} The corresponding IrcChannelUser.
+   */
   static updateModes (existingModes, newModes, newModeParameters = null, modesWithParameters = null, callback = null) {
     var result = existingModes
     var i = 0
