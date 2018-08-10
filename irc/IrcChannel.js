@@ -61,6 +61,10 @@ IrcChannel.prototype.userInvited = function (user) {
 }
 
 IrcChannel.prototype.userKicked = function (channelUser, comment = null) {
+  var idx = this.users.indexOf(channelUser)
+  if (idx != -1) {
+    this.users.splice(idx)
+  }  
   this.emit('userKicked', user)
 }
 

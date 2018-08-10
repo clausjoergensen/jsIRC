@@ -471,7 +471,22 @@ IrcClient.prototype.processMessageKick = function (message) {
   var channelList = message.parameters[0].split(',')
   var userList = message.parameters[1]
   var comment = message.parameters[2]
-  // TODO
+  
+  var channelUsers = channels
+    .map((channel, i) => [channel, users[i]])
+    .map((channel, user) => channel.getChannelUser(user))
+
+  channelUsers.forEach(channelUser => {
+      if (channelUser.user == this.localUser) {
+          var channel = channelUser.channel
+          this.channels.splice(this.channels.indexOf(channel))
+
+          channelUser.channel.userKicked(channelUser, comment)
+          this.localUser.partChannel(channel)
+      } else {
+        channelUser.channel.userKicked(channelUser, comment)
+      }
+  })
 }
 
 // Process INVITE messages received from the server.
@@ -761,7 +776,6 @@ IrcClient.prototype.processMessageReplyAway = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   user.awayMessage = message.parameters[2]
   user.isAway = true
-  // TODO
 }
 
 // Process RPL_ISON responses from the server.
@@ -772,19 +786,16 @@ IrcClient.prototype.processMessageReplyIsOn = function (message) {
     var onlineUser = this.getUserFromNickName(name)
     onlineUser.isOnline = true    
   })
-  // TODO
 }
 
 // Process RPL_UNAWAY responses from the server.
 IrcClient.prototype.processMessageReplyUnAway = function (message) {
   this.localUser.isAway = false
-  // TODO
 }
 
 // Process RPL_NOWAWAY responses from the server.
 IrcClient.prototype.processMessageReplyNowAway = function (message) {
   this.localUser.isAway = true
-  // TODO
 }
 
 // Process RPL_WHOISUSER responses from the server.
@@ -793,7 +804,6 @@ IrcClient.prototype.processMessageReplyWhoIsUser = function (message) {
   user.userName = message.parameters[2]
   user.hostName = message.parameters[3]
   user.realName = message.parameters[5]
-  // TODO
 }
 
 // Process RPL_WHOISSERVER responses from the server.
@@ -801,14 +811,12 @@ IrcClient.prototype.processMessageReplyWhoIsServer = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   user.serverName = message.parameters[2]
   user.serverInfo = message.parameters[3]
-  // TODO
 }
 
 // Process RPL_WHOISOPERATOR responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsOperator = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   user.isOperator = true
-  // TODO
 }
 
 // Process RPL_WHOWASUSER responses from the server.
@@ -817,7 +825,6 @@ IrcClient.prototype.processMessageReplyWhoWasUser = function (message) {
   user.userName = message.parameters[2]
   user.hostName = message.parameters[3]
   user.realName = message.parameters[5]
-  // TODO
 }
 
 // Process RPL_ENDOFWHO responses from the server.
