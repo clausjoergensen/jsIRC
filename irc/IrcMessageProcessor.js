@@ -4,6 +4,8 @@
 const IrcChannel = require('./IrcChannel.js')
 const IrcChannelType = require('./IrcChannelType.js')
 const IrcChannelUser = require('./IrcChannelUser.js')
+const IrcReply = require('./IrcReply.js')
+const IrcError = require('./IrcError.js')
 
 const regexNickName = new RegExp(/([^!@]+)/)
 const regexUserName = new RegExp(/([^!@]+)/)
@@ -159,6 +161,16 @@ module.exports = class IrcMessageProcessor {
         this.processMessageNumericError(message)
       } else {
         if (this.client.loggingEnabled) {
+          var replyId = IrcReply[message.command]
+          if (replyId != null) {
+            console.log(`Unsupported command ${replyId} (${message.command})`)
+            return
+          }
+          var errorId = IrcError[message.command]
+          if (errorId != null) {
+            console.log(`Unsupported command ${errorId} (${message.command})`)
+            return
+          }
           console.log(`Unsupported command '${message.command}'`)
         }
       }
