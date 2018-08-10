@@ -32,6 +32,13 @@ module.exports = class IrcServer extends EventEmitter {
     return this._hostName
   }
 
+  /*
+   * Gets the name of the source, as understood by the IRC protocol.
+   */
+  get name() {
+    return this.hostName
+  } 
+
   /**
    * Returns a string representation of this instance.
    *

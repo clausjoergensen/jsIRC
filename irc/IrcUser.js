@@ -53,6 +53,13 @@ module.exports = class IrcUser extends EventEmitter {
     return true
   }
 
+  /*
+   * Gets the name of the source, as understood by the IRC protocol.
+   */
+  get name() {
+    return this.nickName
+  } 
+
   /**
    *
    * @public
