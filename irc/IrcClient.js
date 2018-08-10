@@ -35,12 +35,23 @@ module.exports = class IrcClient extends EventEmitter {
   */
   constructor () {
     super()
+
     this.loggingEnabled = false
     this.socket = new net.Socket()
     this.socket.setEncoding('utf8')
     this.users = []
     this.channels = []
     this.servers = []
+    
+    this.serverAvailableUserModes = []
+    this.serverAvailableChannelModes = []
+    this.serverSupportedFeatures = {}
+    this.channelUserModes = ['o', 'v']
+    this.channelUserModesPrefixes = { '@': 'o', '+': 'v' }
+    this.listedServerLinks = []
+    this.listedChannels = []
+    this.listedStatsEntries = []
+
     this._messageProcessor = new IrcMessageProcessor(this)
   }
 
@@ -214,6 +225,14 @@ module.exports = class IrcClient extends EventEmitter {
     this.sendMessageTopic(channelName, topic)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
+  setModes (channel, modes, modeParameters) {
+    this.sendMessageChannelMode(channel.name, modes, modeParameters)
+  } 
   /**
    * 
    *

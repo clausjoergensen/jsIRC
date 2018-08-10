@@ -72,7 +72,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * @param {String} [comment] The comment to give for the kick, or null for none.
    */
   kick (comment = null) {
-    channel.kick(user.nickName, comment)
+    this.channel.kick(this.user.nickName, comment)
   }
 
   /**
@@ -81,7 +81,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * @public
    */
   op () {
-    channel.setModes('+0', user.nickName)
+    this.channel.setModes('+o', [this.user.nickName])
   }
 
   /**
@@ -90,7 +90,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * @public
    */
   deop() {
-    channel.setModes('-o', user.nickName)
+    this.channel.setModes('-o', [this.user.nickName])
   }
 
   /**
@@ -99,16 +99,25 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * @public
    */
   voice() {
-    channel.setModes('+v', user.nickName)
+    this.channel.setModes('+v', [this.user.nickName])
   }
 
   /**
-   * Devoices the user in the channel
+   * Devoices the user in the channel.
    *
    * @public
    */
   devoice() {
-    channel.setModes('-v', user.nickName)
+    this.channel.setModes('-v', [this.user.nickName])
+  }
+
+  /**
+   * Bans the user from the channel.
+   *
+   * @public
+   */
+  ban() {
+    this.channel.setModes('+b', [this.user.nickName])
   }
 
   /**

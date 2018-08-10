@@ -227,7 +227,7 @@ module.exports = class IrcChannel extends EventEmitter {
     this._modes = IrcUtils.updateModes(this.modes, 
       newModes,
       newModeParameters,
-      client.channelUserModes, 
+      this.client.channelUserModes, 
       (add, mode, parameter) => {
         var channelUser = this.users.find(u => u.user.nickName == parameter)
         channelUser.modeChanged(add, mode)

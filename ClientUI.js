@@ -464,19 +464,37 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
         } 
       },
       { type: 'separator' },
-      //{ label: 'Control', submenu: [
-      //  { label: 'Ignore' },
-      //  { label: 'Unignore' },
-      //  { label: 'Op' },
-      //  { label: 'Deop' },
-      //  { label: 'Voice' },
-      //  { label: 'Devoice' },
-      //  { label: 'Kick' },
-      //  { label: 'Kick (Why)' },
-      //  { label: 'Ban' },
-      //  { label: 'Ban, Kick' },
-      //  { label: 'Ban, Kick (Why)' }
-      //]},
+      { label: 'Control', submenu: [
+        { label: 'Op', click: () => {
+          channelUser.op()
+        } },
+        { label: 'Deop', click: () => {
+          channelUser.deop()          
+        } },
+        { label: 'Voice', click: () => {
+          channelUser.voice()
+        } },
+        { label: 'Devoice', click: () => {
+          channelUser.devoice()
+        } },
+        { label: 'Kick', click: () => {
+          channelUser.kick()
+        } },
+        { label: 'Kick (Why)', click: () => {
+          channelUser.kick('reason')
+        } },
+        { label: 'Ban', click: () => {
+          channelUser.ban()
+        } },
+        { label: 'Ban, Kick', click: () => {
+          channelUser.ban()
+          channelUser.kick()
+        } },
+        { label: 'Ban, Kick (Why)', click: () => {
+          channelUser.ban()
+          channelUser.kick('why')
+        } }
+      ]},
       { label: 'CTCP', submenu: [
         { label: 'Ping', click: () => {
             this.ctcpClient.ping([user.nickName])

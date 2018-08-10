@@ -34,14 +34,6 @@ module.exports = class IrcMessageProcessor {
   */
   constructor (client) {
     this._client = client
-    this._serverAvailableUserModes = []
-    this._serverAvailableChannelModes = []
-    this._serverSupportedFeatures = {}
-    this._channelUserModes = ['o', 'v']
-    this._channelUserModesPrefixes = { '@': 'o', '+': 'v' }
-    this._listedServerLinks = []
-    this._listedChannels = []
-    this._listedStatsEntries = []
     this._messageProcessors = {
       'NICK': this.processMessageNick.bind(this),
       'QUIT': this.processMessageQuit.bind(this),
@@ -113,37 +105,6 @@ module.exports = class IrcMessageProcessor {
     return this._client
   }
 
-  get serverAvailableUserModes () {
-    return this._serverAvailableUserModes
-  }
-
-  get serverAvailableChannelModes () {
-    return this._serverAvailableChannelModes
-  }
-  
-  get serverSupportedFeatures () {
-    return this._serverSupportedFeatures
-  }
-
-  get channelUserModes () {
-    return this._channelUserModes
-  }
-
-  get channelUserModesPrefixes () {
-    return this._channelUserModesPrefixes
-  }
-
-  get listedServerLinks () {
-    return this._listedServerLinks
-  }
-
-  get listedChannels () {
-    return this._listedChannels
-  }
-
-  get listedStatsEntries () {
-    return this._listedStatsEntries  
-  }
 
   /**
    * Processes a IRC message with the appropriate message handler.
@@ -422,7 +383,7 @@ module.exports = class IrcMessageProcessor {
         var paramValue = paramParts.length == 1 ? null : paramParts[1]
         
         this.handleISupportParameter(paramName, paramValue)
-        this.serverSupportedFeatures[paramName] = paramValue
+        this.client.serverSupportedFeatures[paramName] = paramValue
       }
       
       this.client.emit('serverSupportedFeaturesReceived')
@@ -963,7 +924,7 @@ module.exports = class IrcMessageProcessor {
 
   getUserModeAndIdentifier (identifier) {
     var mode = identifier[0]
-    let channelUserMode = this._channelUserModesPrefixes[mode]
+    let channelUserMode = this.channelUserModesPrefixes[mode]
     if (channelUserMode != null) {
       return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
     }
@@ -980,10 +941,10 @@ module.exports = class IrcMessageProcessor {
         throw 'Message ISupport Prefix is Invalid.'
       }
 
-      this._channelUserModes = []
-      this._channelUserModes = modes.split('')
+      this.channelUserModes = []
+      this.channelUserModes = modes.split('')
 
-      this._channelUserModesPrefixes = {}
+      this.channelUserModesPrefixes = {}
       for (var i = 0; i < prefixes.length; i++) {
         this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
       }
