@@ -40,7 +40,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Gets the client to which the channel belongs.
    *
    * @public
-   * @return {IrcClient} The client to which the channel belongs.
+   * @return {IrcClient} The IRC client.
    */
    get client() {
     return this._client

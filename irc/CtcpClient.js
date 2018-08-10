@@ -11,14 +11,28 @@ const taggedDataDelimeterChar = String.fromCharCode(0x01)
 const lowLevelQuotingEscapeChar = String.fromCharCode(0x10)
 const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
 
+/**
+ * @class CtcpClient
+ * @extends EventEmitter
+ *
+ * Represents a client that communicates with a server using CTCP (Client to Client Protocol), 
+ * operating over an IRC connection.
+ */
 module.exports = class CtcpClient extends EventEmitter {
 
+  /*
+   * Constructs a new CtcpClient for a given IrcClient.
+   *
+   * @access internal
+   * @constructor
+   * @param {IrcClient} client The IRC client by which the CTCP client should communicate.
+  */
   constructor (client) {
     super()
-    this.client = client
-    this.client.on('connected', this.connected.bind(this))
-    this.client.on('disconnected', this.disconnected.bind(this))
-    this.messageProcessors = {
+    this._client = client
+    this._client.on('connected', this.connected.bind(this))
+    this._client.on('disconnected', this.disconnected.bind(this))
+    this._messageProcessors = {
       'ACTION': this.processMessageAction.bind(this),
       'VERSION': this.processMessageVersion.bind(this),
       'PING': this.processMessagePing.bind(this),
@@ -26,22 +40,85 @@ module.exports = class CtcpClient extends EventEmitter {
       'FINGER': this.processMessageFinger.bind(this),
       'CLIENTINFO': this.processMessageClientInfo.bind(this)
     }
-    this.clientVersion = '0.0.1'
-    this.clientName = ''
+    this._clientVersion = '0.0.1'
+    this._clientName = ''
   }
 
+  /**
+   * Gets the IRC client by which the CTCP client should communicate.
+   *
+   * @public
+   * @return {IrcClient} The IRC client.
+   */
+   get client() {
+    return this._client
+   }
+
+  /**
+   * Gets the client version.
+   */
+  get clientVersion () {
+    return this._clientVersion
+  }
+
+  /**
+   * Sets the client version.
+   */
+  set clientVersion (value) {
+    this._clientVersion = value
+  }
+
+  /**
+   * Gets the client name.
+   */
+  get clientName () {
+    return this._clientName
+  }
+
+  /**
+   * Sets the client name.
+   */
+  set clientName (value) {
+    this._clientName = value
+  }
+
+  /**
+   * Sends an action message to the specified list of users.
+   *
+   * @public
+   * @param {Array} targets A list of users to which to send the request.
+   * @param {String} text The text of the message.
+   */
   action (targets, text) {
     this.sendMessageAction(targets, text)
   }
 
+  /**
+   * Gets the local date/time of the specified list of users.
+   *
+   * @public
+   * @param {Array} targets A list of users to which to send the request.
+   */
   time (targets) {
     this.sendMessageTime(targets, null, false)
   }
 
+  /**
+   * Gets the client version of the specified list of users.
+   *
+   * @public
+   * @param {Array} targets A list of users to which to send the request.
+   */
   version (targets) {
    this.sendMessageVersion(targets, null, false) 
   }
 
+  /**
+   * Pings the specified list of users.
+   *
+   * @public
+   * @param {Array} targets A list of users to which to send the request.
+   */
   ping (targets) {
     var now = new Date()
     this.sendMessagePing(targets, now.getTime(), false)
@@ -108,7 +185,7 @@ module.exports = class CtcpClient extends EventEmitter {
 
     this.emit('rawMessage', message)
 
-    var messageProcessor = this.messageProcessors[message.tag]
+    var messageProcessor = this._messageProcessors[message.tag]
     if (messageProcessor != null) {
       messageProcessor(message)
     } else {
