@@ -8,8 +8,8 @@ const IrcServer = require('./IrcServer.js')
 const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcChannelType = require('./IrcChannelType.js')
 const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
-const CtcpClient = require('./CtcpClient.js')
 const IrcClient = require('./IrcClient.js')
+const CtcpClient = require('./CtcpClient.js')
 
 module.exports = {
   IrcUser: IrcUser, 

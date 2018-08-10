@@ -3,8 +3,7 @@
 
 const { remote } = require('electron')
 const { Menu } = remote
-
-const IrcChannelUser = require('./irc/IrcChannelUser.js') 
+const { IrcChannelUser } = require('./irc/index.js') 
 const Autolinker = require('autolinker') 
 const strftime = require('strftime')
 

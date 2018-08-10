@@ -7,7 +7,7 @@ const ClientUI = require('./ClientUI.js')
 const packageInfo = require('./package.json')
 
 const client = new IrcClient()
-client.loggingEnabled = false
+client.loggingEnabled = true
 
 const ctcpClient = new CtcpClient(client)
 ctcpClient.clientName = packageInfo.name

@@ -94,7 +94,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @public
    */
   get userName() {
-    return this._client
+    return this._userName
   }
 
   set userName(value) {
@@ -107,7 +107,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @public
    */
   get realName() {
-    return this._client
+    return this._realName
   }
 
   set realName(value) {
@@ -120,7 +120,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @public
    */
   get realName() {
-    return this._client
+    return this._realName
   }
 
   set realName(value) {
@@ -200,7 +200,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @public
    */
   get awayMessage() {
-    return this._client
+    return this._awayMessage
   }
 
   set awayMessage(value) {
@@ -227,7 +227,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @public
    */ 
   whoIs () {
-    this._client.queryWhoIs(this._nickName)
+    this.client.queryWhoIs(this._nickName)
   }
 
   /**
@@ -237,7 +237,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @param {Int} [entriesCount] The maximum number of entries that the server should return. Specify -1 for unlimited.
    */
   whoWas (entriesCount = -1) {
-    this._client.queryWhoWas([this._nickName], entriesCount)
+    this.client.queryWhoWas([this._nickName], entriesCount)
   }
 
   /**
@@ -249,7 +249,7 @@ module.exports = class IrcUser extends EventEmitter {
    */
   getChannelUsers () {
     var channelUsers = []
-    this._client.channels.forEach(channel => {
+    this.client.channels.forEach(channel => {
       channel.users.forEach(channelUser => {
         if (channelUser.user == this) {
           channelUsers.push(channelUser)
