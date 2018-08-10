@@ -5,21 +5,21 @@ const util = require('util')
 const events = require('events')
 const { EventEmitter } = events
 
-function IrcChannelUser (user, modes = null) {
-  this.user = user
-  this.modes = modes || []
-  this.channel = null
-}
+module.exports = class IrcChannelUser extends EventEmitter {
 
-IrcChannelUser.prototype.modeChanged = function (add, mode) {
-  if (add) {
-    this.modes.push(mode)
-  } else {
-    this.modes.splice(this.modes.indexOf(mode))
+  constructor (user, modes = null) {
+    super()
+    this.user = user
+    this.modes = modes || []
+    this.channel = null
   }
-  this.emit('modes')
+
+  modeChanged (add, mode) {
+    if (add) {
+      this.modes.push(mode)
+    } else {
+      this.modes.splice(this.modes.indexOf(mode))
+    }
+    this.emit('modes')
+  }
 }
-
-util.inherits(IrcChannelUser, EventEmitter)
-
-module.exports = IrcChannelUser

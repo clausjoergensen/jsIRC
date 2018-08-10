@@ -5,10 +5,10 @@ const util = require('util')
 const events = require('events')
 const { EventEmitter } = events
 
-function IrcServer (hostName) {
+module.exports = class IrcServer extends EventEmitter {
+
+  constructor (hostName) {
+    super()
     this.hostName = hostName
+  }
 }
-
-util.inherits(IrcServer, EventEmitter)
-
-module.exports = IrcServer

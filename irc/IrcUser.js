@@ -6,7 +6,10 @@ const events = require('events')
 const { EventEmitter } = events
 const IrcUtils = require('./IrcUtils.js')
 
-function IrcUser(client) {
+module.exports = class IrcUser extends EventEmitter {
+
+  constructor (client) {
+    super()
     this.client = client
     this.isOnline = false
     this.nickName = null
@@ -20,62 +23,59 @@ function IrcUser(client) {
     this.isAway = false
     this.awayMessage = null
     this.isLocalUser = false
-}
+  }
 
-IrcUser.prototype.quit = function (comment) {
-  var allChannelUsers = []
-  client.channels.forEach(channel => {
-    channel.users.forEach(channelUser => {
-      if (channelUser.user == this) {
-        allChannelUsers.push(channelUser)
-      }
+  quit (comment) {
+    var allChannelUsers = []
+    client.channels.forEach(channel => {
+      channel.users.forEach(channelUser => {
+        if (channelUser.user == this) {
+          allChannelUsers.push(channelUser)
+        }
+      })
     })
-  })
 
-  allChannelUsers.forEach(cu => cu.channel.userQuit(cu, comment))
+    allChannelUsers.forEach(cu => cu.channel.userQuit(cu, comment))
 
-  this.emit('quit', comment)
-}
+    this.emit('quit', comment)
+  }
 
-IrcUser.prototype.modesChanged = function (newModes) {
-  this.modes = IrcUtils.updateModes(this.modes, newModes.split(''))
-  this.emit('modes)')
-}
+  modesChanged (newModes) {
+    this.modes = IrcUtils.updateModes(this.modes, newModes.split(''))
+    this.emit('modes)')
+  }
 
-IrcUser.prototype.joinChannel = function (channel) {
-  this.emit('joinedChannel', channel) 
-}
+  joinChannel (channel) {
+    this.emit('joinedChannel', channel) 
+  }
 
-IrcUser.prototype.partChannel = function (channel) {
- this.emit('partedChannel', channel)  
-}
+  partChannel (channel) {
+   this.emit('partedChannel', channel)  
+  }
 
-IrcUser.prototype.inviteReceived = function (source, channel) {
-  this.emit('invite', channel, source)
-}
+  inviteReceived (source, channel) {
+    this.emit('invite', channel, source)
+  }
 
-IrcUser.prototype.actionReceived = function (source, targets, messageText) {
-  this.emit('action', source, messageText)
-}
+  actionReceived (source, targets, messageText) {
+    this.emit('action', source, messageText)
+  }
 
-IrcUser.prototype.messageReceived = function (source, targets, messageText) {
-  var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
-  this.emit('previewMessage', previewMessageEventArgs)
-  
-  if (!previewMessageEventArgs.handled) {
-    this.emit('message', source, targets, messageText)
+  messageReceived (source, targets, messageText) {
+    var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+    this.emit('previewMessage', previewMessageEventArgs)
+    
+    if (!previewMessageEventArgs.handled) {
+      this.emit('message', source, targets, messageText)
+    }
+  }
+
+  noticeReceived (source, targets, noticeText) {
+    var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+    this.emit('previewNotice', previewNoticeEventArgs)
+    
+    if (!previewNoticeEventArgs.handled) {
+      this.emit('notice', source, targets, noticeText)
+    }
   }
 }
-
-IrcUser.prototype.noticeReceived = function (source, targets, noticeText) {
-  var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
-  this.emit('previewNotice', previewNoticeEventArgs)
-  
-  if (!previewNoticeEventArgs.handled) {
-    this.emit('notice', source, targets, noticeText)
-  }
-}
-
-util.inherits(IrcUser, EventEmitter)
-
-module.exports = IrcUser
