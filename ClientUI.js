@@ -30,6 +30,30 @@ function ClientUI (client, ctcpClient) {
 ClientUI.prototype.createServerView = function () {
   var serverView = document.createElement('div')
   serverView.classList.add('server-view')
+
+  const serverMenuTemplate = [
+    { label: 'Network Info', click: () => {
+      this.client.getNetworkInfo()
+    }},
+    { label: 'Time', click: () => {
+      this.client.getServerTime()
+    }},
+    { label: 'Message of the Day', click: () => {
+      this.client.getMessageOfTheDay()
+    }},
+    { type: 'separator' },
+    { label: 'Quit', click: () => {
+      process.exit()
+    }}
+  ]
+
+  const serverMenu = Menu.buildFromTemplate(serverMenuTemplate)
+
+  serverView.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    serverMenu.popup({ window: remote.getCurrentWindow() })
+  }, false)
+
   document.getElementById('right-column').appendChild(serverView)
   return serverView  
 }
@@ -201,6 +225,13 @@ ClientUI.prototype.addChannelToList = function (channel) {
   var channelMessageView = document.createElement('div') 
   channelMessageView.classList.add('channel-message-view')
   channelView.appendChild(channelMessageView)
+
+  const channelMessageViewMenu = Menu.buildFromTemplate([{ label: 'Channel Modes'}])
+
+  channelMessageView.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    channelMessageViewMenu.popup({ window: remote.getCurrentWindow() })
+  }, false)
   
   this.channelViews[channel.name] = channelTableView
   document.getElementById('right-column').appendChild(channelTableView)

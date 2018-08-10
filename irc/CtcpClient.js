@@ -99,6 +99,16 @@ module.exports = class CtcpClient extends EventEmitter {
    * @public
    * @param {Array} targets A list of users to which to send the request.
    */
+  finger (targets) {
+    this.sendMessageFinger(targets, null, false)
+  }
+
+  /**
+   * Gets the local date/time of the specified list of users.
+   *
+   * @public
+   * @param {Array} targets A list of users to which to send the request.
+   */
   time (targets) {
     this.sendMessageTime(targets, null, false)
   }

@@ -608,7 +608,7 @@ module.exports = class IrcMessageProcessor {
   // Process RPL_WHOISIDLE responses from the server.
   processMessageReplyWhoIsIdle (message) {
     var user = this.client.getUserFromNickName(message.parameters[1])
-    user.idleDuration = intParse(message.parameters[2])
+    user.idleDuration = parseInt(message.parameters[2])
   }
 
   // Process RPL_ENDOFWHOIS responses from the server.
