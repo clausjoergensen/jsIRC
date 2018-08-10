@@ -5,13 +5,13 @@ const {app, BrowserWindow, Menu} = require('electron')
 
 var mainWindow = null
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', () => {
   if (process.platform != 'darwin') {
     app.quit()
   }
 })
 
-app.on('ready', function() {
+app.on('ready', () => {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -21,7 +21,7 @@ app.on('ready', function() {
 
   mainWindow.loadURL('file://' + __dirname + '/index.html')
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', () => {
     mainWindow = null
   })
 
