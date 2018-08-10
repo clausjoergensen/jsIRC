@@ -120,7 +120,7 @@ ClientUI.prototype.localUserJoinedChannel = function (channel) {
     this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
   })
 
-  channel.on('topic', (source, topic) => { this.displayChannelTopic(channel) })
+  channel.on('topic', (source, topic) => { this.displayChannelTopic(channel, source) })
   channel.on('userList', () => { this.displayChannelUsers(channel) })
   channel.on('userJoinedChannel', (user) => { this.displayChannelUsers(channel) })
   channel.on('userLeftChannel', (user) => { this.displayChannelUsers(channel) })
@@ -396,13 +396,17 @@ ClientUI.prototype.displayChannelMessage = function (channel, source, text) {
   }
 }
 
-ClientUI.prototype.displayChannelTopic = function (channel) {
+ClientUI.prototype.displayChannelTopic = function (channel, source = null) {
   const channelTableView = this.channelViews[channel.name]
   const titleView = channelTableView.getElementsByClassName('channel-title-label')[0]
-  if (channel.topic == null) {
+  if (channel.topic == null || channel.topic.length == 0) {
     titleView.innerHTML = '(No Channel Topic)'
   } else {
     titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })    
+  }
+  
+  if (source != null) {
+    this.displayChannelAction(channel, source, `changed topic to '${channel.topic}'`)
   }
 }
 
@@ -539,7 +543,6 @@ ClientUI.prototype.sendAction = function (text) {
     content = ''
   }
 
-  console.log(action.toLowerCase())
   switch (action.toLowerCase()) {
     case 'join':
       this.client.joinChannel(content)
@@ -557,6 +560,11 @@ ClientUI.prototype.sendAction = function (text) {
       break;
     case 'nick':
       this.client.setNickName(content)
+      break;
+    case 'topic':
+      if (this.selectedChannel != null) {
+        this.client.setTopic(this.selectedChannel.name, content)
+      }
       break;
   }
 }

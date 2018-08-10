@@ -189,6 +189,10 @@ IrcClient.prototype.setNickName = function (nickName) {
   this.sendMessageNick(nickName)
 }
 
+IrcClient.prototype.setTopic = function (channelName, topic) {
+  this.sendMessageTopic(channelName, topic)
+}
+
 IrcClient.prototype.sendMessage = function (target, messageText) {
   this.sendMessagePrivateMessage([target], messageText)
 }
