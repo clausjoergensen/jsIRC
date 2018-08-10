@@ -125,6 +125,11 @@ div#network-list
     margin-right: 0px
 }
 
+.channel-message-error
+{
+    color: red;
+}
+
 .server-view
 {
     height: calc(100vh - 57px);

@@ -9,6 +9,9 @@ const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcChannelType = require('./IrcChannelType.js')
 const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
 const IrcClient = require('./IrcClient.js')
+const IrcReply = require('./IrcReply.js')
+const IrcError = require('./IrcError.js')
+
 const CtcpClient = require('./CtcpClient.js')
 
 module.exports = {
@@ -20,5 +23,7 @@ module.exports = {
   IrcChannelType: IrcChannelType, 
   IrcServerStatisticalEntry: IrcServerStatisticalEntry, 
   IrcClient: IrcClient,
+  IrcReply: IrcReply,
+  IrcError: IrcError,
   CtcpClient: CtcpClient
 }

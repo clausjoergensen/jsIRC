@@ -3,7 +3,7 @@
 
 const { remote } = require('electron')
 const { Menu } = remote
-const { IrcChannelUser } = require('./irc/index.js') 
+const { IrcChannelUser, IrcError } = require('./irc/index.js') 
 const Autolinker = require('autolinker') 
 const strftime = require('strftime')
 const prompt = require('electron-prompt');
@@ -63,24 +63,26 @@ ClientUI.prototype.setupEventListeners = function() {
   // IRC Client Event Listeners
   this.client.on('connectionError', error => {
     if (error.code == 'ECONNREFUSED') {
-      this.displayServerMessage(null, `* Couldn't connect to ${error.address}:${error.port}`, ['server-error'])
+      this.displayServerError(`* Couldn't connect to ${error.address} (${error.port})`)
     } else if (error.code == 'ECONNRESET') {
-      this.displayServerMessage(null, `* Disconnected (Connection Reset)`, ['server-error'])
+      this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
     }
   })
 
   this.client.on('error', errorMessage => {
-    this.displayServerMessage(null, '* ' + errorMessage)
+    this.displayServerError('* ' + errorMessage)
   })
 
   this.client.on('protocolError', (command, errorParameters, errorMessage) => {
     switch (command) {
       case 433: // ERR_NICKNAMEINUSE
-        this.displayServerMessage(null, `Nickname '${errorParameters[0]}' is already in use.`, ['server-error'])
-        this.chatInput.value = '/nick '
+        this.displayServerError(`Nickname '${errorParameters[0]}' is already in use.`)
         break
+      case 482: // ERR_CHANOPRIVSNEEDED
+        this.displayChannelError(errorParameters[0], errorMessage)
       default:
-        console.log(`Unsupported protocol error '${command}'.`, errorParameters, errorMessage)
+        var errorName = IrcError[command]
+        console.log(`Unsupported protocol error ${errorName}(${command}).`, errorParameters, errorMessage)
         break
     }
   })
@@ -352,6 +354,10 @@ ClientUI.prototype.displayServerAction = function (text) {
   }
 }
 
+ClientUI.prototype.displayServerError = function (text) {
+  this.displayServerMessage(null, text, ['server-error'])  
+}
+
 ClientUI.prototype.displayServerMessage = function (source, text, styles = []) {
   var senderName = ''
   if (source != null) {
@@ -404,7 +410,23 @@ ClientUI.prototype.displayServerNotice = function (source, text) {
   }
 }
 
-ClientUI.prototype.displayChannelAction = function (channel, source, text) {
+ClientUI.prototype.displayChannelError = function (channelName, errorMessage) {
+  var senderName = '* ' + this.client.localUser.nickName
+  var now = new Date()
+  var formattedText = `[${strftime('%H:%M', now)}] ${senderName}: ${errorMessage}`
+  
+  var paragraph = document.createElement('p')
+  paragraph.classList.add('channel-message')
+  paragraph.classList.add('channel-message-error')
+  paragraph.innerText = formattedText
+  
+  const channelTableView = this.channelViews[channelName]
+  const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
+  messageView.appendChild(paragraph)
+  messageView.scrollTop = messageView.scrollHeight    
+}
+
+ClientUI.prototype.displayChannelAction = function (channelName, source, text) {
   var senderName = '* ' + source.nickName
   var now = new Date()
   var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
@@ -413,7 +435,9 @@ ClientUI.prototype.displayChannelAction = function (channel, source, text) {
   paragraph.classList.add('channel-message')
   paragraph.innerText = formattedText
   
-  const channelTableView = this.channelViews[channel.name]
+  styles.forEach(s => paragraph.classList.add(s))
+
+  const channelTableView = this.channelViews[channelName]
   const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
   messageView.appendChild(paragraph)
   messageView.scrollTop = messageView.scrollHeight  
@@ -458,7 +482,7 @@ ClientUI.prototype.displayChannelTopic = function (channel, source = null) {
   }
   
   if (source != null) {
-    this.displayChannelAction(channel, source, `changed topic to '${channel.topic}'`)
+    this.displayChannelAction(channel.name, source, `changed topic to '${channel.topic}'`)
   }
 }
 
@@ -572,7 +596,7 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
       { label: 'Slap', click: () => {
           var slapMessage = 'slaps Windcape around a bit with a large trout'
           this.ctcpClient.action([channel.name], slapMessage)
-          this.displayChannelAction(channel, this.client.localUser, slapMessage)
+          this.displayChannelAction(channel.name, this.client.localUser, slapMessage)
         } 
       }
     ]
@@ -641,7 +665,7 @@ ClientUI.prototype.sendAction = function (text) {
     case 'me':
       if (this.selectedChannel != null) {
         this.ctcpClient.action([this.selectedChannel.name], content)
-        this.displayChannelAction(this.selectedChannel, this.client.localUser, content)
+        this.displayChannelAction(this.selectedChannel.name, this.client.localUser, content)
       } else {
         this.displayServerMessage(null, '* Cannot use /me in this view.')
       }

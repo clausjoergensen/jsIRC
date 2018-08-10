@@ -299,7 +299,6 @@ module.exports = class IrcClient extends EventEmitter {
   }
 
   connectionClosed (reason) {
-    this.emit('disconnected', 'Connection Closed')
     this.localUser = null
   }
 
