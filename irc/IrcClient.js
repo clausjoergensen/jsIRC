@@ -195,12 +195,12 @@ module.exports = class IrcClient extends EventEmitter {
     this.sendMessageTopic(channelName, topic)
   }
 
-  sendMessage (target, messageText) {
-    this.sendMessagePrivateMessage([target], messageText)
+  sendMessage (targets, messageText) {
+    this.sendMessagePrivateMessage(targets, messageText)
   }
 
-  sendNotice (target, noticeText) {
-    this.sendMessagePrivateMessage([target], noticeText)
+  sendNotice (targets, noticeText) {
+    this.sendMessagePrivateMessage(targets, noticeText)
   }
 
   sendRawMessage (message) {

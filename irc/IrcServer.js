@@ -38,6 +38,6 @@ module.exports = class IrcServer extends EventEmitter {
    * @return {String} A string that represents this instance.
    */
   toString () {
-    return this._hostName
+    return this.hostName
   }
 }

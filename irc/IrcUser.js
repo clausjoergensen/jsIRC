@@ -36,32 +36,35 @@ module.exports = class IrcUser extends EventEmitter {
   }
 
   /**
+   * Gets the client on which the user exists.
    *
    * @public
-   * @return {}
    */
   get client() {
     return this._client
   }
 
   /**
+   * Gets a read-only collection of the modes the user currently has.
    *
    * @public
-   * @return {}
    */
   get isLocalUser() {
-    return false
+    return true
   }
 
   /**
    *
    * @public
-   * @return {}
    */
   get isOnline() {
     return this._isOnline
   }
 
+  /**
+   *
+   * @public
+   */
   set isOnline(value) {
     this._isOnline = value
   }
@@ -69,12 +72,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get nickName() {
     return this._nickName
   }
 
+  /**
+   *
+   * @public
+   */
   set nickName(value) {
     this._nickName = value
   }
@@ -82,12 +88,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get userName() {
     return this._client
   }
 
+  /**
+   *
+   * @public
+   */
   set userName(value) {
     this._userName = value
   }
@@ -95,12 +104,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get realName() {
     return this._client
   }
 
+  /**
+   *
+   * @public
+   */
   set realName(value) {
     this._realName = value
   }
@@ -108,12 +120,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get idleDuration() {
     return this._idleDuration
   }
 
+  /**
+   *
+   * @public
+   */
   set idleDuration(value) {
     this._idleDuration = value
   }
@@ -121,12 +136,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get isOperator() {
     return this._isOperator
   }
 
+  /**
+   *
+   * @public
+   */
   set isOperator(value) {
     this._isOperator = value
   }
@@ -134,12 +152,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get serverName() {
     return this._serverName
   }
 
+  /**
+   *
+   * @public
+   */
   set serverName(value) {
     this._serverName = value
   }
@@ -147,12 +168,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get serverInfo() {
     return this._serverInfo
   }
 
+  /**
+   *
+   * @public
+   */
   set serverInfo(value) {
     this._serverInfo = value
   }
@@ -160,12 +184,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get isAway() {
     return this._isAway
   }
 
+  /**
+   *
+   * @public
+   */
   set isAway(value) {
     this._isAway = value
   }
@@ -173,12 +200,15 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    *
    * @public
-   * @return {}
    */
   get awayMessage() {
     return this._client
   }
 
+  /**
+   *
+   * @public
+   */
   set awayMessage(value) {
     this._awayMessage = value
   }
@@ -227,7 +257,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @return {String} A string that represents this instance.
    */
   toString () {
-    return this._nickName
+    return this.nickName
   }
 
   // - Internal Methods
