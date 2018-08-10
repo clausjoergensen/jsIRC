@@ -242,6 +242,7 @@ module.exports = class IrcChannel extends EventEmitter {
         var channelUser = this.users.find(u => u.user.nickName == parameter)
         channelUser.modeChanged(add, mode)
       })
+    this.emit('modes')
   }
 
   actionReceived (source, targets, messageText) {
