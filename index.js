@@ -15,6 +15,11 @@ ctcpClient.clientVersion = packageInfo.version
 
 var clientUI = null
 
+function cmd(message) {
+  client.sendRawMessage(message)
+  return true
+}
+
 document.addEventListener('DOMContentLoaded', function (event) {
   clientUI = new ClientUI(client, ctcpClient)
 
