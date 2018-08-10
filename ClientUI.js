@@ -7,6 +7,7 @@ const { IrcChannelUser } = require('./irc/index.js')
 const Autolinker = require('autolinker') 
 const strftime = require('strftime')
 const prompt = require('electron-prompt');
+const channelModesPrompt = require('./channel-prompt.js');
 
 function ClientUI (client, ctcpClient) {
   this.client = client
@@ -226,7 +227,11 @@ ClientUI.prototype.addChannelToList = function (channel) {
   channelMessageView.classList.add('channel-message-view')
   channelView.appendChild(channelMessageView)
 
-  const channelMessageViewMenu = Menu.buildFromTemplate([{ label: 'Channel Modes'}])
+  const channelMessageViewMenu = Menu.buildFromTemplate([{ 
+    label: 'Channel Modes', click: () => {
+      channelModesPrompt(channel.name)
+    }
+  }])
 
   channelMessageView.addEventListener('contextmenu', (e) => {
     e.preventDefault()

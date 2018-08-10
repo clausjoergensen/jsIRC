@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
+        <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.5em;
+            color: #333;
+            background-color: #fff;
+        }
+
+        #container {
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            overflow: auto;
+
+        }
+
+        #form {
+            width: 100%;
+        }
+
+        #label {
+            max-width: 100%;
+            max-height: 100%;
+            margin-bottom: .8em;
+            padding: 0 .5em;
+        }
+
+        #data {
+            border-radius: 2px;
+            background: #fff;
+            width: 90%;
+            padding: .4em .5em;
+            border: 1px solid black;
+            min-height: 2em;
+            margin: 0 0 1.2em;
+        }
+
+        select#data {
+            height: 2em;
+        }
+
+        #data-container {
+            text-align: center;
+        }
+
+        #buttons {
+            text-align: right;
+            padding: 0 .5em 0 0;
+        }
+
+        #buttons > button {
+            border-radius: 2px;
+            border: 0;
+            margin: 0 0 0 .5em;
+            font-size: .8em;
+            line-height: 1em;
+            padding: .6em 1em
+        }
+
+        #ok {
+            background-color: #3879D9;
+            color: white;
+        }
+
+        #cancel {
+            background-color: #DDD;
+            color: black;
+        }
+
+        </style>
+        <script type="text/javascript">
+        const { remote } = require('electron')
+        document.addEventListener('DOMContentLoaded', function (event) {
+          document.getElementById('ok').addEventListener('click', () => {
+            remote.getCurrentWindow().close()
+          });
+          document.getElementById('cancel').addEventListener('click', () => {
+            remote.getCurrentWindow().close()
+          });
+        })
+        </script>
+    </head>
+    <body>
+        <p style="margin-top: 0px; margin-bottom: 0px;">Topic</p>
+        <input type="text" style="width: calc(100% - .5em); border: 1px solid #ddd;" /><br />
+        <p style="margin-top: 0.5em; margin-bottom: 0px;">Banned Users</p>
+        <div id="banned-users" style="width: calc(100% - .5em); height: 130px; margin-bottom: 0.8em; margin-bottom: 0.8em; border: 1px solid #ddd; overflow-y: scroll;">
+        </div>
+        <div id="buttons">
+            <button id="cancel">Cancel</button>
+            <button id="ok">OK</button>
+        </div>
+    </body>
+</html>

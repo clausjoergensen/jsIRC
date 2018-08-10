@@ -1,7 +1,7 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const {app, BrowserWindow, Menu} = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 
 var mainWindow = null
 
