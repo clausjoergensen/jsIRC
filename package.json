@@ -10,7 +10,10 @@
   "keywords": [
     "irc"
   ],
-  "author": "Claus Jørgensen",
+  "author": {
+    "name": "Claus Jørgensen",
+    "email": "claus.joergensen@outlook.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "electron": "^2.0.6",
