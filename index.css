@@ -151,7 +151,7 @@ div#network-list
 
 input#chat-input
 {
-    margin-left: 39px;
+    margin-left: 45px;
     width: calc(100vw - 215px);
     padding-left: 6px;
     font-size: 11pt;
