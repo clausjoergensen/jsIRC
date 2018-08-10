@@ -1,13 +1,13 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const IrcClient = require('./irc/IrcClient.js')
-const CtcpClient = require('./irc/CtcpClient.js')
+const { IrcClient, CtcpClient } = require('./irc/index.js')
+
 const ClientUI = require('./ClientUI.js')
 const packageInfo = require('./package.json')
 
 const client = new IrcClient()
-client.loggingEnabled = true
+client.loggingEnabled = false
 
 const ctcpClient = new CtcpClient(client)
 ctcpClient.clientName = packageInfo.name

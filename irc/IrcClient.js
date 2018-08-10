@@ -13,6 +13,7 @@ const IrcChannel = require('./IrcChannel.js')
 const IrcServer = require('./IrcServer.js')
 const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcChannelType = require('./IrcChannelType.js')
+const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
 
 const maxParamsCount = 15
 const defaultPort = 6667
@@ -27,8 +28,20 @@ const regexNickNameId = new RegExp(/([^!@]+)(?:(?:!([^!@]+))?@([^%@]+))?/)
 const regexUserNameId = new RegExp(/([^!@]+)(?:(?:%[^%@]+)?@([^%@]+?\.[^%@]*)|%([^!@]+))/)
 const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 
+/**
+ * @class IrcClient
+ * @extends EventEmitter
+ *
+ * Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
+ */
 module.exports = class IrcClient extends EventEmitter {
 
+  /*
+   * Initializes a new instance of the IrcClient class.
+   *
+   * @access internal
+   * @constructor
+  */
   constructor () {
     super()
     this.loggingEnabled = false
@@ -51,7 +64,7 @@ module.exports = class IrcClient extends EventEmitter {
     this.listedServerLinks = []
     this.listedChannels = []
     this.listedStatsEntries = []
-    this.messageProcessors = {
+    this._messageProcessors = {
       'NICK': this.processMessageNick.bind(this),
       'QUIT': this.processMessageQuit.bind(this),
       'JOIN': this.processMessageJoin.bind(this),
@@ -119,6 +132,11 @@ module.exports = class IrcClient extends EventEmitter {
     }
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   connect (hostName, port, registrationInfo) {
     this.registrationInfo = registrationInfo
 
@@ -131,78 +149,173 @@ module.exports = class IrcClient extends EventEmitter {
     this.socket.connect(port, hostName, this.connected.bind(this))
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   disconnect () {
     this.socket.disconnect()
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   listChannels (channelNames = null) {
     this.sendMessageList(channelNames)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   getMessageOfTheDay (targetServer = null) {
     this.sendMessageMotd(targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   getNetworkInfo (serverMask = null, targetServer = null) {
     this.sendMessageLUsers(serverMask, targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   getServerVersion (targetServer = null) {
     this.sendMessageVersion(targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   getServerStatistics (query = null, targetServer = null) {
     this.sendMessageStats(query == null ? null : query, targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   getServerLinks (serverMask = null, targetServer = null) {
     this.sendMessageLinks(serverMask, targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   getServerTime (targetServer = null) {
     this.sendMessageTime(targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   ping (targetServer = null) {
     this.sendMessagePing(this.localUser.nickName, targetServer)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   queryWho (mask = null, onlyOperators = false) {
     this.sendMessageWho(mask, onlyOperators)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   queryWhoIs (nickNameMasks) {
     this.sendMessageWhoIs(nickNameMasks)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   queryWhoWas (nickNames, entriesCount = -1) {
     this.sendMessageWhoWas(nickNames, entriesCount)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   quit (comment = null) {
     this.sendMessageQuit(comment)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   joinChannel(channelName) {
     this.sendMessageJoin([channelName])
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   setNickName (nickName) {
     this.sendMessageNick(nickName)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   setTopic (channelName, topic) {
     this.sendMessageTopic(channelName, topic)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   sendMessage (targets, messageText) {
     this.sendMessagePrivateMessage(targets, messageText)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   sendNotice (targets, noticeText) {
     this.sendMessagePrivateMessage(targets, noticeText)
   }
 
+  /**
+   * 
+   *
+   * @public
+   */
   sendRawMessage (message) {
     if (this.loggingEnabled) {
       console.log('-> ' + message)
@@ -326,7 +439,7 @@ module.exports = class IrcClient extends EventEmitter {
   }
 
   readMessage (message, line) {
-    var messageProcessor = this.messageProcessors[message.command]
+    var messageProcessor = this._messageProcessors[message.command]
     if (messageProcessor != null) {
       messageProcessor(message)
     } else {
@@ -624,7 +737,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSLINKINFO responses from the server.
   processMessageStatsLinkInfo (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.connection,
+      'type': IrcServerStatisticalEntry.connection,
       'message': message
     })
   }
@@ -632,7 +745,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSCOMMANDS responses from the server.
   processMessageStatsCommands (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.command,
+      'type': IrcServerStatisticalEntry.command,
       'message': message
     })
   }
@@ -640,7 +753,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSCLINE responses from the server.
   processMessageStatsCLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.allowedServerConnect,
+      'type': IrcServerStatisticalEntry.allowedServerConnect,
       'message': message
     })
   }
@@ -648,7 +761,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSNLINE responses from the server.
   processMessageStatsNLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.allowedServerAccept,
+      'type': IrcServerStatisticalEntry.allowedServerAccept,
       'message': message
     })
   }
@@ -656,7 +769,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSILINE responses from the server.
   processMessageStatsILine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.allowedClient,
+      'type': IrcServerStatisticalEntry.allowedClient,
       'message': message
     })
   }
@@ -664,7 +777,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSKLINE responses from the server.
   processMessageStatsKLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.bannedClient,
+      'type': IrcServerStatisticalEntry.bannedClient,
       'message': message
     })
   }
@@ -672,7 +785,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSYLINE responses from the server.
   processMessageStatsYLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.connectionClass,
+      'type': IrcServerStatisticalEntry.connectionClass,
       'message': message
     })
   }
@@ -686,7 +799,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSLLINE responses from the server.
   processMessageStatsLLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.leafDepth,
+      'type': IrcServerStatisticalEntry.leafDepth,
       'message': message
     })
   }
@@ -694,7 +807,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSUPTIME responses from the server.
   processMessageStatsUpTime (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.uptime,
+      'type': IrcServerStatisticalEntry.uptime,
       'message': message
     })
   }
@@ -702,7 +815,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSOLINE responses from the server.
   processMessageStatsOLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.allowedOperator,
+      'type': IrcServerStatisticalEntry.allowedOperator,
       'message': message
     })
   }
@@ -710,7 +823,7 @@ module.exports = class IrcClient extends EventEmitter {
   // Process RPL_STATSHLINE responses from the server.
   processMessageStatsHLine (message) {
     this.listedStatsEntries.push({
-      'type': IrcServerStatisticalEntryCommonType.hubServer,
+      'type': IrcServerStatisticalEntry.hubServer,
       'message': message
     })
   }
@@ -1448,32 +1561,4 @@ module.exports = class IrcClient extends EventEmitter {
         throw 'Invalid Channel Type'
     }
   }
-}
-
-/** 
- * These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
- */
-var IrcServerStatisticalEntryCommonType = {
-  // An active connection to the server.
-  connection: 1,
-  // A command supported by the server.
-  command: 2,
-  // A server to which the local server may connect.
-  allowedServerConnect: 3,
-  // A server from which the local server may accept connections.
-  allowedServerAccept: 4,
-  // A client that may connect to the server.
-  allowedClient: 5,
-  // A client that is banned from connecting to the server.
-  bannedClient: 6,
-  // A connection class defined by the server.
-  connectionClass: 7,
-  // The leaf depth of a server in the network.
-  leafDepth: 8,
-  // The uptime of the server.
-  uptime: 9,
-  // An operator on the server.
-  allowedOperator: 10,
-  // A hub server within the network.
-  hubServer: 11
 }
