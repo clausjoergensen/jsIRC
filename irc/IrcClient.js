@@ -19,15 +19,6 @@ const IrcMessageProcessor = require('./IrcMessageProcessor.js')
 const maxParamsCount = 15
 const defaultPort = 6667
 
-const regexNickName = new RegExp(/([^!@]+)/)
-const regexUserName = new RegExp(/([^!@]+)/)
-const regexHostName = new RegExp(/([^%@]+)/)
-const regexChannelName = new RegExp(/([#+!&].+)/)
-const regexTargetMask = new RegExp(/([$#].+)/)
-const regexServerName = new RegExp(/([^%@]+?\.[^%@]*)/)
-const regexNickNameId = new RegExp(/([^!@]+)(?:(?:!([^!@]+))?@([^%@]+))?/)
-const regexUserNameId = new RegExp(/([^!@]+)(?:(?:%[^%@]+)?@([^%@]+?\.[^%@]*)|%([^!@]+))/)
-
 /**
  * @class IrcClient
  * @extends EventEmitter
@@ -50,15 +41,7 @@ module.exports = class IrcClient extends EventEmitter {
     this.users = []
     this.channels = []
     this.servers = []
-    this.yourHostMessage = null
-    this.serverCreatedMessage = null
-    this.serverName = null
-    this.serverVersion = null
     this._messageProcessor = new IrcMessageProcessor(this)
-  }
-
-  get isRegistered() {
-    return this.messageProcessor.isRegistered
   }
 
   /**
@@ -412,16 +395,6 @@ module.exports = class IrcClient extends EventEmitter {
     }
 
     this.socket.write(message + '\r\n')
-  }
-
-  // - Message Receiving
-
-  messageReceived (source, targets, noticeText) {
-    this.emit('message', source, messageText)
-  }
-
-  noticeReceived (source, targets, noticeText) {
-    this.emit('notice', source, noticeText)
   }
 
   // - Message Sending

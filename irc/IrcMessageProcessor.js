@@ -5,8 +5,14 @@ const IrcChannel = require('./IrcChannel.js')
 const IrcChannelType = require('./IrcChannelType.js')
 const IrcChannelUser = require('./IrcChannelUser.js')
 
+const regexNickName = new RegExp(/([^!@]+)/)
+const regexUserName = new RegExp(/([^!@]+)/)
+const regexHostName = new RegExp(/([^%@]+)/)
 const regexChannelName = new RegExp(/([#+!&].+)/)
+const regexTargetMask = new RegExp(/([$#].+)/)
+const regexServerName = new RegExp(/([^%@]+?\.[^%@]*)/)
 const regexNickNameId = new RegExp(/([^!@]+)(?:(?:!([^!@]+))?@([^%@]+))?/)
+const regexUserNameId = new RegExp(/([^!@]+)(?:(?:%[^%@]+)?@([^%@]+?\.[^%@]*)|%([^!@]+))/)
 const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 
 /**
@@ -31,11 +37,9 @@ module.exports = class IrcMessageProcessor {
     this._serverSupportedFeatures = {}
     this._channelUserModes = ['o', 'v']
     this._channelUserModesPrefixes = { '@': 'o', '+': 'v' }
-    this._messageOfTheDay = null
     this._listedServerLinks = []
     this._listedChannels = []
     this._listedStatsEntries = []
-    this._isRegistered = false
     this._messageProcessors = {
       'NICK': this.processMessageNick.bind(this),
       'QUIT': this.processMessageQuit.bind(this),
@@ -105,14 +109,6 @@ module.exports = class IrcMessageProcessor {
 
   get client() {
     return this._client
-  }
-
-  get isRegistered() {
-    return this._isRegistered
-  }
-
-  get messageOfTheDay() {
-    return this._messageOfTheDay
   }
 
   get serverAvailableUserModes () {
@@ -299,7 +295,13 @@ module.exports = class IrcMessageProcessor {
     var messageText = message.parameters[1]
 
     var targets = targetNames.map(x => this.getMessageTarget(x))
-    targets.forEach(t => t.messageReceived(message.source, targets, messageText))
+    targets.forEach(t => {
+      if (typeof t.messageReceived === 'function') {
+        t.messageReceived(message.source, targets, messageText)
+      } else {
+       this.client.localUser.messageReceived(message.source, targets, messageText)
+      }
+    })
   }
 
   // Process NOTICE messages received from the server.
@@ -311,7 +313,13 @@ module.exports = class IrcMessageProcessor {
       this.client.emit('notice', message.source, noticeText)
     } else {
       var targets = targetNames.map(x => this.getMessageTarget(x))
-      targets.forEach(t => t.noticeReceived(message.source, targets, noticeText))
+      targets.forEach(t => {
+        if (typeof t.noticeReceived === 'function') {
+          t.noticeReceived(message.source, targets, noticeText)
+        } else {
+         this.client.localUser.noticeReceived(message.source, targets, noticeText)
+        }
+      })
     }
   }
 
@@ -356,28 +364,28 @@ module.exports = class IrcMessageProcessor {
     this.client.localUser.userName = nickNameMatch[2] || this.client.localUser.userName
     this.client.localUser.hostName = nickNameMatch[3] || this.client.localUser.hostName
     
-    this._isRegistered = true
+    this.client.isRegistered = true
 
     this.client.emit('registered')
   }
 
   // Process RPL_YOURHOST responses from the server.
   processMessageReplyYourHost (message) {
-    this.yourHostMessage = message.parameters[1]
+    this.client.yourHostMessage = message.parameters[1]
 
   }
 
   // Process RPL_CREATED responses from the server.
   processMessageReplyCreated (message) {
-    this._serverCreatedMessage = message.parameters[1]
+    this.client.serverCreatedMessage = message.parameters[1]
   }
 
   // Process RPL_MYINFO responses from the server.
   processMessageReplyMyInfo (message) {
-    this._serverName = message.parameters[1]
-    this._serverVersion = message.parameters[2]
-    this._serverAvailableUserModes = message.parameters[3].split('')
-    this._serverAvailableChannelModes = message.parameters[4].split('')
+    this.client.serverName = message.parameters[1]
+    this.client.serverVersion = message.parameters[2]
+    this.client.serverAvailableUserModes = message.parameters[3].split('')
+    this.client.serverAvailableChannelModes = message.parameters[4].split('')
 
     this.client.emit('clientInfo')
   }
@@ -810,18 +818,18 @@ module.exports = class IrcMessageProcessor {
 
   // Process RPL_MOTD responses from the server.
   processMessageReplyMotd (message) {
-    this._messageOfTheDay += message.parameters[1] + '\r\n'
+    this.client.messageOfTheDay += message.parameters[1] + '\r\n'
   }
 
   // Process RPL_MOTDSTART responses from the server.
   processMessageReplyMotdStart (message) {
-    this._messageOfTheDay = ''
+    this.client.messageOfTheDay = ''
   }
 
   // Process RPL_ENDOFMOTD responses from the server.
   processMessageReplyMotdEnd (message) {
-    this._messageOfTheDay += message.parameters[1]
-    this.client.emit('motd', this.messageOfTheDay)
+    this.client.messageOfTheDay += message.parameters[1]
+    this.client.emit('motd', this.client.messageOfTheDay)
   }
 
   // Process RPL_TIME responses from the server.
@@ -910,7 +918,7 @@ module.exports = class IrcMessageProcessor {
     }
 
     if (nickName != null) {
-      var user = this.getUserFromNickName(nickName, true)
+      var user = this.client.getUserFromNickName(nickName, true)
       if (user.userName == null) {
         user.userName = userName
       }
@@ -921,7 +929,7 @@ module.exports = class IrcMessageProcessor {
     }
     
     if (userName != null) {
-      var user = this.getUserFromNickName(nickName, true)
+      var user = this.client.getUserFromNickName(nickName, true)
       if (user.hostName == null) {
         user.hostName = hostName
       }
