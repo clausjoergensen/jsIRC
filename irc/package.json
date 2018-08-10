@@ -1,0 +1,17 @@
+{ 
+  "name": "jsirc", 
+  "main": "index.js",
+  "version": "0.0.1",
+  "description": "JavaScript IRC Library",
+  "author": {
+    "name": "Claus Jørgensen",
+    "email": "claus.joergensen@outlook.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "irc"
+  ],
+  "dependencies": {
+    "strftime": "^0.10.0"
+  }
+}
