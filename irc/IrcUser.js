@@ -33,6 +33,7 @@ module.exports = class IrcUser extends EventEmitter {
     this._serverInfo = null
     this._isAway = false
     this._awayMessage = null
+    this._hopCount = 0
   }
 
   /**
@@ -61,22 +62,21 @@ module.exports = class IrcUser extends EventEmitter {
   } 
 
   /**
-   *
+   * Gets whether the user is currently connected to the IRC network. 
+   * This value may not be always be up-to-date.
+   * 
    * @public
    */
   get isOnline() {
     return this._isOnline
   }
 
-  /**
-   *
-   * @public
-   */
   set isOnline(value) {
     this._isOnline = value
   }
 
   /**
+   * Gets the current nick name of the user.
    *
    * @public
    */
@@ -84,15 +84,12 @@ module.exports = class IrcUser extends EventEmitter {
     return this._nickName
   }
 
-  /**
-   *
-   * @public
-   */
   set nickName(value) {
     this._nickName = value
   }
 
   /**
+   * Gets the current user name of the user. This value never changes until the user reconnects.
    *
    * @public
    */
@@ -100,15 +97,12 @@ module.exports = class IrcUser extends EventEmitter {
     return this._client
   }
 
-  /**
-   *
-   * @public
-   */
   set userName(value) {
     this._userName = value
   }
 
   /**
+   * Gets the real name of the user. This value never changes until the user reconnects.
    *
    * @public
    */
@@ -116,15 +110,25 @@ module.exports = class IrcUser extends EventEmitter {
     return this._client
   }
 
-  /**
-   *
-   * @public
-   */
   set realName(value) {
     this._realName = value
   }
 
   /**
+   * Gets the host name of the user.
+   *
+   * @public
+   */
+  get realName() {
+    return this._client
+  }
+
+  set realName(value) {
+    this._realName = value
+  }
+
+  /**
+   * Gets the duration for which the user has been idle. This is set when a Who Is response is received.
    *
    * @public
    */
@@ -132,15 +136,12 @@ module.exports = class IrcUser extends EventEmitter {
     return this._idleDuration
   }
 
-  /**
-   *
-   * @public
-   */
   set idleDuration(value) {
     this._idleDuration = value
   }
 
   /**
+   * Gets whether the user is a server operator.
    *
    * @public
    */
@@ -148,15 +149,12 @@ module.exports = class IrcUser extends EventEmitter {
     return this._isOperator
   }
 
-  /**
-   *
-   * @public
-   */
   set isOperator(value) {
     this._isOperator = value
   }
 
   /**
+   * Gets the name of the server to which the user is connected.
    *
    * @public
    */
@@ -164,15 +162,12 @@ module.exports = class IrcUser extends EventEmitter {
     return this._serverName
   }
 
-  /**
-   *
-   * @public
-   */
   set serverName(value) {
     this._serverName = value
   }
 
   /**
+   * Gets arbitrary information about the server to which the user is connected.
    *
    * @public
    */
@@ -180,15 +175,14 @@ module.exports = class IrcUser extends EventEmitter {
     return this._serverInfo
   }
 
-  /**
-   *
-   * @public
-   */
   set serverInfo(value) {
     this._serverInfo = value
   }
 
   /**
+   * Gets whether the user has been been seen as away. This value is always up-to-date for the local user;
+   * though it is only updated for remote users when a private message is sent to them or a Who Is response
+   * is received for the user.
    *
    * @public
    */
@@ -196,15 +190,12 @@ module.exports = class IrcUser extends EventEmitter {
     return this._isAway
   }
 
-  /**
-   *
-   * @public
-   */
   set isAway(value) {
     this._isAway = value
   }
 
   /**
+   * Gets the current away message received when the user was seen as away.
    *
    * @public
    */
@@ -212,12 +203,22 @@ module.exports = class IrcUser extends EventEmitter {
     return this._client
   }
 
-  /**
+  set awayMessage(value) {
+    this._awayMessage = value
+  }
+
+   /**
+   * Gets the hop count of the user, which is the number of servers between the user and the server on which the
+   * client is connected, within the network.
    *
    * @public
    */
-  set awayMessage(value) {
-    this._awayMessage = value
+  get hopCount() {
+    return this._hopCount
+  }
+
+  set hopCount(value) {
+    this._hopCount = value
   }
 
   /**
