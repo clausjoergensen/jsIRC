@@ -137,7 +137,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * @param {String} [comment] The comment to send the server upon leaving the channel, or null for no comment.
    */
   part (comment = null) {
-    this.client.sendMessagePart([this.name], comment)
+    this.client.leaveChannel(this.name, comment)
   }
 
   /**
@@ -147,7 +147,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * @param {String} messageText The message to send.
    */
   sendMessage (messageText) {
-    this.client.sendMessagePrivateMessage([this.name], messageText)
+    this.client.sendMessage([this.name], messageText)
     this.emit('message', this.client.localUser, messageText)
   }
 
@@ -158,7 +158,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * @param {String} noticeText The notice to send.
    */
   sendNotice (noticeText) {
-    this.client.sendMessagePrivateMessage([this.name], noticeText)
+    this.client.sendNotice([this.name], noticeText)
     this.emit('notice', this.client.localUser, noticeText)
   }
 
