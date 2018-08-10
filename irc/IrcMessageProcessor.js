@@ -494,25 +494,25 @@ module.exports = class IrcMessageProcessor {
       'serversCount': parseInt(infoParts[8])
     }
 
-    this.client.emit('networkInformationReceived', networkInfo)
+    this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSEROP responses from the server.
   processMessageLUserOp (message) {
     var networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
-    this.client.emit('networkInformationReceived', networkInfo)
+    this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSERUNKNOWN responses from the server.
   processMessageLUserUnknown (message) {
     var networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
-    this.client.emit('networkInformationReceived', networkInfo)
+    this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSERCHANNELS responses from the server.
   processMessageLUserChannels (message) {
     var networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
-    this.client.emit('networkInformation', networkInfo)
+    this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSERME responses from the server.
@@ -674,7 +674,7 @@ module.exports = class IrcMessageProcessor {
     var server = message.parameters[2]
     var comments = message.parameters[3]
 
-    this.client.emit('serverVersionInfo', { 
+    this.client.emit('serverVersion', { 
       'version': version, 
       'debugLevel': debugLevel, 
       'server': server, 

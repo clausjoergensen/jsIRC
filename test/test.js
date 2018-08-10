@@ -75,6 +75,38 @@ describe('IrcClient', function() {
     registeredPromise1.then(registeredPromise2).then(done)
   })
 
+  it('motd', function(done) {
+    client1.once('motd', (_) => {
+      done()
+    })
+
+    client1.getMessageOfTheDay()
+  })
+
+  it('networkInfo', function(done) {
+    client1.once('networkInfo', (_) => {
+      done()
+    })
+
+    client1.getNetworkInfo()
+  })
+
+  it('serverVersion', function(done) {
+    client1.once('serverVersion', (_) => {
+      done()
+    })
+
+    client1.getServerVersion()
+  })
+
+  it('serverTime', function(done) {
+    client1.once('serverTime', (_) => {
+      done()
+    })
+
+    client1.getServerTime()
+  })
+
   it('joinChannel', function(done) {
     var userJoinedPromise1 = new Promise((resolve, reject) => {
       client1.localUser.once('joinedChannel', (channel) => {
