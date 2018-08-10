@@ -329,8 +329,13 @@ IrcClient.prototype.readMessage = function (message, line) {
   if (messageProcessor != null) {
     messageProcessor(message)
   } else {
-    if (this.loggingEnabled) {
-      console.log(`Unsupported command '${message.command}'`)
+    var numericCommand = parseInt(message.command)
+    if (numericCommand >= 400 && numericCommand <= 599) {
+      this.processMessageNumericError(message)
+    } else {
+      if (this.loggingEnabled) {
+        console.log(`Unsupported command '${message.command}'`)
+      }
     }
   }
 }
@@ -756,6 +761,7 @@ IrcClient.prototype.processMessageReplyAway = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   user.awayMessage = message.parameters[2]
   user.isAway = true
+  // TODO
 }
 
 // Process RPL_ISON responses from the server.
@@ -766,16 +772,19 @@ IrcClient.prototype.processMessageReplyIsOn = function (message) {
     var onlineUser = this.getUserFromNickName(name)
     onlineUser.isOnline = true    
   })
+  // TODO
 }
 
 // Process RPL_UNAWAY responses from the server.
 IrcClient.prototype.processMessageReplyUnAway = function (message) {
   this.localUser.isAway = false
+  // TODO
 }
 
 // Process RPL_NOWAWAY responses from the server.
 IrcClient.prototype.processMessageReplyNowAway = function (message) {
   this.localUser.isAway = true
+  // TODO
 }
 
 // Process RPL_WHOISUSER responses from the server.
@@ -784,6 +793,7 @@ IrcClient.prototype.processMessageReplyWhoIsUser = function (message) {
   user.userName = message.parameters[2]
   user.hostName = message.parameters[3]
   user.realName = message.parameters[5]
+  // TODO
 }
 
 // Process RPL_WHOISSERVER responses from the server.
@@ -791,12 +801,14 @@ IrcClient.prototype.processMessageReplyWhoIsServer = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   user.serverName = message.parameters[2]
   user.serverInfo = message.parameters[3]
+  // TODO
 }
 
 // Process RPL_WHOISOPERATOR responses from the server.
 IrcClient.prototype.processMessageReplyWhoIsOperator = function (message) {
   var user = this.getUserFromNickName(message.parameters[1])
   user.isOperator = true
+  // TODO
 }
 
 // Process RPL_WHOWASUSER responses from the server.
@@ -805,6 +817,7 @@ IrcClient.prototype.processMessageReplyWhoWasUser = function (message) {
   user.userName = message.parameters[2]
   user.hostName = message.parameters[3]
   user.realName = message.parameters[5]
+  // TODO
 }
 
 // Process RPL_ENDOFWHO responses from the server.
@@ -1001,10 +1014,26 @@ IrcClient.prototype.processMessageReplyMotdEnd = function (message) {
 
 //  Process RPL_YOURESERVICE responses from the server.
 IrcClient.prototype.processMessageReplyYouAreService = function (message) {
+  // TODO
 }
 
 // Process RPL_TIME responses from the server.
 IrcClient.prototype.processMessageReplyTime = function (message) {
+  // TODO
+}
+
+IrcClient.prototype.processMessageNumericError = function (message) {
+  var errorParameters = []
+  var errorMessage = null;
+  for (var i = 1; i < message.parameters.length; i++) {
+      if (i + 1 == message.parameters.length || message.parameters[i + 1] == null) {
+          errorMessage = message.parameters[i]
+          break
+      }
+      errorParameters.push(message.parameters[i])
+  }
+
+  this.emit('protocolError', parseInt(message.command), errorParameters, errorMessage)
 }
 
 // ------------------- Message Sending ----------------------------------------

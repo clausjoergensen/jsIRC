@@ -144,6 +144,11 @@ div#network-list
     margin-right: 0px
 }
 
+.server-error
+{
+    color: red;
+}
+
 input#chat-input
 {
     margin-left: 39px;

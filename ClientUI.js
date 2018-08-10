@@ -12,6 +12,7 @@ function ClientUI (client, ctcpClient) {
   this.client = client
   this.ctcpClient = ctcpClient
 
+  this.chatInput = document.getElementById('chat-input')
   this.serverView = this.createServerView()
   this.channelViews = {}
   this.navigationServerView = null
@@ -19,6 +20,7 @@ function ClientUI (client, ctcpClient) {
   this.selectedChannel = null
 
   this.setupEventListeners()
+  this.focusInputField()
 }
 
 ClientUI.prototype.createServerView = function () {
@@ -32,14 +34,26 @@ ClientUI.prototype.setupEventListeners = function() {
   // IRC Client Event Listeners
   this.client.on('connectionError', error => {
     if (error.code == 'ECONNREFUSED') {
-      this.displayServerMessage(null, `* Couldn't connect to ${error.address}:${error.port}`)
+      this.displayServerMessage(null, `* Couldn't connect to ${error.address}:${error.port}`, ['server-error'])
     } else if (error.code == 'ECONNRESET') {
-      this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
+      this.displayServerMessage(null, `* Disconnected (Connection Reset)`, ['server-error'])
     }
   })
 
   this.client.on('error', errorMessage => {
     this.displayServerMessage(null, '* ' + errorMessage)
+  })
+
+  this.client.on('protocolError', (command, errorParameters, errorMessage) => {
+    switch (command) {
+      case 433: // ERR_NICKNAMEINUSE
+        this.displayServerMessage(null, `Nickname '${errorParameters[0]}' is already in use.`, ['server-error'])
+        this.chatInput.value = '/nick '
+        break
+      default:
+        console.log(`Unsupported protocol error '${command}'.`, errorParameters, errorMessage)
+        break
+    }
   })
 
   this.client.on('clientInfo', () => {
@@ -90,12 +104,11 @@ ClientUI.prototype.setupEventListeners = function() {
   })
 
   // UI Event Listeners
-  const chatInput = document.getElementById('chat-input')
-  chatInput.addEventListener('keyup', e => {
+  this.chatInput.addEventListener('keyup', e => {
     e.preventDefault()
     if (e.keyCode === 13) {
-      this.sendUserInput(chatInput.value)
-      chatInput.value = ''
+      this.sendUserInput(this.chatInput.value)
+      this.chatInput.value = ''
     }
   })
 }
@@ -302,7 +315,7 @@ ClientUI.prototype.displayServerAction = function (text) {
   }
 }
 
-ClientUI.prototype.displayServerMessage = function (source, text) {
+ClientUI.prototype.displayServerMessage = function (source, text, styles = []) {
   var senderName = ''
   if (source != null) {
     if (source.nickName != null) {
@@ -318,6 +331,8 @@ ClientUI.prototype.displayServerMessage = function (source, text) {
   var paragraph = document.createElement('p')
   paragraph.classList.add('server-message')
   paragraph.innerText = formattedText
+
+  styles.forEach(s => paragraph.classList.add(s))    
   
   this.serverView.appendChild(paragraph)
   this.serverView.scrollTop = this.serverView.scrollHeight

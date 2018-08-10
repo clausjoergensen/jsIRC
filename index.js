@@ -7,7 +7,7 @@ const ClientUI = require('./ClientUI.js')
 const packageInfo = require('./package.json')
 
 const client = new IrcClient()
-client.loggingEnabled = false
+client.loggingEnabled = true
 
 const ctcpClient = new CtcpClient(client)
 ctcpClient.clientName = packageInfo.name
@@ -23,23 +23,18 @@ function cmd(message) {
 document.addEventListener('DOMContentLoaded', function (event) {
   clientUI = new ClientUI(client, ctcpClient)
 
-  client.connect('127.0.0.1', 6667, {
-    'nickName': 'Rincewind',
+  var server = '127.0.0.1'
+  //var server = 'irc.quakenet.org' 
+
+  client.connect(server, 6667, {
+    'nickName': 'Windcape',
     'password': null,
     'userName': 'claus.joergensen@outlook.com',
     'realName': 'Claus Joergensen',
     'userModes': []
   })
 
-  /*client.connect('irc.quakenet.org', 6667, {
-    'nickName': 'Windcapes',
-    'password': null,
-    'userName': 'claus.joergensen@outlook.com',
-    'realName': 'Claus Joergensen',
-    'userModes': []
-  })*/
-
   client.on('registered', () => {
-    client.sendRawMessage('join :#wow')
+    client.sendRawMessage('join :#c#')
   })
 })
