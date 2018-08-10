@@ -144,10 +144,39 @@ module.exports = class IrcChannel extends EventEmitter {
    * Kicks a user from the channel, optionally with a reason
    * 
    * @public
+   * @param {String} userNickName The User Nick Name.
    * @param {String} [reason] The kick reason.
    */
   kick (userNickName, reason = null) {
     this.client.kick(this, [userNickName], reason)
+  }
+
+  /**
+   * Invites a user to the channel.
+   * 
+   * @public
+   * @param {String} userNickName The User Nick Name.
+   */
+  invite (userNickName) {
+    this.client.invite(this, userNickName)
+  }
+
+  /**
+   * Bans a hostMask from the channel.
+   *
+   * @public
+   */
+  ban (hostMask) {
+    this.setModes('+b', [hostMask])
+  }
+
+  /**
+   * Unbans a hostMask from the channel.
+   *
+   * @public
+   */
+  unban (hostMask) {
+    this.setModes('-b', [hostMask])
   }
 
   /**

@@ -12,6 +12,8 @@ describe('IrcClient', function() {
 
   var client1 = null
   var client2 = null
+  var ctcpClient1 = null
+  var ctcpClient2 = null
 
   var connectedPromise1 = null
   var connectedPromise2 = null
@@ -21,6 +23,9 @@ describe('IrcClient', function() {
   before(function() {
     client1 = new IrcClient()
     client2 = new IrcClient()
+    
+    ctcpClient1 = new CtcpClient(client1)
+    ctcpClient2 = new CtcpClient(client2)
     
     connectedPromise1 = new Promise((resolve, reject) => {
       client1.once('connected', () => { 
@@ -105,6 +110,22 @@ describe('IrcClient', function() {
     })
 
     client1.getServerTime()
+  })
+
+  it('serverStatistics', function(done) {
+    client1.once('serverStatistics', (_) => {
+      done()
+    })
+
+    client1.getServerStatistics()
+  })
+
+  it('serverLinks', function(done) {
+    client1.once('serverLinks', (_) => {
+      done()
+    })
+
+    client1.getServerLinks()
   })
 
   it('joinChannel', function(done) {
@@ -232,6 +253,16 @@ describe('IrcClient', function() {
     channelUser2.ban()
   })
 
+  it('unban', function(done) {
+    client1.channels[0].once('modes', () => {
+      if (!client1.channels[0].modes.includes('b')) {
+        done()
+      }
+    })
+
+    client1.channels[0].unban(nickName2)
+  })
+
   it('kick', function(done) {
     client1.channels[0].once('userKicked', (channelUser) => {
       if (channelUser.user.nickName == nickName2) {
@@ -248,5 +279,82 @@ describe('IrcClient', function() {
     })
 
     client1.leaveChannel(client1.channels[0].name)
+  })
+
+  it('invite', function(done) {
+    client1.joinChannel('#unseenuniversity')
+    
+    setTimeout(function() {
+      client1.channels[0].once('userInvite', (_) => {
+        done()
+      })
+    
+      client1.channels[0].invite(nickName2)
+    }, 2000)
+  })
+
+  it('who', function(done) {
+    client1.once('whoReply', () => {
+      done()      
+    })
+    
+    client1.queryWho([nickName2])
+  })
+  
+  it('whoIs', function(done) {
+    client1.once('whoIsReply', () => {
+      done()      
+    })
+    
+    client1.queryWhoIs([nickName2])
+  })
+
+  it('whoWas', function(done) {
+    client1.once('whoWasReply', () => {
+      done()      
+    })
+    
+    client1.queryWhoWas([nickName2])
+  })
+
+  it('ctcp ping', function(done) {
+    ctcpClient1.once('ping', (source, pingTime) => {
+      done()
+    })
+
+    ctcpClient1.ping([nickName2])
+  })
+
+  it('ctcp version', function(done) {
+    ctcpClient1.once('version', (source, versionInfo) => {
+      done()
+    })
+
+    ctcpClient1.version([nickName2])
+  })
+  
+  it('ctcp time', function(done) {
+    ctcpClient1.once('time', (source, dateTime) => {
+      done()
+    })
+
+    ctcpClient1.time([nickName2])
+  })
+  
+  it('ctcp action', function(done) {
+    var expectedMessageText = 'slaps Twoflower around a bit with a large trout'
+    var channelName = '#MendedDrum'
+    client1.joinChannel(channelName)
+    client2.joinChannel(channelName)
+    
+    setTimeout(function() {
+      client2.channels.find(x => x.name == channelName).once('action', (source, messageText) => {
+        if (messageText == expectedMessageText) {
+          done()
+        }
+      })
+
+      ctcpClient1.action([channelName], expectedMessageText)
+    }, 2000)
   })
 })

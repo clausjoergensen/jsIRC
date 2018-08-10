@@ -448,7 +448,7 @@ module.exports = class IrcMessageProcessor {
 
   // Process RPL_ENDOFSTATS responses from the server.
   processMessageEndOfStats (message) {
-    this.client.emit('serverStatsReceived', this.listedStatsEntries)
+    this.client.emit('serverStatistics', this.listedStatsEntries)
     this.listedStatsEntries = []
   }
 
@@ -710,8 +710,8 @@ module.exports = class IrcMessageProcessor {
             channel.userJoined(channelUser)
         }
 
-        userModeFlags.forEach(c => {
-            var mode = channelUserModesPrefixes[c]
+        userModeFlags.split('').forEach(c => {
+            var mode = this.client.channelUserModesPrefixes[c]
             if (mode != null) {
               channelUser.modeChanged(true, mode)
             } else {
@@ -769,13 +769,13 @@ module.exports = class IrcMessageProcessor {
     var hopCount = parseInt(infoParts[0])
     var info = infoParts[1]
 
-    this.listedServerLinks.Add({ 'hostName': hostName, 'hopCount': hopCount, 'info': info });
+    this.client.listedServerLinks.push({ 'hostName': hostName, 'hopCount': hopCount, 'info': info });
   }
 
   // Process RPL_ENDOFLINKS responses from the server.
   processMessageReplyEndOfLinks (message) {
-    this.client.emit('serverLinksList', this.listedServerLinks)
-    this.listedServerLinks = []
+    this.client.emit('serverLinks', this.client.listedServerLinks)
+    this.client.listedServerLinks = []
   }
 
   // Process RPL_ENDOFNAMES responses from the server.
@@ -924,7 +924,7 @@ module.exports = class IrcMessageProcessor {
 
   getUserModeAndIdentifier (identifier) {
     var mode = identifier[0]
-    let channelUserMode = this.channelUserModesPrefixes[mode]
+    let channelUserMode = this.client.channelUserModesPrefixes[mode]
     if (channelUserMode != null) {
       return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
     }
@@ -941,12 +941,12 @@ module.exports = class IrcMessageProcessor {
         throw 'Message ISupport Prefix is Invalid.'
       }
 
-      this.channelUserModes = []
-      this.channelUserModes = modes.split('')
+      this.client.channelUserModes = []
+      this.client.channelUserModes = modes.split('')
 
-      this.channelUserModesPrefixes = {}
+      this.client.channelUserModesPrefixes = {}
       for (var i = 0; i < prefixes.length; i++) {
-        this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
+        this.client.channelUserModesPrefixes[prefixes[i]] = this.client.channelUserModes[i]
       }
     }
   }

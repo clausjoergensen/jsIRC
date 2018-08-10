@@ -594,7 +594,7 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
       ]},
       { type: 'separator' },
       { label: 'Slap', click: () => {
-          var slapMessage = 'slaps Windcape around a bit with a large trout'
+          var slapMessage = `slaps ${user.nickName} around a bit with a large trout`
           this.ctcpClient.action([channel.name], slapMessage)
           this.displayChannelAction(channel.name, this.client.localUser, slapMessage)
         } 
