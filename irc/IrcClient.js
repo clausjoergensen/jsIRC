@@ -50,7 +50,7 @@ module.exports = class IrcClient extends EventEmitter {
     this.users = []
     this.channels = []
     this.servers = []
-    this.isRegistered = false
+    this._isRegistered = false
     this.yourHostMessage = null
     this.serverCreatedMessage = null
     this.serverName = null
@@ -127,9 +127,12 @@ module.exports = class IrcClient extends EventEmitter {
       '372': this.processMessageReplyMotd.bind(this),
       '375': this.processMessageReplyMotdStart.bind(this),
       '376': this.processMessageReplyMotdEnd.bind(this),
-      '383': this.processMessageReplyYouAreService.bind(this),
       '391': this.processMessageReplyTime.bind(this)
     }
+  }
+
+  get isRegistered() {
+    return this._isRegistered
   }
 
   /**
@@ -685,7 +688,7 @@ module.exports = class IrcClient extends EventEmitter {
     this.localUser.userName = nickNameMatch[2] || this.localUser.userName
     this.localUser.hostName = nickNameMatch[3] || this.localUser.hostName
     
-    this.isRegistered = true
+    this._isRegistered = true
 
     this.emit('registered')
   }
@@ -1153,14 +1156,10 @@ module.exports = class IrcClient extends EventEmitter {
     this.emit('motd', this.messageOfTheDay)
   }
 
-  //  Process RPL_YOURESERVICE responses from the server.
-  processMessageReplyYouAreService (message) {
-    // TODO
-  }
-
   // Process RPL_TIME responses from the server.
   processMessageReplyTime (message) {
-    // TODO
+    var [server, message, dateTime] = message.parameters
+    this.emit('serverTime', server, dateTime)
   }
 
   processMessageNumericError (message) {
