@@ -490,6 +490,14 @@ module.exports = class IrcClient extends EventEmitter {
 
   // - Message Receiving
 
+  messageReceived (source, targets, noticeText) {
+    this.emit('message', source, messageText)
+  }
+
+  noticeReceived (source, targets, noticeText) {
+    this.emit('notice', source, noticeText)
+  }
+
   // Process NICK messages received from the server.
   processMessageNick (message) {
     var sourceUser = message.source
@@ -561,6 +569,10 @@ module.exports = class IrcClient extends EventEmitter {
       return { 'modes': modes.split(''), 'parameters': modeParameters}
     }
 
+    function isChannelName (channelName) {
+      return channelName.match(regexChannelName) != null
+    }
+
     var newModes = message.parameters[1]
     if (this.isChannelName(message.parameters[0])) {
       var channel = this.getChannelFromName(message.parameters[0])
@@ -619,10 +631,6 @@ module.exports = class IrcClient extends EventEmitter {
     targets.forEach(t => t.messageReceived(message.source, targets, messageText))
   }
 
-  messageReceived (source, targets, noticeText) {
-    this.emit('message', source, messageText)
-  }
-
   // Process NOTICE messages received from the server.
   processMessageNotice (message) {
     var targetNames = message.parameters[0].split(',')
@@ -634,10 +642,6 @@ module.exports = class IrcClient extends EventEmitter {
       var targets = targetNames.map(x => this.getMessageTarget(x))
       targets.forEach(t => t.noticeReceived(message.source, targets, noticeText))
     }
-  }
-
-  noticeReceived (source, targets, noticeText) {
-    this.emit('notice', source, noticeText)
   }
 
   // Process PING messages received from the server.
@@ -726,7 +730,24 @@ module.exports = class IrcClient extends EventEmitter {
         var paramName = paramParts[0]
         var paramValue = paramParts.length == 1 ? null : paramParts[1]
         
-        this.handleISupportParameter(paramName, paramValue)
+        if (paramName.toLowerCase() == 'prefix') {
+          var prefixValueMatch = paramValue.match(regexISupportPrefix)
+          var prefixes = prefixValueMatch[2]
+          var modes = prefixValueMatch[1]
+          
+          if (prefixes.length != modes.length) {
+            throw 'Message ISupport Prefix is Invalid.'
+          }
+
+          this.channelUserModes = []
+          this.channelUserModes = modes.split('')
+
+          this.channelUserModesPrefixes = {}
+          for (var i = 0; i < prefixes.length; i++) {
+            this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
+          }
+        }
+
         this.serverSupportedFeatures[paramName] = paramValue
       }
       
@@ -1073,9 +1094,25 @@ module.exports = class IrcClient extends EventEmitter {
 
   // Process RPL_NAMEREPLY responses from the server.
   processMessageReplyNameReply (message) {
+    function getChannelType (type) {
+      switch (type) {
+        case '=':
+          return IrcChannelType.public
+          break
+        case '*':
+          return IrcChannelType.private
+          break
+        case '@':
+          return IrcChannelType.secret
+          break
+        default:
+          throw 'Invalid Channel Type'
+      }
+    }
+
     var channel = this.getChannelFromName(message.parameters[2])
     if (channel != null) {
-      channel.typeChanged(this.getChannelType(message.parameters[1][0]))
+      channel.typeChanged(getChannelType(message.parameters[1][0]))
 
       var userIds = message.parameters[3].split(' ')
       userIds.forEach(userId => {
@@ -1513,30 +1550,6 @@ module.exports = class IrcClient extends EventEmitter {
     return newUser
   }
 
-  handleISupportParameter (name, value) {
-    if (name.toLowerCase() == 'prefix') {
-      var prefixValueMatch = value.match(regexISupportPrefix)
-      var prefixes = prefixValueMatch[2]
-      var modes = prefixValueMatch[1]
-      
-      if (prefixes.length != modes.length) {
-        throw 'Message ISupport Prefix is Invalid.'
-      }
-
-      this.channelUserModes = []
-      this.channelUserModes = modes.split('')
-
-      this.channelUserModesPrefixes = {}
-      for (var i = 0; i < prefixes.length; i++) {
-        this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
-      }
-    }
-  }
-
-  isChannelName (channelName) {
-    return channelName.match(regexChannelName) != null
-  }
-
   getUserModeAndIdentifier (identifier) {
     var mode = identifier[0]
     let channelUserMode = this.channelUserModesPrefixes[mode]
@@ -1544,21 +1557,5 @@ module.exports = class IrcClient extends EventEmitter {
       return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
     }
     return { 'mode': '', 'identifier': identifier }
-  }
-
-  getChannelType (type) {
-    switch (type) {
-      case '=':
-        return IrcChannelType.public
-        break
-      case '*':
-        return IrcChannelType.private
-        break
-      case '@':
-        return IrcChannelType.secret
-        break
-      default:
-        throw 'Invalid Channel Type'
-    }
   }
 }
