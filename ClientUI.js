@@ -6,6 +6,7 @@ const { Menu } = remote
 const { IrcChannelUser } = require('./irc/index.js') 
 const Autolinker = require('autolinker') 
 const strftime = require('strftime')
+const prompt = require('electron-prompt');
 
 function ClientUI (client, ctcpClient) {
   this.client = client
@@ -482,7 +483,16 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
           channelUser.kick()
         } },
         { label: 'Kick (Why)', click: () => {
-          channelUser.kick('reason')
+          prompt({
+            title: `Kick ${user.nickName}`,
+            label: 'Reason:'
+          })
+          .then((r) => {
+            if (r !== null) {
+              channelUser.kick(r)
+            }
+          })
+          .catch(console.error);
         } },
         { label: 'Ban', click: () => {
           channelUser.ban()
@@ -492,8 +502,17 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
           channelUser.kick()
         } },
         { label: 'Ban, Kick (Why)', click: () => {
-          channelUser.ban()
-          channelUser.kick('why')
+          prompt({
+            title: `Ban & Kick ${user.nickName}`,
+            label: 'Reason:'
+          })
+          .then((r) => {
+            if (r !== null) {
+              channelUser.ban()
+              channelUser.kick(r)
+            }
+          })
+          .catch(console.error);
         } }
       ]},
       { label: 'CTCP', submenu: [
