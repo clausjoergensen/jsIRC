@@ -52,7 +52,7 @@ describe('IrcClient', function() {
       done()      
     })
 
-    client.joinChannel('#testing')
+    client.joinChannel('#discworld')
   })
 
   it('sendMessage', function(done) {
@@ -80,11 +80,36 @@ describe('IrcClient', function() {
     client.channels[0].sendNotice(expectedNoticeText)
   })
 
+  it('setNickName', function(done) {
+    var expectedNickName = 'Ridicully'
+    
+    client.localUser.on('nickName', () => {
+      if (client.localUser.nickName == expectedNickName) {
+        done()      
+      }
+    })
+
+    client.setNickName(expectedNickName)
+  })
+
+  it('setTopic', function(done) {
+    var expectedTopic = 'Nunc Id Vides, Nunc Ne Vides'
+    var expectedUser = client.localUser
+    
+    client.channels[0].on('topic', (user, topic) => {
+      if (user == expectedUser && topic == expectedTopic) {
+        done()      
+      }
+    })
+
+    client.setTopic(client.channels[0].name, expectedTopic)
+  })
+
   it('leaveChannel', function(done) {
     client.localUser.on('partedChannel', (channel) => {
       done()      
     })
 
-    client.leaveChannel('#testing')
+    client.leaveChannel(client.channels[0].name)
   })
 })
