@@ -63,14 +63,10 @@ ClientUI.prototype.setupEventListeners = function() {
     this.displayServerMessage(null, `* Connecting to ${hostName} (${port})`)
   })
 
-  this.client.on('registered', this.clientRegistered.bind(this))
+  this.client.on('connected', this.clientConnected.bind(this))
 
   this.client.on('disconnected', (reason) => {
     this.displayServerMessage(null, `* Disconnected (${reason})`)
-  })
-
-  this.client.on('notice', (source, noticeText) => {
-    this.displayServerNotice(source, noticeText)
   })
 
   this.client.on('motd', messageOfTheDay => {
@@ -112,7 +108,7 @@ ClientUI.prototype.setupEventListeners = function() {
   })
 }
 
-ClientUI.prototype.clientRegistered = function() {
+ClientUI.prototype.clientConnected = function() {
   this.client.localUser.on('message', (source, targets, messageText) => {
     this.displayServerMessage(source, messageText)
   })
