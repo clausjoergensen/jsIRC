@@ -6,6 +6,7 @@ const events = require('events')
 const { EventEmitter } = events
 const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcUtils = require('./IrcUtils.js')
+const IrcChannelType = require('./IrcChannelType.js')
 
 /**
  * @class IrcChannel
@@ -263,18 +264,4 @@ module.exports = class IrcChannel extends EventEmitter {
     this._type = type
     this.emit('type', type)
   }
-}
-
-/**
- * Defines the types of channels. Each channel may only be of a single type at any one time.
- */
-var IrcChannelType = {
-  // The channel type is unspecified.
-  unspecified: 0,
-  // The channel is public. The server always lists this channel.
-  public: 1,
-  // The channel is private. The server never lists this channel.
-  private: 2,
-  // The channel is secret. The server never lists this channel and pretends it does not exist when responding to queries.
-  secret: 3
 }

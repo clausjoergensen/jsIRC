@@ -4,7 +4,6 @@
 var util = require('util')
 const events = require('events')
 const { EventEmitter } = events
-const IrcUtils = require('./IrcUtils.js')
 
 /**
  * @class IrcUser
@@ -21,21 +20,167 @@ module.exports = class IrcUser extends EventEmitter {
    * @constructor
    * @param {IrcClient} client The IrcClient instance.
   */
-  constructor (client) {
+  constructor (client, isLocalUser = false) {
     super()
     this._client = client
     this._isOnline = false
     this._nickName = null
     this._userName = null
     this._realName = null
-    this._modes = []
     this._idleDuration = null
     this._isOperator = false
     this._serverName = null
     this._serverInfo = null
     this._isAway = false
     this._awayMessage = null
-    this._isLocalUser = false
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get client() {
+    return this._client
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get isLocalUser() {
+    return false
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get isOnline() {
+    return this._isOnline
+  }
+
+  set isOnline(value) {
+    this._isOnline = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get nickName() {
+    return this._nickName
+  }
+
+  set nickName(value) {
+    this._nickName = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get userName() {
+    return this._client
+  }
+
+  set userName(value) {
+    this._userName = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get realName() {
+    return this._client
+  }
+
+  set realName(value) {
+    this._realName = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get idleDuration() {
+    return this._idleDuration
+  }
+
+  set idleDuration(value) {
+    this._idleDuration = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get isOperator() {
+    return this._isOperator
+  }
+
+  set isOperator(value) {
+    this._isOperator = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get serverName() {
+    return this._serverName
+  }
+
+  set serverName(value) {
+    this._serverName = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get serverInfo() {
+    return this._serverInfo
+  }
+
+  set serverInfo(value) {
+    this._serverInfo = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get isAway() {
+    return this._isAway
+  }
+
+  set isAway(value) {
+    this._isAway = value
+  }
+
+  /**
+   *
+   * @public
+   * @return {}
+   */
+  get awayMessage() {
+    return this._client
+  }
+
+  set awayMessage(value) {
+    this._awayMessage = value
   }
 
   /**
@@ -51,7 +196,7 @@ module.exports = class IrcUser extends EventEmitter {
    * Sends a Who Was query to server for the user.
    *
    * @public
-   * @param {Int} [entriesCount] The maximum number of entries that the server should return. A negative number specifies an unlimited number of entries.
+   * @param {Int} [entriesCount] The maximum number of entries that the server should return. Specify -1 for unlimited.
    */
   whoWas (entriesCount = -1) {
     this._client.queryWhoWas([this._nickName], entriesCount)
@@ -100,11 +245,6 @@ module.exports = class IrcUser extends EventEmitter {
     allChannelUsers.forEach(cu => cu.channel.userQuit(cu, comment))
 
     this.emit('quit', comment)
-  }
-
-  modesChanged (newModes) {
-    this._modes = IrcUtils.updateModes(this._modes, newModes.split(''))
-    this.emit('modes)')
   }
 
   joinChannel (channel) {

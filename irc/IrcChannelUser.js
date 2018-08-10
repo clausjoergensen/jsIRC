@@ -33,7 +33,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * 
    * @public
    */
-  get User() {
+  get user() {
     return this._user
   }
 

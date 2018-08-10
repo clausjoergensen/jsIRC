@@ -8,9 +8,11 @@ const events = require('events')
 const { EventEmitter } = events
 
 const IrcUser = require('./IrcUser.js')
+const IrcLocalUser = require('./IrcLocalUser.js')
 const IrcChannel = require('./IrcChannel.js')
 const IrcServer = require('./IrcServer.js')
 const IrcChannelUser = require('./IrcChannelUser.js')
+const IrcChannelType = require('./IrcChannelType.js')
 
 const maxParamsCount = 15
 const defaultPort = 6667
@@ -221,8 +223,7 @@ module.exports = class IrcClient extends EventEmitter {
                          this.getNumericUserMode(this.registrationInfo.userModes),
                          this.registrationInfo.realName)
 
-    var localUser = new IrcUser(this)
-    localUser.isLocalUser = true
+    var localUser = new IrcLocalUser(this)
     localUser.isOnline = true
     localUser.nickName = this.registrationInfo.nickName
     localUser.userName = this.registrationInfo.userName
@@ -1449,7 +1450,9 @@ module.exports = class IrcClient extends EventEmitter {
   }
 }
 
-// These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
+/** 
+ * These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
+ */
 var IrcServerStatisticalEntryCommonType = {
   // An active connection to the server.
   connection: 1,
@@ -1473,10 +1476,4 @@ var IrcServerStatisticalEntryCommonType = {
   allowedOperator: 10,
   // A hub server within the network.
   hubServer: 11
-}
-
-var IrcChannelType = {
-  public: 1,
-  private: 2,
-  secret: 3
 }

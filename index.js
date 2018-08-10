@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
   //var server = 'irc.quakenet.org' 
 
   client.connect(server, 6667, {
-    'nickName': 'Windcape',
+    'nickName': 'Twoflower',
     'password': null,
     'userName': 'claus.joergensen@outlook.com',
     'realName': 'Claus Joergensen',
