@@ -574,7 +574,7 @@ module.exports = class IrcClient extends EventEmitter {
     }
 
     var newModes = message.parameters[1]
-    if (this.isChannelName(message.parameters[0])) {
+    if (isChannelName(message.parameters[0])) {
       var channel = this.getChannelFromName(message.parameters[0])
       var modesAndParameters = getModeAndParameters(message.parameters.slice(1))
       channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
@@ -730,24 +730,7 @@ module.exports = class IrcClient extends EventEmitter {
         var paramName = paramParts[0]
         var paramValue = paramParts.length == 1 ? null : paramParts[1]
         
-        if (paramName.toLowerCase() == 'prefix') {
-          var prefixValueMatch = paramValue.match(regexISupportPrefix)
-          var prefixes = prefixValueMatch[2]
-          var modes = prefixValueMatch[1]
-          
-          if (prefixes.length != modes.length) {
-            throw 'Message ISupport Prefix is Invalid.'
-          }
-
-          this.channelUserModes = []
-          this.channelUserModes = modes.split('')
-
-          this.channelUserModesPrefixes = {}
-          for (var i = 0; i < prefixes.length; i++) {
-            this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
-          }
-        }
-
+        this.handleISupportParameter(paramName, paramValue)
         this.serverSupportedFeatures[paramName] = paramValue
       }
       
@@ -1557,5 +1540,25 @@ module.exports = class IrcClient extends EventEmitter {
       return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
     }
     return { 'mode': '', 'identifier': identifier }
+  }
+
+  handleISupportParameter (name, value) {
+    if (name.toLowerCase() == 'prefix') {
+      var prefixValueMatch = value.match(regexISupportPrefix)
+      var prefixes = prefixValueMatch[2]
+      var modes = prefixValueMatch[1]
+      
+      if (prefixes.length != modes.length) {
+        throw 'Message ISupport Prefix is Invalid.'
+      }
+
+      this.channelUserModes = []
+      this.channelUserModes = modes.split('')
+
+      this.channelUserModesPrefixes = {}
+      for (var i = 0; i < prefixes.length; i++) {
+        this.channelUserModesPrefixes[prefixes[i]] = this.channelUserModes[i]
+      }
+    }
   }
 }
