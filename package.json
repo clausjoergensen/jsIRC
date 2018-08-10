@@ -4,7 +4,8 @@
   "description": "JavaScript IRC Client",
   "main": "app.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "test": "mocha --timeout 10000"
   },
   "keywords": [
     "irc"
@@ -16,7 +17,8 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^2.0.6",
-    "electron-debug": "^2.0.0"
+    "electron-debug": "^2.0.0",
+    "mocha": "^5.2.0"
   },
   "dependencies": {
     "autolinker": "^1.7.1",

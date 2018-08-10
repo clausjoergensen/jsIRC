@@ -339,8 +339,6 @@ module.exports = class IrcMessageProcessor {
     this.client.localUser.userName = nickNameMatch[2] || this.client.localUser.userName
     this.client.localUser.hostName = nickNameMatch[3] || this.client.localUser.hostName
     
-    this.client.isRegistered = true
-
     this.client.emit('registered')
   }
 

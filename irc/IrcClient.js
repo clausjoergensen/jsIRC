@@ -77,15 +77,6 @@ module.exports = class IrcClient extends EventEmitter {
    *
    * @public
    */
-  disconnect () {
-    this.socket.disconnect()
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
   listChannels (channelNames = null) {
     this.sendMessageList(channelNames)
   }
