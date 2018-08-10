@@ -4,8 +4,7 @@
   "description": "JavaScript IRC Client",
   "main": "app.js",
   "scripts": {
-    "start": "electron .",
-    "console": "node console.js"
+    "start": "electron ."
   },
   "keywords": [
     "irc"
