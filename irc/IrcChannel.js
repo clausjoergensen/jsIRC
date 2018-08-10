@@ -7,47 +7,192 @@ const { EventEmitter } = events
 const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcUtils = require('./IrcUtils.js')
 
+/**
+ * @class IrcChannel
+ * @extends EventEmitter
+ *
+ * Represents an IRC channel that exists on a specific IrcClient.
+ */
 module.exports = class IrcChannel extends EventEmitter { 
 
+  /*
+   * Constructs a new IrcChannel for a given IrcClient.
+   *
+   * @access internal
+   * @constructor
+   * @param {IrcClient} client The IrcClient instance.
+   * @param {String} name The channel name.
+  */
   constructor (client, name) {
     super()
-    this.client = client
-    this.name = name
-    this.topic = null
-    this.channelType = IrcChannelType.Unspecified
-    this.modes = []
-    this.users = []
+    this._client = client
+    this._name = name
+    this._topic = null
+    this._channelType = IrcChannelType.unspecified
+    this._modes = []
+    this._users = []
   }
 
-  part (comment = null) {
-    this.client.sendMessagePart([this.name], comment)
+  // - Public Properties -
+
+  /**
+   * Gets the client to which the channel belongs.
+   *
+   * @public
+   * @return {IrcClient} The client to which the channel belongs.
+   */
+   get client() {
+    return this._client
+   }
+
+  /**
+   * Gets the name of the channel.
+   *
+   * @public
+   * @return {String} Name of the Channel.
+   */
+  get name() {
+    return this._name
   }
 
+  /**
+   * Gets a read-only list of the modes the channel currently has.
+   *
+   * @public
+   * @return {Array} List of the modes the channel currently has.
+   */
+  get modes() {
+    return this._modes
+  }
+
+  /*
+   * Gets a list of all channel users currently in the channel.
+   *
+   * @public
+   * @return {Array} list of all channel users currently in the channel
+   */
+  get users() {
+    return this._users
+  } 
+
+  /*
+   * Gets the current topic of the channel.
+   *
+   * @public
+   * @return {String} The current topic of the channel.
+   */
+  get channelType() {
+    return this._channelType    
+  }
+
+  /*
+   * Gets the current topic of the channel.
+   *
+   * @public
+   * @return {String} The current topic of the channel.
+   */
+  get topic() {
+    return this._topic    
+  }
+
+  // - Public Methods -
+
+  /**
+   * Gets the IrcChannelUser in the channel that corresponds to the specified IrcUser, or null if none is found.
+   *
+   * @public
+   * @param {IrcUser} user The IrcUser for which to look.
+   * @return {IrcChannelUser} The corresponding IrcChannelUser.
+   */
   getChannelUser (user) {
-    return this.users.find(u => u.user == user)
+    return this._users.find(u => u.user == user)
   }
+
+  /**
+   * Requests a list of the current modes of the channel, or if modes is specified, the settings for the specified modes.
+   *
+   * @public
+   * @param {Array} [modes] The modes for which to get the current settings, or null for all current channel modes.
+   */
+  getModes(modes = null) {
+    this._client.getChannelModes(this, modes)
+  }
+
+  /**
+   * Sets the specified modes on the channel.
+   * 
+   * @public
+   * @param {String} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
+   * @param {Array} modeParameters A array of parameters to the modes, or null for no parameters   
+   */
+  setModes (modes, modeParameters) {
+    this._client.setModes(this, modes, modeParameters)
+  }
+
+  /**
+   * Leaves the channel, giving the specified comment.
+   * 
+   * @public
+   * @param {String} [comment] The comment to send the server upon leaving the channel, or null for no comment.
+   */
+  part (comment = null) {
+    this._client.sendMessagePart([this._name], comment)
+  }
+
+  /**
+   * Sends a PRIVMSG to the current channel.
+   *
+   * @public
+   * @param {String} messageText The message to send.
+   */
+  sendMessage (messageText) {
+    this._client.sendMessagePrivateMessage([this._name], messageText)
+    this.emit('message', this._client.localUser, messageText)
+  }
+
+  /**
+   * Sends a NOTICE to the current channel.
+   *
+   * @public
+   * @param {String} noticeText The notice to send.
+   */
+  sendNotice (noticeText) {
+    this._client.sendMessagePrivateMessage([this._name], noticeText)
+    this.emit('notice', this._client.localUser, noticeText)
+  }
+
+  /**
+   * Returns a string representation of this instance.
+   *
+   * @return {String} A string that represents this instance.
+   */
+  toString () {
+    return this._name
+  }
+
+  // - Internal Methods -
 
   userJoined (channelUser) {
-    if (this.users.indexOf(channelUser) != -1) {
+    if (this._users.indexOf(channelUser) != -1) {
       return
     }
     channelUser.channel = this
-    this.users.push(channelUser)
+    this._users.push(channelUser)
     this.emit('userJoinedChannel', channelUser)
   }
 
   userParted (channelUser, comment) {
-    var idx = this.users.indexOf(channelUser)
+    var idx = this._users.indexOf(channelUser)
     if (idx != -1) {
-      this.users.splice(idx)
+      this._users.splice(idx)
     }
     this.emit('userLeftChannel', channelUser, comment)
   }
 
   userQuit (channelUser, comment) {
-    var idx = this.users.indexOf(channelUser)
+    var idx = this._users.indexOf(channelUser)
     if (idx != -1) {
-      this.users.splice(idx)
+      this._users.splice(idx)
     }
     this.emit('userQuit', channelUser, comment)
   }
@@ -57,33 +202,33 @@ module.exports = class IrcChannel extends EventEmitter {
   }
 
   userKicked (channelUser, comment = null) {
-    var idx = this.users.indexOf(channelUser)
+    var idx = this._users.indexOf(channelUser)
     if (idx != -1) {
-      this.users.splice(idx)
+      this._users.splice(idx)
     }  
     this.emit('userKicked', user)
   }
 
   userNameReply(channelUser) {
-    if (this.users.indexOf(channelUser) != -1) {
+    if (this._users.indexOf(channelUser) != -1) {
       return
     }
     channelUser.channel = this
-    this.users.push(channelUser)
+    this._users.push(channelUser)
   }
 
   topicChanged (user, newTopic) {
-    this.topic = newTopic
+    this._topic = newTopic
     this.emit('topic', user, newTopic)
   }
 
   modesChanged (source, newModes, newModeParameters) {
-    this.modes = IrcUtils.updateModes(this.modes, 
+    this._modes = IrcUtils.updateModes(this._modes, 
       newModes,
       newModeParameters,
       client.channelUserModes, 
       (add, mode, parameter) => {
-        var channelUser = this.users.find(u => u.user.nickName == parameter)
+        var channelUser = this._users.find(u => u.user.nickName == parameter)
         channelUser.modeChanged(add, mode)
       })
   }
@@ -115,24 +260,21 @@ module.exports = class IrcChannel extends EventEmitter {
   }
 
   typeChanged (type) {
-    this.type = type
+    this._type = type
     this.emit('type', type)
-  }
-
-  sendMessage (messageText) {
-    this.client.sendMessagePrivateMessage([this.name], messageText)
-    this.emit('message', this.client.localUser, messageText)
-  }
-
-  sendNotice (noticeText) {
-    this.client.sendMessagePrivateMessage([this.name], noticeText)
-    this.emit('notice', this.client.localUser, noticeText)
   }
 }
 
+/**
+ * Defines the types of channels. Each channel may only be of a single type at any one time.
+ */
 var IrcChannelType = {
-  Unspecified: 0,
-  Public: 1,
-  Private: 2,
-  Secret: 3
+  // The channel type is unspecified.
+  unspecified: 0,
+  // The channel is public. The server always lists this channel.
+  public: 1,
+  // The channel is private. The server never lists this channel.
+  private: 2,
+  // The channel is secret. The server never lists this channel and pretends it does not exist when responding to queries.
+  secret: 3
 }
