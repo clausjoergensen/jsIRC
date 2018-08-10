@@ -141,6 +141,16 @@ module.exports = class IrcChannel extends EventEmitter {
   }
 
   /**
+   * Kicks a user from the channel, optionally with a reason
+   * 
+   * @public
+   * @param {String} [reason] The kick reason.
+   */
+  kick (userNickName, reason = null) {
+    this.client.kick(this, [userNickName], reason)
+  }
+
+  /**
    * Sends a PRIVMSG to the current channel.
    *
    * @public
@@ -207,7 +217,7 @@ module.exports = class IrcChannel extends EventEmitter {
     if (idx != -1) {
       this.users.splice(idx)
     }  
-    this.emit('userKicked', user)
+    this.emit('userKicked', channelUser)
   }
 
   userNameReply(channelUser) {

@@ -230,6 +230,15 @@ module.exports = class IrcClient extends EventEmitter {
    *
    * @public
    */
+  kick(channel, usersNickNames, reason) {
+    this.sendMessageKick(channel.name, usersNickNames, reason)    
+  }
+
+  /**
+   * 
+   *
+   * @public
+   */
   setModes (channel, modes, modeParameters) {
     this.sendMessageChannelMode(channel.name, modes, modeParameters)
   } 

@@ -134,8 +134,9 @@ ClientUI.prototype.localUserJoinedChannel = function (channel) {
 
   channel.on('topic', (source, topic) => { this.displayChannelTopic(channel, source) })
   channel.on('userList', () => { this.displayChannelUsers(channel) })
-  channel.on('userJoinedChannel', (user) => { this.displayChannelUsers(channel) })
-  channel.on('userLeftChannel', (user) => { this.displayChannelUsers(channel) })
+  channel.on('userJoinedChannel', (_) => { this.displayChannelUsers(channel) })
+  channel.on('userLeftChannel', (_) => { this.displayChannelUsers(channel) })
+  channel.on('userKicked', (_) => { this.displayChannelUsers(channel) })
 
   this.addChannelToList(channel)
   this.viewChannel(channel)

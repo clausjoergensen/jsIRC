@@ -234,13 +234,15 @@ module.exports = class IrcMessageProcessor {
 
   // Process KICK messages received from the server.
   processMessageKick (message) {
-    var channelList = message.parameters[0].split(',')
-    var userList = message.parameters[1]
+    var channels = message.parameters[0].split(',').map(n => this.getChannelFromName(n))    
+    var users = message.parameters[1].split(',').map(n => this.client.getUserFromNickName(n))
     var comment = message.parameters[2]
     
     var channelUsers = channels
       .map((channel, i) => [channel, users[i]])
-      .map((channel, user) => channel.getChannelUser(user))
+      .map(([channel, user], i) => {
+        return channel.getChannelUser(user)
+      })
 
     channelUsers.forEach(channelUser => {
         if (channelUser.user == this.client.localUser) {
