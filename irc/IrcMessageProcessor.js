@@ -406,7 +406,7 @@ class IrcMessageProcessor {
       /**
        * @event IrcClient#serverSupportedFeatures
        */      
-      this.client.emit('serverSupportedFeatures')
+      this.client.emit('serverSupportedFeatures', this.client.serverSupportedFeatures)
     }
   }
 

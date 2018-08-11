@@ -87,6 +87,13 @@ ClientUI.prototype.setupEventListeners = function() {
     }
   })
 
+  this.client.on('serverSupportedFeatures', (serverSupportedFeatures) => {
+    let networkName = serverSupportedFeatures['NETWORK']
+    if (networkName != null) {
+      this.navigationServerView.firstChild.innerText = networkName
+    }
+  })
+
   this.client.on('clientInfo', () => {
     this.addServerToList(this.client.serverName)
   })
