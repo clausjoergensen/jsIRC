@@ -77,6 +77,8 @@ ClientUI.prototype.setupEventListeners = function() {
     switch (command) {
       case 433: // ERR_NICKNAMEINUSE
         this.displayServerError(`Nickname '${errorParameters[0]}' is already in use.`)
+        this.chatInput.value = '/nick '
+        this.focusInputField()
         break
       case 482: // ERR_CHANOPRIVSNEEDED
         this.displayChannelError(errorParameters[0], errorMessage)
@@ -388,7 +390,7 @@ ClientUI.prototype.displayServerMessage = function (source, text, styles = []) {
   this.serverView.scrollTop = this.serverView.scrollHeight
 
   if (this.serverView.style.display == 'none') {
-    this.navigationServerView.firstChild.classList.add('unread')
+    this.navigationServerView.firstChild.classList.add('nav-unread')
   }
 }
 
@@ -413,7 +415,7 @@ ClientUI.prototype.displayServerNotice = function (source, text) {
   this.serverView.scrollTop = this.serverView.scrollHeight
 
   if (this.serverView.style.display == 'none') {
-    this.navigationServerView.firstChild.classList.add('unread')
+    this.navigationServerView.firstChild.classList.add('nav-unread')
   }
 }
 
@@ -428,9 +430,13 @@ ClientUI.prototype.displayChannelError = function (channelName, errorMessage) {
   paragraph.innerText = formattedText
   
   const channelTableView = this.channelViews[channelName]
-  const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
-  messageView.appendChild(paragraph)
-  messageView.scrollTop = messageView.scrollHeight    
+  if (channelTableView != null) {
+    const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
+    messageView.appendChild(paragraph)
+    messageView.scrollTop = messageView.scrollHeight
+  } else {
+    this.displayServerError(`${channelName} ${errorMessage}`)
+  }
 }
 
 ClientUI.prototype.displayChannelAction = function (channelName, source, text) {

@@ -209,6 +209,17 @@ class IrcClient extends EventEmitter {
   }
 
   /**
+   * Attempts to authenticate as a IRC network operator.
+   *
+   * @public
+   * @param {string} userName The username.
+   * @param {string} userName The password.
+   */
+  oper (userName, password) {
+    this.sendMessageOper(userName, password)
+  }
+
+  /**
    * Sends the specified raw message to the server.
    *
    * @public

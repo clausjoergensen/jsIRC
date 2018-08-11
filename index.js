@@ -35,9 +35,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
   })
 
   client.on('registered', () => {
-    client.sendRawMessage('join :#c#')
-    client.sendRawMessage('join :#hearthstone')
-    client.sendRawMessage('join :#wow')
-    client.sendRawMessage('join :#php')
+    client.oper('Windcapes', 'correcthorsebatterystaple')
+    client.joinChannel('#c#')
+    client.joinChannel('#hearthstone')
+    client.joinChannel('#wow')
   })
 })
