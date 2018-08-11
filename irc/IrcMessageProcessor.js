@@ -7,8 +7,6 @@ const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcReply = require('./IrcReply.js')
 const IrcError = require('./IrcError.js')
 
-const regexNickName = new RegExp(/([^!@]+)/)
-const regexUserName = new RegExp(/([^!@]+)/)
 const regexHostName = new RegExp(/([^%@]+)/)
 const regexChannelName = new RegExp(/([#+!&].+)/)
 const regexTargetMask = new RegExp(/([$#].+)/)

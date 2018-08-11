@@ -1,7 +1,6 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-var util = require('util')
 const events = require('events')
 const { EventEmitter } = events
 

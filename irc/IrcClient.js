@@ -2,18 +2,13 @@
 'use strict'
 
 const net = require('net')
-const util = require('util')
 const events = require('events')
 
 const { EventEmitter } = events
 
 const IrcUser = require('./IrcUser.js')
 const IrcLocalUser = require('./IrcLocalUser.js')
-const IrcChannel = require('./IrcChannel.js')
 const IrcServer = require('./IrcServer.js')
-const IrcChannelUser = require('./IrcChannelUser.js')
-const IrcChannelType = require('./IrcChannelType.js')
-const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
 const IrcMessageProcessor = require('./IrcMessageProcessor.js')
 
 const maxParamsCount = 15
