@@ -442,8 +442,6 @@ ClientUI.prototype.displayChannelAction = function (channelName, source, text) {
   paragraph.classList.add('channel-message')
   paragraph.innerText = formattedText
   
-  styles.forEach(s => paragraph.classList.add(s))
-
   const channelTableView = this.channelViews[channelName]
   const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
   messageView.appendChild(paragraph)
