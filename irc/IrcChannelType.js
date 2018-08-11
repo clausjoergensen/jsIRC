@@ -7,7 +7,7 @@
  * @readonly
  * @enum {number}
  */
-var IrcChannelType = {
+let IrcChannelType = {
   /** The channel type is unspecified. */
   unspecified: 0,
   /** The channel is public. The server always lists this channel. */

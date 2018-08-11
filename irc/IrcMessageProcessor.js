@@ -112,21 +112,21 @@ class IrcMessageProcessor {
    * @param {Object} message The message object.
    */
   processMessage (message) {
-    var messageProcessor = this._messageProcessors[message.command]
+    let messageProcessor = this._messageProcessors[message.command]
     if (messageProcessor != null) {
       messageProcessor(message)
     } else {
-      var numericCommand = parseInt(message.command)
+      let numericCommand = parseInt(message.command)
       if (numericCommand >= 400 && numericCommand <= 599) {
         this.processMessageNumericError(message)
       } else {
         if (this.client.loggingEnabled) {
-          var replyId = IrcReply[message.command]
+          let replyId = IrcReply[message.command]
           if (replyId != null) {
             console.log(`Unsupported command ${replyId} (${message.command})`)
             return
           }
-          var errorId = IrcError[message.command]
+          let errorId = IrcError[message.command]
           if (errorId != null) {
             console.log(`Unsupported command ${errorId} (${message.command})`)
             return
@@ -140,14 +140,14 @@ class IrcMessageProcessor {
   // - Internal Methods
 
   processMessageNick (message) {
-    var sourceUser = message.source
-    var newNickName = message.parameters[0]
+    let sourceUser = message.source
+    let newNickName = message.parameters[0]
     sourceUser.nickName = newNickName
   }
 
   processMessageQuit (message) {
-    var sourceUser = message.source
-    var comment = message.parameters[0]
+    let sourceUser = message.source
+    let comment = message.parameters[0]
     
     sourceUser.quit(comment)
     
@@ -159,11 +159,11 @@ class IrcMessageProcessor {
 
   // Process JOIN messages received from the server.
   processMessageJoin (message) {
-    var sourceUser = message.source
-    var channelList = message.parameters[0].split(',')
+    let sourceUser = message.source
+    let channelList = message.parameters[0].split(',')
 
     channelList.forEach(channelName => {
-      var channel = this.getChannelFromName(channelName)
+      let channel = this.getChannelFromName(channelName)
       if (sourceUser == this.client.localUser) {
         this.client.localUser.joinChannel(channel)
       } else {
@@ -174,12 +174,12 @@ class IrcMessageProcessor {
 
   // Process PART messages received from the server.
   processMessagePart (message) {
-    var sourceUser = message.source
-    var channelList = message.parameters[0].split(',')
-    var comment = message.parameters[1]
+    let sourceUser = message.source
+    let channelList = message.parameters[0].split(',')
+    let comment = message.parameters[1]
 
     channelList.forEach(channelName => {
-      var channel = this.getChannelFromName(channelName)
+      let channel = this.getChannelFromName(channelName)
       if (sourceUser == this.client.localUser) {
         this.client.localUser.partChannel(channel)
         this.client.channels.splice(this.client.channels.indexOf(channel))
@@ -195,10 +195,10 @@ class IrcMessageProcessor {
       return channelName.match(regexChannelName) != null
     }
 
-    var newModes = message.parameters[1]
+    let newModes = message.parameters[1]
     if (isChannelName(message.parameters[0])) {
-      var channel = this.getChannelFromName(message.parameters[0])
-      var modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
+      let channel = this.getChannelFromName(message.parameters[0])
+      let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
       channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
       /**
        * @event IrcClient#channelMode
@@ -217,17 +217,17 @@ class IrcMessageProcessor {
 
   // Process TOPIC messages received from the server.
   processMessageTopic (message) {
-    var channel = this.getChannelFromName(message.parameters[0])
+    let channel = this.getChannelFromName(message.parameters[0])
     channel.topicChanged(message.source, message.parameters[1])
   }
 
   // Process KICK messages received from the server.
   processMessageKick (message) {
-    var channels = message.parameters[0].split(',').map(n => this.getChannelFromName(n))    
-    var users = message.parameters[1].split(',').map(n => this.client.getUserFromNickName(n))
-    var comment = message.parameters[2]
+    let channels = message.parameters[0].split(',').map(n => this.getChannelFromName(n))    
+    let users = message.parameters[1].split(',').map(n => this.client.getUserFromNickName(n))
+    let comment = message.parameters[2]
     
-    var channelUsers = channels
+    let channelUsers = channels
       .map((channel, i) => [channel, users[i]])
       .map(([channel, user], i) => {
         return channel.getChannelUser(user)
@@ -235,7 +235,7 @@ class IrcMessageProcessor {
 
     channelUsers.forEach(channelUser => {
         if (channelUser.user == this.client.localUser) {
-            var channel = channelUser.channel
+            let channel = channelUser.channel
             this.client.channels.splice(this.client.channels.indexOf(channel))
 
             channelUser.channel.userKicked(channelUser, comment)
@@ -248,17 +248,17 @@ class IrcMessageProcessor {
 
   // Process INVITE messages received from the server.
   processMessageInvite (message) {
-    var user = this.client.getUserFromNickName(message.parameters[0])
-    var channel = this.getChannelFromName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[0])
+    let channel = this.getChannelFromName(message.parameters[1])
     user.inviteReceived(message.source, channel)
   }    
 
    // Process PRIVMSG messages received from the server.
   processMessagePrivateMessage (message) {
-    var targetNames = message.parameters[0].split(',')
-    var messageText = message.parameters[1]
+    let targetNames = message.parameters[0].split(',')
+    let messageText = message.parameters[1]
 
-    var targets = targetNames.map(x => this.getMessageTarget(x))
+    let targets = targetNames.map(x => this.getMessageTarget(x))
     targets.forEach(t => {
       if (typeof t.messageReceived === 'function') {
         t.messageReceived(message.source, targets, messageText)
@@ -270,8 +270,8 @@ class IrcMessageProcessor {
 
   // Process NOTICE messages received from the server.
   processMessageNotice (message) {
-    var targetNames = message.parameters[0].split(',')
-    var noticeText = message.parameters[1]
+    let targetNames = message.parameters[0].split(',')
+    let noticeText = message.parameters[1]
 
     if (targetNames[0] == 'AUTH') {
       /**
@@ -281,7 +281,7 @@ class IrcMessageProcessor {
        */
       this.client.emit('notice', message.source, noticeText)
     } else {
-      var targets = targetNames.map(x => this.getMessageTarget(x))
+      let targets = targetNames.map(x => this.getMessageTarget(x))
       targets.forEach(t => {
         if (typeof t.noticeReceived === 'function') {
           t.noticeReceived(message.source, targets, noticeText)
@@ -294,8 +294,8 @@ class IrcMessageProcessor {
 
   // Process PING messages received from the server.
   processMessagePing (message) {
-    var server = message.parameters[0]
-    var targetServer = message.parameters[1]
+    let server = message.parameters[0]
+    let targetServer = message.parameters[1]
     
     try {
       /**
@@ -310,7 +310,7 @@ class IrcMessageProcessor {
 
   // Process PONG messages received from the server.
   processMessagePong (message) {
-    var server = message.parameters[0]
+    let server = message.parameters[0]
     
     try {
       /**
@@ -325,7 +325,7 @@ class IrcMessageProcessor {
 
   // Process ERROR messages received from the server.
   processMessageError (message) {
-    var errorMessage = message.parameters[0]
+    let errorMessage = message.parameters[0]
     /**
      * @event IrcClient#error
      * @param {string} errorMessage
@@ -337,10 +337,10 @@ class IrcMessageProcessor {
 
   // Process RPL_WELCOME responses from the server.
   processMessageReplyWelcome (message) {
-    var welcomeMessage = message.parameters[1].split(' ')
-    var hostMask = welcomeMessage[welcomeMessage.length - 1]
+    let welcomeMessage = message.parameters[1].split(' ')
+    let hostMask = welcomeMessage[welcomeMessage.length - 1]
     
-    var nickNameMatch = hostMask.match(regexNickNameId)
+    let nickNameMatch = hostMask.match(regexNickNameId)
     this.client.localUser.nickName = nickNameMatch[1] || this.client.localUser.nickName
     this.client.localUser.userName = nickNameMatch[2] || this.client.localUser.userName
     this.client.localUser.hostName = nickNameMatch[3] || this.client.localUser.hostName
@@ -379,9 +379,9 @@ class IrcMessageProcessor {
   processMessageReplyBounceOrISupport (message) {
     if (message.parameters[1].startsWith('Try Server')) { 
       // RPL_BOUNCE
-      var textParts = message.parameters[0].split(' ', ',')
-      var serverAddress = textParts[2]
-      var serverPort = int.Parse(textParts[6])
+      let textParts = message.parameters[0].split(' ', ',')
+      let serverAddress = textParts[2]
+      let serverPort = int.Parse(textParts[6])
 
       /**
        * @event IrcClient#bounce
@@ -391,13 +391,13 @@ class IrcMessageProcessor {
       this.client.emit('bounce', serverAddress, serverPort)
     } else {
       // RPL_ISUPPORT
-      for (var i = 1; i < message.parameters.length - 1; i++) {
+      for (let i = 1; i < message.parameters.length - 1; i++) {
         if (message.parameters[i + 1] == null) {
           break
         }
-        var paramParts = message.parameters[i].split('=')
-        var paramName = paramParts[0]
-        var paramValue = paramParts.length == 1 ? null : paramParts[1]
+        let paramParts = message.parameters[i].split('=')
+        let paramName = paramParts[0]
+        let paramValue = paramParts.length == 1 ? null : paramParts[1]
         
         this.handleISupportParameter(paramName, paramValue)
         this.client.serverSupportedFeatures[paramName] = paramValue
@@ -509,9 +509,9 @@ class IrcMessageProcessor {
 
   // Process RPL_LUSERCLIENT responses from the server.
   processMessageLUserClient (message) {
-    var info = message.parameters[1]
-    var infoParts = info.split(' ')
-    var networkInfo = {
+    let info = message.parameters[1]
+    let infoParts = info.split(' ')
+    let networkInfo = {
       'visibleUsersCount': parseInt(infoParts[2]),
       'invisibleUsersCount': parseInt(infoParts[5]),
       'serversCount': parseInt(infoParts[8])
@@ -525,7 +525,7 @@ class IrcMessageProcessor {
 
   // Process RPL_LUSEROP responses from the server.
   processMessageLUserOp (message) {
-    var networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
+    let networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
     /**
      * @event IrcClient#networkInfo
      */      
@@ -534,7 +534,7 @@ class IrcMessageProcessor {
 
   // Process RPL_LUSERUNKNOWN responses from the server.
   processMessageLUserUnknown (message) {
-    var networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
+    let networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
     /**
      * @event IrcClient#networkInfo
      */      
@@ -543,7 +543,7 @@ class IrcMessageProcessor {
 
   // Process RPL_LUSERCHANNELS responses from the server.
   processMessageLUserChannels (message) {
-    var networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
+    let networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
     /**
      * @event IrcClient#networkInfo
      */      
@@ -552,11 +552,11 @@ class IrcMessageProcessor {
 
   // Process RPL_LUSERME responses from the server.
   processMessageLUserMe (message) {
-    var networkInfo = {}
-    var info = message.parameters[1]
-    var infoParts = info.split(' ')
+    let networkInfo = {}
+    let info = message.parameters[1]
+    let infoParts = info.split(' ')
     
-    for (var i = 0; i < infoParts.length; i++) {
+    for (let i = 0; i < infoParts.length; i++) {
       switch (infoParts[i].toLowerCase()) {
         case 'user':
         case 'users':
@@ -581,17 +581,17 @@ class IrcMessageProcessor {
 
   // Process RPL_AWAY responses from the server.
   processMessageReplyAway (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[1])
     user.awayMessage = message.parameters[2]
     user.isAway = true
   }
 
   // Process RPL_ISON responses from the server.
   processMessageReplyIsOn (message) {
-    var onlineUsers = []
-    var onlineUserNames = message.parameters[1].split(' ')
+    let onlineUsers = []
+    let onlineUserNames = message.parameters[1].split(' ')
     onlineUserNames.forEach(name => {
-      var onlineUser = this.client.getUserFromNickName(name)
+      let onlineUser = this.client.getUserFromNickName(name)
       onlineUser.isOnline = true    
     })
   }
@@ -608,7 +608,7 @@ class IrcMessageProcessor {
 
   // Process RPL_WHOISUSER responses from the server.
   processMessageReplyWhoIsUser (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[1])
     user.userName = message.parameters[2]
     user.hostName = message.parameters[3]
     user.realName = message.parameters[5]
@@ -616,20 +616,20 @@ class IrcMessageProcessor {
 
   // Process RPL_WHOISSERVER responses from the server.
   processMessageReplyWhoIsServer (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[1])
     user.serverName = message.parameters[2]
     user.serverInfo = message.parameters[3]
   }
 
   // Process RPL_WHOISOPERATOR responses from the server.
   processMessageReplyWhoIsOperator (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[1])
     user.isOperator = true
   }
 
   // Process RPL_WHOWASUSER responses from the server.
   processMessageReplyWhoWasUser (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1], false)
+    let user = this.client.getUserFromNickName(message.parameters[1], false)
     user.userName = message.parameters[2]
     user.hostName = message.parameters[3]
     user.realName = message.parameters[5]
@@ -637,7 +637,7 @@ class IrcMessageProcessor {
 
   // Process RPL_ENDOFWHO responses from the server.
   processMessageReplyEndOfWho (message) {
-    var mask = message.parameters[1]
+    let mask = message.parameters[1]
     /**
      * @event IrcClient#whoReply
      * @param {string} mask
@@ -647,13 +647,13 @@ class IrcMessageProcessor {
 
   // Process RPL_WHOISIDLE responses from the server.
   processMessageReplyWhoIsIdle (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[1])
     user.idleDuration = parseInt(message.parameters[2])
   }
 
   // Process RPL_ENDOFWHOIS responses from the server.
   processMessageReplyEndOfWhoIs (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[1])
     /**
      * @event IrcClient#whoIsReply
      * @param {IrcUser} user
@@ -663,14 +663,14 @@ class IrcMessageProcessor {
 
   // Process RPL_WHOISCHANNELS responses from the server.
   processMessageReplyWhoIsChannels (message) {
-    var user = this.client.getUserFromNickName(message.parameters[1])
-    var channelIds = message.parameters[2].split(' ')
+    let user = this.client.getUserFromNickName(message.parameters[1])
+    let channelIds = message.parameters[2].split(' ')
     channelIds.forEach(channelId => {
       if (channelId.length == 0) {
         return
       }
-      var lookup = this.getUserModeAndIdentifier(channelId)
-      var channel = this.getChannelFromName(lookup.identifier)
+      let lookup = this.getUserModeAndIdentifier(channelId)
+      let channel = this.getChannelFromName(lookup.identifier)
       if (channel.getChannelUser(user) == null) {
         channel.userJoined(new IrcChannelUser(user, lookup.mode.split('')))
       }    
@@ -679,9 +679,9 @@ class IrcMessageProcessor {
 
   // Process RPL_LIST responses from the server.
   processMessageReplyList (message) {
-    var channelName = message.parameters[1]
-    var visibleUsersCount = parseInt(message.parameters[2])
-    var topic = message.parameters[3]
+    let channelName = message.parameters[1]
+    let visibleUsersCount = parseInt(message.parameters[2])
+    let topic = message.parameters[3]
 
     this.listedChannels.push({ 'channelName': channelName, 'visibleUsersCount': visibleUsersCount, 'topic': topic })
   }
@@ -698,8 +698,8 @@ class IrcMessageProcessor {
 
   // Process processMessageReplyListEnd responses from the server
   processMessageReplyChannelModes (message) {
-    var channel = this.getChannelFromName(message.parameters[0])
-    var modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
+    let channel = this.getChannelFromName(message.parameters[0])
+    let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
     
     channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
     
@@ -716,31 +716,31 @@ class IrcMessageProcessor {
 
   // Process RPL_NOTOPIC responses from the server.
   processMessageReplyNoTopic (message) {
-    var channel = this.getChannelFromName(message.parameters[1])
+    let channel = this.getChannelFromName(message.parameters[1])
     channel.topicChanged(null, null)
   }
 
   // Process RPL_TOPIC responses from the server.
   processMessageReplyTopic (message) {
-    var channel = this.getChannelFromName(message.parameters[1])
+    let channel = this.getChannelFromName(message.parameters[1])
     channel.topicChanged(null, message.parameters[2])
   }
 
   // Process RPL_INVITING responses from the server.
   processMessageReplyInviting (message) {
-    var invitedUser = this.client.getUserFromNickName(message.parameters[1])
-    var channel = this.getChannelFromName(message.parameters[2])
+    let invitedUser = this.client.getUserFromNickName(message.parameters[1])
+    let channel = this.getChannelFromName(message.parameters[2])
     channel.userInvited(invitedUser)
   }
 
   // Process RPL_VERSION responses from the server.
   processMessageReplyVersion (message) {
-    var versionInfo = message.parameters[1]
-    var versionSplitIndex = versionInfo.lastIndexOf('.')
-    var version = versionInfo.substr(0, versionSplitIndex)
-    var debugLevel = versionInfo.substr(versionSplitIndex + 1)
-    var server = message.parameters[2]
-    var comments = message.parameters[3]
+    let versionInfo = message.parameters[1]
+    let versionSplitIndex = versionInfo.lastIndexOf('.')
+    let version = versionInfo.substr(0, versionSplitIndex)
+    let debugLevel = versionInfo.substr(versionSplitIndex + 1)
+    let server = message.parameters[2]
+    let comments = message.parameters[3]
 
     /**
      * @event IrcClient#serverVersion
@@ -759,14 +759,14 @@ class IrcMessageProcessor {
 
   // Process RPL_WHOREPLY responses from the server.
   processMessageReplyWhoReply (message) {
-    var channel = message.parameters[1] == '*' ? null : this.getChannelFromName(message.parameters[1])
-    var user = this.client.getUserFromNickName(message.parameters[5])
+    let channel = message.parameters[1] == '*' ? null : this.getChannelFromName(message.parameters[1])
+    let user = this.client.getUserFromNickName(message.parameters[5])
 
-    var userName = message.parameters[2]
+    let userName = message.parameters[2]
     user.hostName = message.parameters[3]
     user.serverName = message.parameters[4]
 
-    var userModeFlags = message.parameters[6]
+    let userModeFlags = message.parameters[6]
     if (userModeFlags.includes('H')) {
       user.IsAway = false;
     }
@@ -778,7 +778,7 @@ class IrcMessageProcessor {
     
     if (channel != null)
     {
-        var channelUser = channel.getChannelUser(user)
+        let channelUser = channel.getChannelUser(user)
         if (channelUser == null)
         {
             channelUser = new IrcChannelUser(user)
@@ -786,7 +786,7 @@ class IrcMessageProcessor {
         }
 
         userModeFlags.split('').forEach(c => {
-            var mode = this.client.channelUserModesPrefixes[c]
+            let mode = this.client.channelUserModesPrefixes[c]
             if (mode != null) {
               channelUser.modeChanged(true, mode)
             } else {
@@ -795,7 +795,7 @@ class IrcMessageProcessor {
         })
     }
 
-    var lastParamParts = message.parameters[7].split(' ')
+    let lastParamParts = message.parameters[7].split(' ')
     user.hopCount = parseInt(lastParamParts[0])
     if (lastParamParts.length > 1) {
       user.realName = lastParamParts[1]
@@ -820,18 +820,18 @@ class IrcMessageProcessor {
       }
     }
 
-    var channel = this.getChannelFromName(message.parameters[2])
+    let channel = this.getChannelFromName(message.parameters[2])
     if (channel != null) {
       channel.typeChanged(getChannelType(message.parameters[1][0]))
 
-      var userIds = message.parameters[3].split(' ')
+      let userIds = message.parameters[3].split(' ')
       userIds.forEach(userId => {
           if (userId.length == 0) {
             return
           }
 
-          var userNickNameAndMode = this.getUserModeAndIdentifier(userId)
-          var user = this.client.getUserFromNickName(userNickNameAndMode.identifier)
+          let userNickNameAndMode = this.getUserModeAndIdentifier(userId)
+          let user = this.client.getUserFromNickName(userNickNameAndMode.identifier)
           channel.userNameReply(new IrcChannelUser(user, userNickNameAndMode.mode.split('')))
       })
     }
@@ -839,10 +839,10 @@ class IrcMessageProcessor {
 
   // Process RPL_LINKS responses from the server.
   processMessageReplyLinks (message) {
-    var hostName = message.parameters[1]
-    var infoParts = message.parameters[3].split(' ')
-    var hopCount = parseInt(infoParts[0])
-    var info = infoParts[1]
+    let hostName = message.parameters[1]
+    let infoParts = message.parameters[3].split(' ')
+    let hopCount = parseInt(infoParts[0])
+    let info = infoParts[1]
 
     this.client.listedServerLinks.push({ 'hostName': hostName, 'hopCount': hopCount, 'info': info });
   }
@@ -859,7 +859,7 @@ class IrcMessageProcessor {
 
   // Process RPL_ENDOFNAMES responses from the server.
   processMessageReplyEndOfNames (message) {
-    var channel = this.getChannelFromName(message.parameters[1])
+    let channel = this.getChannelFromName(message.parameters[1])
     channel.usersListReceived()
   }
 
@@ -869,7 +869,7 @@ class IrcMessageProcessor {
       this.banList = []
     }
     
-    var [source, channel, banMask, bannedBy, time] = message.parameters
+    let [source, channel, banMask, bannedBy, time] = message.parameters
     
     this.banList.push({
       'channel': channel,
@@ -881,7 +881,7 @@ class IrcMessageProcessor {
 
   // Process RPL_ENDOFBANLIST responses from the server.
   processMessageReplyBanListEnd (message) {
-    var channel = this.getChannelFromName(message.parameters[1])
+    let channel = this.getChannelFromName(message.parameters[1])
     /**
      * @event IrcClient#banList
      * @property {object[]} banList
@@ -921,7 +921,7 @@ class IrcMessageProcessor {
 
   // Process RPL_TIME responses from the server.
   processMessageReplyTime (message) {
-    var [server, message, dateTime] = message.parameters
+    let [server, dateTime] = message.parameters
     /**
      * @event IrcClient#serverTime
      * @property {string} server
@@ -931,9 +931,9 @@ class IrcMessageProcessor {
   }
 
   processMessageNumericError (message) {
-    var errorParameters = []
-    var errorMessage = null;
-    for (var i = 1; i < message.parameters.length; i++) {
+    let errorParameters = []
+    let errorMessage = null;
+    for (let i = 1; i < message.parameters.length; i++) {
         if (i + 1 == message.parameters.length || message.parameters[i + 1] == null) {
             errorMessage = message.parameters[i]
             break
@@ -953,11 +953,11 @@ class IrcMessageProcessor {
   // -- Utils
 
   getChannelFromName (channelName) {
-    var existingChannel = this.client.channels.find(c => c.name == channelName)
+    let existingChannel = this.client.channels.find(c => c.name == channelName)
     if (existingChannel != null) {
       return existingChannel
     }
-    var newChannel = new IrcChannel(this.client, channelName)
+    let newChannel = new IrcChannel(this.client, channelName)
     this.client.channels.push(newChannel)
     return newChannel
   }
@@ -975,38 +975,38 @@ class IrcMessageProcessor {
       return this.client
     }
 
-    var channelName = null
-    var channelNameMatch = targetName.match(regexChannelName)
+    let channelName = null
+    let channelNameMatch = targetName.match(regexChannelName)
     if (channelNameMatch != null) {
       channelName = channelNameMatch[1]
     }
 
-    var nickName = null
-    var nickNameMatch = targetName.match(regexNickNameId)
+    let nickName = null
+    let nickNameMatch = targetName.match(regexNickNameId)
     if (nickNameMatch != null) {
       nickName = nickNameMatch[1]
     }
 
-    var userName = null
-    var userNameMatch = targetName.match(regexUserNameId)
+    let userName = null
+    let userNameMatch = targetName.match(regexUserNameId)
     if (userNameMatch != null) {
       userName = userNameMatch[1]
     }
 
-    var hostName = null
-    var hostNameMatch = targetName.match(regexHostName)
+    let hostName = null
+    let hostNameMatch = targetName.match(regexHostName)
     if (hostNameMatch != null) {
       hostName = hostNameMatch[1]
     }
 
-    var serverName = null
-    var serverNameMatch = targetName.match(regexServerName)
+    let serverName = null
+    let serverNameMatch = targetName.match(regexServerName)
     if (serverNameMatch != null) {
       serverName = serverNameMatch[1]
     }
 
-    var targetMask = null
-    var targetMaskMatch = targetName.match(regexTargetMask)
+    let targetMask = null
+    let targetMaskMatch = targetName.match(regexTargetMask)
     if (targetMaskMatch != null) {
       targetMask = targetMaskMatch[1]
     }
@@ -1016,7 +1016,7 @@ class IrcMessageProcessor {
     }
 
     if (nickName != null) {
-      var user = this.client.getUserFromNickName(nickName, true)
+      let user = this.client.getUserFromNickName(nickName, true)
       if (user.userName == null) {
         user.userName = userName
       }
@@ -1027,7 +1027,7 @@ class IrcMessageProcessor {
     }
     
     if (userName != null) {
-      var user = this.client.getUserFromNickName(nickName, true)
+      let user = this.client.getUserFromNickName(nickName, true)
       if (user.hostName == null) {
         user.hostName = hostName
       }
@@ -1048,7 +1048,7 @@ class IrcMessageProcessor {
   }
 
   getUserModeAndIdentifier (identifier) {
-    var mode = identifier[0]
+    let mode = identifier[0]
     let channelUserMode = this.client.channelUserModesPrefixes[mode]
     if (channelUserMode != null) {
       return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
@@ -1058,9 +1058,9 @@ class IrcMessageProcessor {
 
   handleISupportParameter (name, value) {
     if (name.toLowerCase() == 'prefix') {
-      var prefixValueMatch = value.match(regexISupportPrefix)
-      var prefixes = prefixValueMatch[2]
-      var modes = prefixValueMatch[1]
+      let prefixValueMatch = value.match(regexISupportPrefix)
+      let prefixes = prefixValueMatch[2]
+      let modes = prefixValueMatch[1]
       
       if (prefixes.length != modes.length) {
         throw 'Message ISupport Prefix is Invalid.'
@@ -1070,15 +1070,15 @@ class IrcMessageProcessor {
       this.client.channelUserModes = modes.split('')
 
       this.client.channelUserModesPrefixes = {}
-      for (var i = 0; i < prefixes.length; i++) {
+      for (let i = 0; i < prefixes.length; i++) {
         this.client.channelUserModesPrefixes[prefixes[i]] = this.client.channelUserModes[i]
       }
     }
   }
   
   getModeAndParameters(messageParameters) {
-    var modes = ''
-    var modeParameters = []
+    let modes = ''
+    let modeParameters = []
     messageParameters.forEach(p => {
       if (p == null) { return }
       if (p.length != 0) {

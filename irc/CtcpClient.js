@@ -126,14 +126,14 @@ class CtcpClient extends EventEmitter {
    * @param {string[]} targets A list of users to which to send the request.
    */
   ping (targets) {
-    var now = new Date()
+    let now = new Date()
     this.sendMessagePing(targets, now.getTime(), false)
   }
 
   // - Event Handlers
 
   connected () {
-    var localUser = this.client.localUser
+    let localUser = this.client.localUser
     if (localUser == null) {
       return
     }
@@ -171,14 +171,14 @@ class CtcpClient extends EventEmitter {
       return false
     }
     
-    var message = {
+    let message = {
       'source': e.source,
       'targets': e.targets,
       'isResponse': isNotice
     }
 
-    var dequotedText = lowLevelDequote(ctcpDequote(e.text.substr(1, e.text.length - 2)))
-    var firstSpaceIndex = dequotedText.indexOf(' ')
+    let dequotedText = lowLevelDequote(ctcpDequote(e.text.substr(1, e.text.length - 2)))
+    let firstSpaceIndex = dequotedText.indexOf(' ')
     if (firstSpaceIndex == -1) {
         message['tag'] = dequotedText
         message['data'] = null
@@ -195,7 +195,7 @@ class CtcpClient extends EventEmitter {
      */
     this.emit('rawMessage', message)
 
-    var messageProcessor = this._messageProcessors[message.tag]
+    let messageProcessor = this._messageProcessors[message.tag]
     if (messageProcessor != null) {
       messageProcessor(message)
     } else {
@@ -217,7 +217,7 @@ class CtcpClient extends EventEmitter {
 
   processMessageVersion (message) {
     if (message.isResponse) {
-      var versionInfo = message.data
+      let versionInfo = message.data
       /**
        * @event CtcpClient#version
        * @param {IrcUser} source
@@ -225,16 +225,16 @@ class CtcpClient extends EventEmitter {
        */
       this.emit('version', message.source, versionInfo)
     } else {
-      var versionInfo = `${this.clientName} ${this.clientVersion}`
+      let versionInfo = `${this.clientName} ${this.clientVersion}`
       this.sendMessageVersion([message.source.nickName], versionInfo, true)
     }
   }
 
   processMessagePing (message) {
     if (message.isResponse) {
-      var now = new Date().getTime()
-      var sendTime = parseInt(message.data)
-      var pingTime = now - sendTime
+      let now = new Date().getTime()
+      let sendTime = parseInt(message.data)
+      let pingTime = now - sendTime
       /**
        * @event CtcpClient#ping
        * @param {IrcUser} source
@@ -248,7 +248,7 @@ class CtcpClient extends EventEmitter {
 
   processMessageTime (message) {
     if (message.isResponse) {
-      var dateTime = message.data
+      let dateTime = message.data
       /**
        * @event CtcpClient#time
        * @param {IrcUser} source
@@ -256,7 +256,7 @@ class CtcpClient extends EventEmitter {
        */
       this.emit('time', message.source, dateTime)
     } else {
-      var now = Date()
+      let now = Date()
       this.sendMessageTime([message.source.nickName], now.toLocaleString(), true)
     }
   }
@@ -270,7 +270,7 @@ class CtcpClient extends EventEmitter {
        */
       this.emit('finger', message.source, message.data)
     } else {
-      var finger = `${this.client.registrationInfo.realName} (${this.client.registrationInfo.userName})`
+      let finger = `${this.client.registrationInfo.realName} (${this.client.registrationInfo.userName})`
       this.sendMessageFinger([message.source.nickName], finger, true)
     }
   }
@@ -284,7 +284,7 @@ class CtcpClient extends EventEmitter {
        */
       this.emit('clientInfo', message.source, message.data)
     } else {
-      var supportedCommands = 'ACTION CLIENTINFO FINGER PING TIME VERSION'
+      let supportedCommands = 'ACTION CLIENTINFO FINGER PING TIME VERSION'
       this.sendMessageClientInfo([message.source.nickName], supportedCommands, true)
     }
   }
@@ -316,9 +316,8 @@ class CtcpClient extends EventEmitter {
   }
 
   writeMessage (targets, tag, data = null, isResponse = false) {
-    var tag = tag.toUpperCase()
-    var taggedData = data == null ? tag : tag + ' ' + data
-    var text = taggedDataDelimeterChar + lowLevelQuote(ctcpQuote(taggedData)) + taggedDataDelimeterChar
+    let taggedData = data == null ? tag.toUpperCase() : tag.toUpperCase() + ' ' + data
+    let text = taggedDataDelimeterChar + lowLevelQuote(ctcpQuote(taggedData)) + taggedDataDelimeterChar
 
     if (isResponse) {
       this.client.sendMessageNotice(targets, text)
@@ -357,8 +356,8 @@ function lowLevelDequote (value) {
 }
 
 function quote(value, escapeChar, quotedChars) {
-  var output = ''
-  for (var i = 0; i < value.length; i++) {
+  let output = ''
+  for (let i = 0; i < value.length; i++) {
     if (value[i] == escapeChar) {
       if (dequotedChars[value[i]] != null || value[i] == escapeChar) {
         output += escapeChar
@@ -374,8 +373,8 @@ function quote(value, escapeChar, quotedChars) {
 }
 
 function dequote(value, escapeChar, dequotedChars) {
-  var output = ''
-  for (var i = 0; i < value.length; i++) {
+  let output = ''
+  for (let i = 0; i < value.length; i++) {
     if (value[i] == escapeChar) {
       i++
       if (dequotedChars[value[i]] != null || value[i] == escapeChar) {
@@ -391,7 +390,7 @@ function dequote(value, escapeChar, dequotedChars) {
 }
 
 function trimStart(chr, string) {
-  var output = string
+  let output = string
   while (output[0] == chr) {
     output = output.splice(1)
   }

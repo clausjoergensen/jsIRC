@@ -7,7 +7,7 @@
  * @readonly
  * @enum {number}
  */
-var IrcReply = {
+let IrcReply = {
   /** The first message sent after client registration. The text used varies widely */
   '001': 'RPL_WELCOME',
   /** Part of the post-registration greeting. Text varies widely. Also known as RPL_YOURHOSTIS (InspIRCd) */

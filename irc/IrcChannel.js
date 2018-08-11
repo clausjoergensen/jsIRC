@@ -233,7 +233,7 @@ class IrcChannel extends EventEmitter {
   }
 
   userParted (channelUser, comment) {
-    var idx = this.users.indexOf(channelUser)
+    let idx = this.users.indexOf(channelUser)
     if (idx != -1) {
       this.users.splice(idx)
     }
@@ -245,7 +245,7 @@ class IrcChannel extends EventEmitter {
   }
 
   userQuit (channelUser, comment) {
-    var idx = this.users.indexOf(channelUser)
+    let idx = this.users.indexOf(channelUser)
     if (idx != -1) {
       this.users.splice(idx)
     }
@@ -266,7 +266,7 @@ class IrcChannel extends EventEmitter {
   }
 
   userKicked (channelUser, comment = null) {
-    var idx = this.users.indexOf(channelUser)
+    let idx = this.users.indexOf(channelUser)
     if (idx != -1) {
       this.users.splice(idx)
     }  
@@ -302,7 +302,7 @@ class IrcChannel extends EventEmitter {
       newModeParameters,
       this.client.channelUserModes, 
       (add, mode, parameter) => {
-        var channelUser = this.users.find(u => u.user.nickName == parameter)
+        let channelUser = this.users.find(u => u.user.nickName == parameter)
         channelUser.modeChanged(add, mode)
       })
     /**
@@ -321,7 +321,7 @@ class IrcChannel extends EventEmitter {
   }
 
   messageReceived (source, targets, messageText) {
-    var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+    let previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
     /**
      * @event IrcChannel#previewMessage
      * @property {boolean} handled
@@ -342,7 +342,7 @@ class IrcChannel extends EventEmitter {
   }
 
   noticeReceived (source, targets, noticeText) {
-    var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+    let previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
     /**
      * @event IrcChannel#previewNotice
      * @property {boolean} handled

@@ -25,9 +25,9 @@ class IrcUtils {
    * @return {IrcChannelUser} The corresponding IrcChannelUser.
    */
   static updateModes (existingModes, newModes, newModeParameters = null, modesWithParameters = null, callback = null) {
-    var result = existingModes
-    var i = 0
-    var addMode = null
+    let result = existingModes
+    let i = 0
+    let addMode = null
     newModes.forEach(mode => {
       if (mode == '+') {
         addMode = true

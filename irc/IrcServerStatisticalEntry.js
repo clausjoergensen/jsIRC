@@ -7,7 +7,7 @@
  * @readonly
  * @enum {number}
  */
-var IrcServerStatisticalEntry = {
+let IrcServerStatisticalEntry = {
   /** An active connection to the server. */
   connection: 1,
   /** A command supported by the server. */

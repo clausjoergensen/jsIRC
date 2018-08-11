@@ -331,7 +331,7 @@ class IrcUser extends EventEmitter {
    * @return {IrcChannelUser[]} A array of all IrcChannelUser object that correspond to the IrcUser.
    */
   getChannelUsers () {
-    var channelUsers = []
+    let channelUsers = []
     this.client.channels.forEach(channel => {
       channel.users.forEach(channelUser => {
         if (channelUser.user == this) {
@@ -354,7 +354,7 @@ class IrcUser extends EventEmitter {
   // - Internal Methods
 
   quit (comment) {
-    var allChannelUsers = []
+    let allChannelUsers = []
     client.channels.forEach(channel => {
       channel.users.forEach(channelUser => {
         if (channelUser.user == this) {
@@ -407,7 +407,7 @@ class IrcUser extends EventEmitter {
   }
 
   messageReceived (source, targets, messageText) {
-    var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+    let previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
     /**
      * @event IrcUser#previewMessage
      * @property {boolean} handled
@@ -428,7 +428,7 @@ class IrcUser extends EventEmitter {
   }
 
   noticeReceived (source, targets, noticeText) {
-    var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+    let previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
     /**
      * @event IrcUser#previewNotice
      * @property {boolean} handled

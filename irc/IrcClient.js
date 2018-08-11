@@ -276,7 +276,7 @@ class IrcClient extends EventEmitter {
                          this.getNumericUserMode(this.registrationInfo.userModes),
                          this.registrationInfo.realName)
 
-    var localUser = new IrcLocalUser(this)
+    let localUser = new IrcLocalUser(this)
     localUser.isOnline = true
     localUser.nickName = this.registrationInfo.nickName
     localUser.userName = this.registrationInfo.userName
@@ -313,12 +313,12 @@ class IrcClient extends EventEmitter {
   }
 
   dataReceived (data) {
-    var str = data.toString()
+    let str = data.toString()
     if (str == null) {
       return
     }
 
-    var lines = str.split('\r\n')
+    let lines = str.split('\r\n')
     lines.forEach(line => {
       if (line.length == 0) {
         return
@@ -330,31 +330,31 @@ class IrcClient extends EventEmitter {
   // - Data Parsing
 
   parseMessage (line) {
-    var prefix = null
-    var lineAfterPrefix = null
+    let prefix = null
+    let lineAfterPrefix = null
 
     if (line[0] == ':') {
-      var firstSpaceIndex = line.indexOf(' ')
+      let firstSpaceIndex = line.indexOf(' ')
       prefix = line.substr(1, firstSpaceIndex - 1)
       lineAfterPrefix = line.substr(firstSpaceIndex + 1)
     } else {
       lineAfterPrefix = line
     }
 
-    var spaceIndex = lineAfterPrefix.indexOf(' ')
-    var command = lineAfterPrefix.substr(0, spaceIndex)
-    var paramsLine = lineAfterPrefix.substr(command.length + 1)
+    let spaceIndex = lineAfterPrefix.indexOf(' ')
+    let command = lineAfterPrefix.substr(0, spaceIndex)
+    let paramsLine = lineAfterPrefix.substr(command.length + 1)
 
-    var parameters = []
-    var paramStartIndex = -1
-    var paramEndIndex = -1
+    let parameters = []
+    let paramStartIndex = -1
+    let paramEndIndex = -1
 
-    var lineColonIndex = paramsLine.indexOf(' :')
+    let lineColonIndex = paramsLine.indexOf(' :')
     if (lineColonIndex == -1 && !paramsLine.startsWith(':')) {
       lineColonIndex = paramsLine.length
     }
 
-    for (var i = 0; i < maxParamsCount; i++)
+    for (let i = 0; i < maxParamsCount; i++)
     {
       paramStartIndex = paramEndIndex + 1
       paramEndIndex = paramsLine.indexOf(' ', paramStartIndex)
@@ -400,20 +400,20 @@ class IrcClient extends EventEmitter {
       throw 'Too many parameters.'
     }
 
-    var message = ''
+    let message = ''
     if (prefix !== null) {
       message += ':' + prefix + ' '
     }
 
     message += command.toUpperCase()
-    for (var i = 0; i < parameters.length - 1; i++) {
+    for (let i = 0; i < parameters.length - 1; i++) {
       if (parameters[i] != null) {
         message += ' ' + parameters[i]
       }
     }
     
     if (parameters.length > 0) {
-      var lastParameter = parameters[parameters.length - 1]
+      let lastParameter = parameters[parameters.length - 1]
       if (lastParameter != null) {
         message += ' :' + lastParameter
       }
@@ -615,7 +615,7 @@ class IrcClient extends EventEmitter {
   // -- Utils
 
   getNumericUserMode (modes) {
-    var value = 0
+    let value = 0
     if (modes == null) {
       return value
     }
@@ -633,13 +633,13 @@ class IrcClient extends EventEmitter {
       return null
     }
 
-    var dotIdx = prefix.indexOf('.') + 1
-    var bangIdx = prefix.indexOf('!') + 1
-    var atIdx = prefix.indexOf('@', bangIdx) + 1
+    let dotIdx = prefix.indexOf('.') + 1
+    let bangIdx = prefix.indexOf('!') + 1
+    let atIdx = prefix.indexOf('@', bangIdx) + 1
 
     if (bangIdx > 0) {
-        var nickName = prefix.slice(0, bangIdx - 1)
-        var user = this.getUserFromNickName(nickName, true)
+        let nickName = prefix.slice(0, bangIdx - 1)
+        let user = this.getUserFromNickName(nickName, true)
         if (atIdx > 0) {
             user.userName = prefix.slice(bangIdx, atIdx - 1)
             user.hostName = prefix.slice(atIdx)
@@ -648,14 +648,14 @@ class IrcClient extends EventEmitter {
         }
         return user
     } else if (atIdx > 0) {
-        var nickName = prefix.slice(0, atIdx - 1)
-        var user = this.getUserFromNickName(nickName, true)
+        let nickName = prefix.slice(0, atIdx - 1)
+        let user = this.getUserFromNickName(nickName, true)
         user.hostName = prefix.slice(atIdx)
         return user
     } else if (dotIdx > 0) {
         return this.getServerFromHostName(prefix)
     } else {
-        var user = this.getUserFromNickName(prefix, true)
+        let user = this.getUserFromNickName(prefix, true)
         return user
     }
 
@@ -663,22 +663,22 @@ class IrcClient extends EventEmitter {
   }
 
   getServerFromHostName (hostName) {
-    var existingServer = this.servers.find(s => s.hostName == hostName)
+    let existingServer = this.servers.find(s => s.hostName == hostName)
     if (existingServer != null) {
       return existingServer
     }
-    var newServer = new IrcServer(hostName)
+    let newServer = new IrcServer(hostName)
     this.servers.push(newServer)
     return newServer
   }
 
   getUserFromNickName (nickName, isOnline = true) {
-    var existingUser = this.users.find(u => u.nickName == nickName)
+    let existingUser = this.users.find(u => u.nickName == nickName)
     if (existingUser != null) {
       return existingUser
     }
     
-    var newUser = new IrcUser(this)
+    let newUser = new IrcUser(this)
     newUser.nickName = nickName
     newUser.isOnline = isOnline
 

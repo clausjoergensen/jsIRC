@@ -7,7 +7,7 @@
  * @readonly
  * @enum {number}
  */
-var IrcError = {
+let IrcError = {
   /** Sent when an error occured executing a command, but it is not specifically known why the command could not be executed. */
   '400': 'ERR_UNKNOWNERROR',
   /** Used to indicate the nickname parameter supplied to a command is currently unused */
