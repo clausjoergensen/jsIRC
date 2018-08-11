@@ -19,7 +19,7 @@ const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
  * @class
  * @extends EventEmitter
  */
-class CtcpClient {
+class CtcpClient extends EventEmitter {
     
   /**
    * Constructs a new CtcpClient for a given {@link IrcClient}.
