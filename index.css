@@ -189,9 +189,9 @@ input#chat-input:focus
 
 .user
 {
-    padding-top: 3px;
+    padding-top: 2px;
     padding-bottom: 3px;
-    padding-left: 10px;
+    padding-left: 3px;
     padding-right: 5px;
     font-size: 10pt;
 }
@@ -200,6 +200,53 @@ input#chat-input:focus
 {
     cursor: pointer;
     background: #ddd;   
+}
+
+.user-name
+{
+}
+
+.user-mode
+{
+    display: block;
+    float: left;
+    width: 22px;
+    height: 18px;
+    border-radius: 5px;
+    text-align: center;
+    margin-right: 5px;
+    margin-top: -2px;
+}
+
+.user-mode-op
+{
+    background: #665eb3;
+    color: white;
+    border: 1px solid #665eb3;
+    font-size: 12px;
+    padding-top: 1px;
+    height: 17px;
+}
+
+.user-mode-voice
+{
+    background: #268248;
+    color: white;
+    border: 1px solid #268248;
+    padding-top: 2px;
+    height: 16px;
+    font-family: sans-serif;
+}
+
+.user-mode-none
+{
+    background: gray;
+    color: white;
+    border: 1px solid gray;
+    font-family: sans-serif;
+    padding-top: 1px;
+    height: 17px;
+    font-size: 12px;
 }
 
 .nav-unread

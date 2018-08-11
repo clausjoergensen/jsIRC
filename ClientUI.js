@@ -166,12 +166,6 @@ ClientUI.prototype.localUserJoinedChannel = function (channel) {
   channel.on('userLeftChannel', (_) => { this.displayChannelUsers(channel) })
   channel.on('userKicked', (_) => { this.displayChannelUsers(channel) })
 
-  /*channel.on('banList', (banList) => {
-    console.log(banList)
-  })*/
-
-  channel.getModes('b')
-
   this.addChannelToList(channel)
   this.viewChannel(channel)
 }
@@ -616,13 +610,7 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
       userMenu.popup({ window: remote.getCurrentWindow() })
     }, false)
 
-    var icon = document.createElement('span')
-    icon.classList.add('icon')
-    icon.classList.add('icon-user')
-    userElement.appendChild(icon)
-    
-    var text = document.createTextNode(' ' + channelUser.modePrefix() + '' + user.nickName)
-    userElement.appendChild(text)
+    userElement.innerHTML += (' ' + channelUser.modePrefix() + '<span class="user-name">' + user.nickName + '</span>')
     
     user.once('nickName', () => {  
       this.displayChannelUsers(channel)
@@ -639,11 +627,11 @@ ClientUI.prototype.displayChannelUsers = function (channel) {
 IrcChannelUser.prototype.modePrefix = function () {
   var modePrefix = ''
   if (this.modes.includes('o')) {
-    return '@'
+    return '<span class="user-mode user-mode-op">@</span>'
   } else if (this.modes.includes('v')) {
-    return '+'
+    return '<span class="user-mode user-mode-voice" />+</span>'
   }
-  return ''
+  return '<span class="user-mode user-mode-none" />x</span>'
 }
 
 ClientUI.prototype.focusInputField = function() {
