@@ -146,7 +146,6 @@ class IrcMessageProcessor {
     var sourceUser = message.source
     var newNickName = message.parameters[0]
     sourceUser.nickName = newNickName
-    sourceUser.emit('nickName', newNickName)
   }
 
   processMessageQuit (message) {
@@ -204,6 +203,13 @@ class IrcMessageProcessor {
       var channel = this.getChannelFromName(message.parameters[0])
       var modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
       channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
+      /**
+       * @event IrcClient#channelMode
+       * @param {IrcChannel} channel
+       * @param {IrcChannel|IrcUser} source
+       * @param {string[]} modes
+       * @param {string[]} parameters
+       */
       this.client.emit('channelMode', channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
     } else if (message.parameters[0] == this.client.localUser.nickName) {
       this.client.localUser.modesChanged(message.parameters[1])
@@ -271,6 +277,11 @@ class IrcMessageProcessor {
     var noticeText = message.parameters[1]
 
     if (targetNames[0] == 'AUTH') {
+      /**
+       * @event IrcClient#notice
+       * @param {IrcChannel|IrcUser} source
+       * @param {string[]} noticeText
+       */
       this.client.emit('notice', message.source, noticeText)
     } else {
       var targets = targetNames.map(x => this.getMessageTarget(x))
@@ -290,6 +301,10 @@ class IrcMessageProcessor {
     var targetServer = message.parameters[1]
     
     try {
+      /**
+       * @event IrcClient#ping
+       * @param {string} server
+       */
       this.client.emit('ping', server)    
     } finally {
       this.client.sendMessagePong(server, targetServer)
@@ -301,6 +316,10 @@ class IrcMessageProcessor {
     var server = message.parameters[0]
     
     try {
+      /**
+       * @event IrcClient#pong
+       * @param {string} server
+       */
       this.client.emit('pong', server)    
     } finally {
       this.client.sendMessagePong(server, targetServer)
@@ -310,6 +329,10 @@ class IrcMessageProcessor {
   // Process ERROR messages received from the server.
   processMessageError (message) {
     var errorMessage = message.parameters[0]
+    /**
+     * @event IrcClient#error
+     * @param {string} errorMessage
+     */
     this.client.emit('error', errorMessage)
   }
 
@@ -325,6 +348,9 @@ class IrcMessageProcessor {
     this.client.localUser.userName = nickNameMatch[2] || this.client.localUser.userName
     this.client.localUser.hostName = nickNameMatch[3] || this.client.localUser.hostName
     
+    /**
+     * @event IrcClient#registered
+     */
     this.client.emit('registered')
   }
 
@@ -346,6 +372,9 @@ class IrcMessageProcessor {
     this.client.serverAvailableUserModes = message.parameters[3].split('')
     this.client.serverAvailableChannelModes = message.parameters[4].split('')
 
+    /**
+     * @event IrcClient#clientInfo
+     */
     this.client.emit('clientInfo')
   }
 
@@ -357,6 +386,11 @@ class IrcMessageProcessor {
       var serverAddress = textParts[2]
       var serverPort = int.Parse(textParts[6])
 
+      /**
+       * @event IrcClient#bounce
+       * @param {string} serverAddress
+       * @param {number} serverPort
+       */
       this.client.emit('bounce', serverAddress, serverPort)
     } else {
       // RPL_ISUPPORT
@@ -372,7 +406,10 @@ class IrcMessageProcessor {
         this.client.serverSupportedFeatures[paramName] = paramValue
       }
       
-      this.client.emit('serverSupportedFeaturesReceived')
+      /**
+       * @event IrcClient#serverSupportedFeatures
+       */      
+      this.client.emit('serverSupportedFeatures')
     }
   }
 
@@ -434,6 +471,9 @@ class IrcMessageProcessor {
 
   // Process RPL_ENDOFSTATS responses from the server.
   processMessageEndOfStats (message) {
+    /**
+     * @event IrcClient#serverStatistics
+     */      
     this.client.emit('serverStatistics', this.listedStatsEntries)
     this.listedStatsEntries = []
   }
@@ -480,24 +520,36 @@ class IrcMessageProcessor {
       'serversCount': parseInt(infoParts[8])
     }
 
+    /**
+     * @event IrcClient#networkInfo
+     */      
     this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSEROP responses from the server.
   processMessageLUserOp (message) {
     var networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
+    /**
+     * @event IrcClient#networkInfo
+     */      
     this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSERUNKNOWN responses from the server.
   processMessageLUserUnknown (message) {
     var networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
+    /**
+     * @event IrcClient#networkInfo
+     */      
     this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_LUSERCHANNELS responses from the server.
   processMessageLUserChannels (message) {
     var networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
+    /**
+     * @event IrcClient#networkInfo
+     */      
     this.client.emit('networkInfo', networkInfo)
   }
 
@@ -524,7 +576,10 @@ class IrcMessageProcessor {
       }
     }
 
-    this.client.emit('networkInformation', networkInfo)
+    /**
+     * @event IrcClient#networkInfo
+     */      
+    this.client.emit('networkInfo', networkInfo)
   }
 
   // Process RPL_AWAY responses from the server.
@@ -586,6 +641,10 @@ class IrcMessageProcessor {
   // Process RPL_ENDOFWHO responses from the server.
   processMessageReplyEndOfWho (message) {
     var mask = message.parameters[1]
+    /**
+     * @event IrcClient#whoReply
+     * @param {string} mask
+     */      
     this.client.emit('whoReply', mask)
   }
 
@@ -598,6 +657,10 @@ class IrcMessageProcessor {
   // Process RPL_ENDOFWHOIS responses from the server.
   processMessageReplyEndOfWhoIs (message) {
     var user = this.client.getUserFromNickName(message.parameters[1])
+    /**
+     * @event IrcClient#whoIsReply
+     * @param {IrcUser} user
+     */      
     this.client.emit('whoIsReply', user)
   }
 
@@ -628,6 +691,10 @@ class IrcMessageProcessor {
 
   // Process RPL_LISTEND responses from the server.
   processMessageReplyListEnd (message) {
+    /**
+     * @event IrcClient#channelList
+     * @param {Object[]} listedChannels
+     */      
     this.client.emit('channelList', listedChannels)
     this.listedChannels = []
   }
@@ -639,6 +706,13 @@ class IrcMessageProcessor {
     
     channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
     
+    /**
+     * @event IrcClient#channelMode
+     * @param {IrcChannel} channel
+     * @param {IrcChannel|IrcUser} channel
+     * @param {string[]} modes
+     * @param {string[]} parameters
+     */      
     this.client.emit('channelMode', 
       channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
   }
@@ -671,6 +745,13 @@ class IrcMessageProcessor {
     var server = message.parameters[2]
     var comments = message.parameters[3]
 
+    /**
+     * @event IrcClient#serverVersion
+     * @property {string} version
+     * @property {string} debugLevel
+     * @property {string} server
+     * @property {string} comments
+     */      
     this.client.emit('serverVersion', { 
       'version': version, 
       'debugLevel': debugLevel, 
@@ -771,6 +852,10 @@ class IrcMessageProcessor {
 
   // Process RPL_ENDOFLINKS responses from the server.
   processMessageReplyEndOfLinks (message) {
+    /**
+     * @event IrcClient#serverLinks
+     * @property {object[]} serverLinks
+     */      
     this.client.emit('serverLinks', this.client.listedServerLinks)
     this.client.listedServerLinks = []
   }
@@ -800,12 +885,20 @@ class IrcMessageProcessor {
   // Process RPL_ENDOFBANLIST responses from the server.
   processMessageReplyBanListEnd (message) {
     var channel = this.getChannelFromName(message.parameters[1])
+    /**
+     * @event IrcClient#banList
+     * @property {object[]} banList
+     */      
     channel.emit('banList', this.banList)
     this.banList = []
   }
 
   // Process RPL_ENDOFWHOWAS responses from the server.
   processMessageReplyEndOfWhoWas (message) {
+    /**
+     * @event IrcClient#whoWasReply
+     * @property {IrcUser} user
+     */      
     this.client.emit('whoWasReply', this.client.getUserFromNickName(message.parameters[1], false))
   }
 
@@ -822,12 +915,21 @@ class IrcMessageProcessor {
   // Process RPL_ENDOFMOTD responses from the server.
   processMessageReplyMotdEnd (message) {
     this.client.messageOfTheDay += message.parameters[1]
+    /**
+     * @event IrcClient#motd
+     * @property {string} messageOfTheDay
+     */      
     this.client.emit('motd', this.client.messageOfTheDay)
   }
 
   // Process RPL_TIME responses from the server.
   processMessageReplyTime (message) {
     var [server, message, dateTime] = message.parameters
+    /**
+     * @event IrcClient#serverTime
+     * @property {string} server
+     * @property {string} dateTime
+     */      
     this.client.emit('serverTime', server, dateTime)
   }
 
@@ -842,6 +944,12 @@ class IrcMessageProcessor {
         errorParameters.push(message.parameters[i])
     }
 
+    /**
+     * @event IrcClient#protocolError
+     * @property {number} command
+     * @property {string[]} errorParameters
+     * @property {string} errorMessage
+     */      
     this.client.emit('protocolError', parseInt(message.command), errorParameters, errorMessage)
   }
 

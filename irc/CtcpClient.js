@@ -192,6 +192,10 @@ class CtcpClient extends EventEmitter {
         message['data'] = trimStart(':', dequotedText.substr(firstSpaceIndex + 1))
     }
 
+    /**
+     * @event CtcpClient#rawMessage
+     * @param {string} message
+     */
     this.emit('rawMessage', message)
 
     var messageProcessor = this._messageProcessors[message.tag]
@@ -217,6 +221,11 @@ class CtcpClient extends EventEmitter {
   processMessageVersion (message) {
     if (message.isResponse) {
       var versionInfo = message.data
+      /**
+       * @event CtcpClient#version
+       * @param {IrcUser} source
+       * @param {string} versionInfo
+       */
       this.emit('version', message.source, versionInfo)
     } else {
       var versionInfo = `${this.clientName} ${this.clientVersion}`
@@ -229,6 +238,11 @@ class CtcpClient extends EventEmitter {
       var now = new Date().getTime()
       var sendTime = parseInt(message.data)
       var pingTime = now - sendTime
+      /**
+       * @event CtcpClient#ping
+       * @param {IrcUser} source
+       * @param {number} pingTime
+       */
       this.emit('ping', message.source, pingTime)
     } else {
       this.sendMessagePing([message.source.nickName], message.data, true)
@@ -238,6 +252,11 @@ class CtcpClient extends EventEmitter {
   processMessageTime (message) {
     if (message.isResponse) {
       var dateTime = message.data
+      /**
+       * @event CtcpClient#time
+       * @param {IrcUser} source
+       * @param {string} dateTime
+       */
       this.emit('time', message.source, dateTime)
     } else {
       var now = Date()
@@ -247,6 +266,11 @@ class CtcpClient extends EventEmitter {
 
   processMessageFinger (message) {
     if (message.isResponse) {
+      /**
+       * @event CtcpClient#finger
+       * @param {IrcUser} source
+       * @param {string} userInfo
+       */
       this.emit('finger', message.source, message.data)
     } else {
       var finger = `${this.client.registrationInfo.realName} (${this.client.registrationInfo.userName})`
@@ -256,6 +280,11 @@ class CtcpClient extends EventEmitter {
 
   processMessageClientInfo (message) {
     if (message.isResponse) {
+      /**
+       * @event CtcpClient#clientInfo
+       * @param {IrcUser} source
+       * @param {string} clientInfo
+       */
       this.emit('clientInfo', message.source, message.data)
     } else {
       var supportedCommands = 'ACTION CLIENTINFO FINGER PING TIME VERSION'

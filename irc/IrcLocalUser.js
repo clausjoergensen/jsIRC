@@ -118,11 +118,13 @@ class IrcLocalUser extends IrcUser {
     this.client.SetLocalUserModes(this, `+${setModes.join('')}-${unsetModes.join('')}`)
   } 
 
-
   // - Internal Methods
 
   modesChanged (newModes) {
     this._modes = IrcUtils.updateModes(this._modes, newModes.split(''))
+    /**
+     * @event IrcLocalUser#modes
+     */
     this.emit('modes)')
   }
 }

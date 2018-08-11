@@ -71,6 +71,11 @@ class IrcUser extends EventEmitter {
     return this._isOnline
   }
 
+  /**
+   * Sets whether the user is currently connected to the IRC network.
+   *
+   * @fires IrcUser#isOnline
+   */
   set isOnline(value) {
     this._isOnline = value
     this.emit('isOnline')
@@ -85,8 +90,16 @@ class IrcUser extends EventEmitter {
     return this._nickName
   }
 
+  /**
+   * Sets the current nick name of the user
+   *
+   * @fires IrcUser#nickName
+   */
   set nickName(value) {
     this._nickName = value
+    /**
+     * @event IrcUser#nickName
+     */
     this.emit('nickName')
   }
 
@@ -99,8 +112,16 @@ class IrcUser extends EventEmitter {
     return this._userName
   }
 
+  /**
+   * Sets the current user name of the user
+   *
+   * @fires IrcUser#userName
+   */
   set userName(value) {
     this._userName = value
+    /**
+     * @event IrcUser#userName
+     */
     this.emit('userName')
   }
 
@@ -113,8 +134,16 @@ class IrcUser extends EventEmitter {
     return this._realName
   }
 
+  /**
+   * Sets the host name of the user
+   *
+   * @fires IrcUser#realName
+   */
   set realName(value) {
     this._realName = value
+    /**
+     * @event IrcUser#realName
+     */
     this.emit('realName')
   }
 
@@ -127,8 +156,16 @@ class IrcUser extends EventEmitter {
     return this._idleDuration
   }
 
+  /**
+   * Sets the duration for which the user has been idle.
+   *
+   * @fires IrcUser#idleDuration
+   */
   set idleDuration(value) {
     this._idleDuration = value
+    /**
+     * @event IrcUser#idleDuration
+     */
     this.emit('idleDuration')
   }
 
@@ -141,8 +178,16 @@ class IrcUser extends EventEmitter {
     return this._isOperator
   }
 
+  /**
+   * Sets whether the user is a server operator.
+   *
+   * @fires IrcUser#isOperator
+   */
   set isOperator(value) {
     this._isOperator = value
+    /**
+     * @event IrcUser#isOperator
+     */    
     this.emit('isOperator')
   }
 
@@ -155,8 +200,16 @@ class IrcUser extends EventEmitter {
     return this._serverName
   }
 
+  /**
+   * Sets the name of the server to which the user is connected.
+   *
+   * @fires IrcUser#serverName
+   */
   set serverName(value) {
     this._serverName = value
+    /**
+     * @event IrcUser#serverName
+     */
     this.emit('serverName')
   }
 
@@ -169,8 +222,16 @@ class IrcUser extends EventEmitter {
     return this._serverInfo
   }
 
+  /**
+   * Sets the information about the server to which the user is connected.
+   *
+   * @fires IrcUser#serverInfo
+   */
   set serverInfo(value) {
     this._serverInfo = value
+    /**
+     * @event IrcUser#serverInfo
+     */
     this.emit('serverInfo')
   }
 
@@ -185,8 +246,16 @@ class IrcUser extends EventEmitter {
     return this._isAway
   }
 
+  /**
+   * Sets wheather the user should be seen as away.
+   *
+   * @fires IrcUser#isAway
+   */
   set isAway(value) {
     this._isAway = value
+    /**
+     * @event IrcUser#isAway
+     */
     this.emit('isAway')
   }
 
@@ -199,8 +268,16 @@ class IrcUser extends EventEmitter {
     return this._awayMessage
   }
 
+  /**
+   * Sets the users away message.
+   *
+   * @fires IrcUser#awayMessage
+   */
   set awayMessage(value) {
     this._awayMessage = value
+    /**
+     * @event IrcUser#awayMessage
+     */
     this.emit('awayMessage')
   }
 
@@ -214,8 +291,16 @@ class IrcUser extends EventEmitter {
     return this._hopCount
   }
 
+  /**
+   * Sets the hop count of the user.
+   *
+   * @fires IrcUser#hopCount
+   */
   set hopCount(value) {
     this._hopCount = value
+    /**
+     * @event IrcUser#hopCount
+     */
     this.emit('hopCount')
   }
 
@@ -280,39 +365,85 @@ class IrcUser extends EventEmitter {
 
     allChannelUsers.forEach(cu => cu.channel.userQuit(cu, comment))
 
+    /**
+     * @event IrcUser#quit
+     * @param {string} comment
+     */
     this.emit('quit', comment)
   }
 
   joinChannel (channel) {
+    /**
+     * @event IrcUser#joinedChannel
+     * @param {IrcChannel} channel
+     */
     this.emit('joinedChannel', channel) 
   }
 
   partChannel (channel) {
+    /**
+     * @event IrcUser#partedChannel
+     * @param {IrcChannel} channel
+     */
    this.emit('partedChannel', channel)  
   }
 
   inviteReceived (source, channel) {
+    /**
+     * @event IrcUser#invite
+     * @param {IrcChannel} channel
+     * @param {IrcUser} source
+     */
     this.emit('invite', channel, source)
   }
 
   actionReceived (source, targets, messageText) {
+    /**
+     * @event IrcUser#action
+     * @param {IrcUser|IrcChannel} source
+     * @param {string} messageText
+     */
     this.emit('action', source, messageText)
   }
 
   messageReceived (source, targets, messageText) {
     var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+    /**
+     * @event IrcUser#previewMessage
+     * @property {boolean} handled
+     * @property {IrcUser|IrcChannel} source
+     * @property {string[]} targets
+     * @property {string} messageText
+     */
     this.emit('previewMessage', previewMessageEventArgs)
     
     if (!previewMessageEventArgs.handled) {
+      /**
+       * @event IrcUser#message
+       * @param {IrcUser|IrcChannel} source
+       * @param {string} messageText
+       */
       this.emit('message', source, targets, messageText)
     }
   }
 
   noticeReceived (source, targets, noticeText) {
     var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+    /**
+     * @event IrcUser#previewNotice
+     * @property {boolean} handled
+     * @property {IrcUser|IrcChannel} source
+     * @property {string[]} targets
+     * @property {string} noticeText
+     */
     this.emit('previewNotice', previewNoticeEventArgs)
     
     if (!previewNoticeEventArgs.handled) {
+      /**
+       * @event IrcUser#notice
+       * @param {IrcUser|IrcChannel} source
+       * @param {string} noticeText
+       */
       this.emit('notice', source, targets, noticeText)
     }
   }

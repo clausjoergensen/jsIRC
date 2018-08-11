@@ -52,10 +52,14 @@ class IrcChannelUser extends EventEmitter {
    * Sets the Irc Channel.
    *
    * @public
+   * @fires IrcChannelUser#channel
    * @param {IrcChannel} The Irc Channel.
    */
   set channel(value) {
     this._channel = value
+    /**
+     * @event IrcChannelUser#channel
+     */
     this.emit('channel')
   }
 
@@ -141,6 +145,9 @@ class IrcChannelUser extends EventEmitter {
     } else {
       this._modes.splice(this._modes.indexOf(mode))
     }
+    /**
+     * @event IrcChannelUser#modes
+     */
     this.emit('modes')
   }
 }

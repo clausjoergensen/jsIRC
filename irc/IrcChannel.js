@@ -179,10 +179,16 @@ class IrcChannel extends EventEmitter {
    * Sends a PRIVMSG to the current channel.
    *
    * @public
+   * @fires IrcChannel#message
    * @param {string} messageText The message to send.
    */
   sendMessage (messageText) {
     this.client.sendMessage([this.name], messageText)
+    /**
+     * @event IrcChannel#message
+     * @param {IrcUser} user
+     * @param {string} messageText
+     */
     this.emit('message', this.client.localUser, messageText)
   }
 
@@ -190,10 +196,16 @@ class IrcChannel extends EventEmitter {
    * Sends a NOTICE to the current channel.
    *
    * @public
+   * @fires IrcChannel#notice
    * @param {string} noticeText The notice to send.
    */
   sendNotice (noticeText) {
     this.client.sendNotice([this.name], noticeText)
+    /**
+     * @event IrcChannel#notice
+     * @param {IrcUser} user
+     * @param {string} noticeText
+     */
     this.emit('notice', this.client.localUser, noticeText)
   }
 
@@ -214,6 +226,11 @@ class IrcChannel extends EventEmitter {
     }
     channelUser.channel = this
     this.users.push(channelUser)
+
+    /**
+     * @event IrcChannel#userJoinedChannel
+     * @param {IrcChannelUser} channelUser
+     */
     this.emit('userJoinedChannel', channelUser)
   }
 
@@ -222,6 +239,10 @@ class IrcChannel extends EventEmitter {
     if (idx != -1) {
       this.users.splice(idx)
     }
+    /**
+     * @event IrcChannel#userLeftChannel
+     * @param {IrcChannelUser} channelUser
+     */
     this.emit('userLeftChannel', channelUser, comment)
   }
 
@@ -230,10 +251,19 @@ class IrcChannel extends EventEmitter {
     if (idx != -1) {
       this.users.splice(idx)
     }
+    /**
+     * @event IrcChannel#userQuit
+     * @param {IrcChannelUser} channelUser
+     * @param {string} comment
+     */
     this.emit('userQuit', channelUser, comment)
   }
 
   userInvited (user) {
+    /**
+     * @event IrcChannel#userInvite
+     * @param {IrcUser} user
+     */
     this.emit('userInvite', user)
   }
 
@@ -242,7 +272,12 @@ class IrcChannel extends EventEmitter {
     if (idx != -1) {
       this.users.splice(idx)
     }  
-    this.emit('userKicked', channelUser)
+    /**
+     * @event IrcChannel#userKicked
+     * @param {IrcChannelUser} channelUser
+     * @param {string} comment
+     */
+    this.emit('userKicked', channelUser, comment)
   }
 
   userNameReply(channelUser) {
@@ -255,6 +290,11 @@ class IrcChannel extends EventEmitter {
 
   topicChanged (user, newTopic) {
     this._topic = newTopic
+    /**
+     * @event IrcChannel#topic
+     * @param {IrcUser} user
+     * @param {string} newTopic
+     */
     this.emit('topic', user, newTopic)
   }
 
@@ -267,37 +307,76 @@ class IrcChannel extends EventEmitter {
         var channelUser = this.users.find(u => u.user.nickName == parameter)
         channelUser.modeChanged(add, mode)
       })
+    /**
+     * @event IrcChannel#modes
+     */
     this.emit('modes')
   }
 
   actionReceived (source, targets, messageText) {
+    /**
+     * @event IrcChannel#action
+     * @param {IrcUser|IrcChannel} source
+     * @param {string} messageText
+     */
     this.emit('action', source, messageText)
   }
 
   messageReceived (source, targets, messageText) {
     var previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+    /**
+     * @event IrcChannel#previewMessage
+     * @property {boolean} handled
+     * @property {IrcUser|IrcChannel} source
+     * @property {string[]} targets
+     * @property {string} messageText
+     */
     this.emit('previewMessage', previewMessageEventArgs)
     
     if (!previewMessageEventArgs.handled) {
+    /**
+     * @event IrcChannel#message
+     * @param {IrcUser|IrcChannel} source
+     * @param {string} messageText
+     */
       this.emit('message', source, messageText)
     }
   }
 
   noticeReceived (source, targets, noticeText) {
     var previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+    /**
+     * @event IrcChannel#previewNotice
+     * @property {boolean} handled
+     * @property {IrcUser|IrcChannel} source
+     * @property {string[]} targets
+     * @property {string} noticeText
+     */
     this.emit('previewNotice', previewNoticeEventArgs)
     
     if (!previewNoticeEventArgs.handled) {
+      /**
+       * @event IrcChannel#notice
+       * @param {IrcUser|IrcChannel} source
+       * @param {string} noticeText
+       */
       this.emit('notice', source, noticeText)
     }
   }
 
   usersListReceived () {
+    /**
+     * @event IrcChannel#notice
+     */
     this.emit('userList')
   }
 
   typeChanged (type) {
     this._type = type
+    /**
+     * @event IrcChannel#notice
+     * @param {IrcChannelType} type
+     */
     this.emit('type', type)
   }
 }

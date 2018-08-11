@@ -58,6 +58,7 @@ class IrcClient extends EventEmitter {
    * Connects to the specified server.
    *
    * @public
+   * @fires IrcClient#connecting
    * @param {string} hostName The name of the remote host.
    * @param {number} port The port number of the remote host.
    * @param {Object} registrationInfo The information used for registering the client.
@@ -70,6 +71,11 @@ class IrcClient extends EventEmitter {
     this._socket.on('error', this.connectionError.bind(this))
     this._socket.on('disconnect', this.disconnected.bind(this))
 
+    /**
+     * @event IrcClient#connecting
+     * @property {string} hostName
+     * @property {number} port
+     */      
     this.emit('connecting', hostName, port)
 
     this._socket.connect(port, hostName, this.connected.bind(this))
@@ -285,6 +291,9 @@ class IrcClient extends EventEmitter {
     this.localUser = localUser
     this.users.push(localUser)
 
+    /**
+     * @event IrcClient#connected
+     */      
     this.emit('connected')
   }
 
@@ -293,10 +302,18 @@ class IrcClient extends EventEmitter {
   }
 
   connectionError (error) {
+    /**
+     * @event IrcClient#connectionError
+     * @param {Object} error
+     */      
     this.emit('connectionError', error)
   }
 
   disconnected (reason) {
+    /**
+     * @event IrcClient#disconnected
+     * @param {string} reason
+     */      
     this.emit('disconnected', reason)
   }
 
