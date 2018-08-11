@@ -7,16 +7,20 @@
  * @class
  * @static
  */
-module.exports = class IrcUtils {
+class IrcUtils {
 
   /**
    * Updates collection of modes from specified mode string.
    *
-   * The mode string is of form `( "+" | "-" ) ( mode character )+`.
+   * The mode string is of form <code>( "+" | "-" ) ( mode character )+</code>
    *
    * @public
    * @static
-   * @param {IrcUser} user The IrcUser for which to look.
+   * @param {string[]} existingModes
+   * @param {string[]} newModes
+   * @param {string[]} [newModeParameters]
+   * @param {string[]} [modesWithParameters]
+   * @param {function} [callback]
    * @return {IrcChannelUser} The corresponding IrcChannelUser.
    */
   static updateModes (existingModes, newModes, newModeParameters = null, modesWithParameters = null, callback = null) {
@@ -43,3 +47,5 @@ module.exports = class IrcUtils {
     return result
   }
 }
+
+module.exports = IrcUtils

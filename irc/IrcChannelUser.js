@@ -11,15 +11,15 @@ const { EventEmitter } = events
  * @class IrcChannelUser
  * @extends EventEmitter
  */
-module.exports = class IrcChannelUser extends EventEmitter {
+class IrcChannelUser extends EventEmitter {
 
   /*
    * Constructs a new IrcChannelUser for a given {@link IrcUser}.
    *
-   * @access internal
+   * @access private
    * @constructor
    * @param {IrcUser} user The IrcUser on the channel.
-   * @param {Array} [modes] Array of channel modes.
+   * @param {string[]} [modes] Array of channel modes.
   */
   constructor (user, modes = null) {
     super()
@@ -63,7 +63,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * Gets a read-only list of the channel modes the user currently has.
    *
    * @public
-   * @return {Array} The list of channel modes.
+   * @return {string[]} The list of channel modes.
    */
   get modes() {
     return this._modes
@@ -144,3 +144,5 @@ module.exports = class IrcChannelUser extends EventEmitter {
     this.emit('modes')
   }
 }
+
+module.exports = IrcChannelUser

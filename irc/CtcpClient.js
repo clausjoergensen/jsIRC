@@ -18,12 +18,11 @@ const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
  * @class CtcpClient
  * @extends EventEmitter
  */
-module.exports = class CtcpClient extends EventEmitter {
+class CtcpClient extends EventEmitter {
 
   /*
    * Constructs a new CtcpClient for a given {@link IrcClient}.
    *
-   * @access internal
    * @constructor
    * @param {IrcClient} client The IRC client by which the CTCP client should communicate.
   */
@@ -86,7 +85,7 @@ module.exports = class CtcpClient extends EventEmitter {
    * Sends an action message to the specified list of users.
    *
    * @public
-   * @param {Array} targets A list of users to which to send the request.
+   * @param {string[]} targets A list of users to which to send the request.
    * @param {string} text The text of the message.
    */
   action (targets, text) {
@@ -97,7 +96,7 @@ module.exports = class CtcpClient extends EventEmitter {
    * Gets the local date/time of the specified list of users.
    *
    * @public
-   * @param {Array} targets A list of users to which to send the request.
+   * @param {string[]} targets A list of users to which to send the request.
    */
   finger (targets) {
     this.sendMessageFinger(targets, null, false)
@@ -107,7 +106,7 @@ module.exports = class CtcpClient extends EventEmitter {
    * Gets the local date/time of the specified list of users.
    *
    * @public
-   * @param {Array} targets A list of users to which to send the request.
+   * @param {string[]} targets A list of users to which to send the request.
    */
   time (targets) {
     this.sendMessageTime(targets, null, false)
@@ -117,7 +116,7 @@ module.exports = class CtcpClient extends EventEmitter {
    * Gets the client version of the specified list of users.
    *
    * @public
-   * @param {Array} targets A list of users to which to send the request.
+   * @param {string[]} targets A list of users to which to send the request.
    */
   version (targets) {
    this.sendMessageVersion(targets, null, false) 
@@ -127,7 +126,7 @@ module.exports = class CtcpClient extends EventEmitter {
    * Pings the specified list of users.
    *
    * @public
-   * @param {Array} targets A list of users to which to send the request.
+   * @param {string[]} targets A list of users to which to send the request.
    */
   ping (targets) {
     var now = new Date()
@@ -372,3 +371,5 @@ function trimStart(chr, string) {
   }
   return output
 }
+
+module.exports = CtcpClient

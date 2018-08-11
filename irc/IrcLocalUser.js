@@ -13,7 +13,7 @@ const IrcUser = require('./IrcUser.js')
  * @class IrcLocalUser
  * @extends IrcUser
  */
-module.exports = class IrcLocalUser extends IrcUser {
+class IrcLocalUser extends IrcUser {
 
   /*
    * Initializes a new instance of the IrcLocalUser class.
@@ -79,7 +79,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Sends a message to the specified target.
    *
    * @public
-   * @param {Array} targets A collection of the names of targets to which to send the notice.
+   * @param {string[]} targets A array of the names of targets to which to send the notice.
    * @param {string} text The text of the notice to send.
    */
   sendMessage (targets, text) {
@@ -90,7 +90,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Sends a notice to the specified target.
 
    * @public
-   * @param {Array} targets A collection of the names of targets to which to send the notice.
+   * @param {string[]} targets A array of the names of targets to which to send the notice.
    * @param {string} text The text of the notice to send.
    */
   sendNotice (targets, text) {
@@ -110,7 +110,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Sets the specified modes on the local user.
    *
    * @public
-   * @param {string} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
+   * @param {string} modes The mode string that specifies mode changes, which takes the form <code>( "+" / "-" ) *( mode character )</code>
    */
   setModes(newModes) {
     var setModes = newModes.filter(x => !this.modes.include(x))
@@ -126,3 +126,5 @@ module.exports = class IrcLocalUser extends IrcUser {
     this.emit('modes)')
   }
 }
+
+module.exports = IrcLocalUser

@@ -11,12 +11,12 @@ const { EventEmitter } = events
  * @class IrcUser
  * @extends EventEmitter
  */
-module.exports = class IrcUser extends EventEmitter {
+class IrcUser extends EventEmitter {
 
   /*
    * Constructs a new IrcUser for a given {@link IrcClient}.
    *
-   * @access internal
+   * @access private
    * @constructor
    * @param {IrcClient} client The IrcClient instance.
   */
@@ -245,7 +245,7 @@ module.exports = class IrcUser extends EventEmitter {
    * Each IrcChannelUser represents a channel of which the user is currently a member.
    *
    * @public
-   * @return {Array} A array of all IrcChannelUser object that correspond to the IrcUser.
+   * @return {IrcChannelUser[]} A array of all IrcChannelUser object that correspond to the IrcUser.
    */
   getChannelUsers () {
     var channelUsers = []
@@ -319,3 +319,5 @@ module.exports = class IrcUser extends EventEmitter {
     }
   }
 }
+
+module.exports = IrcUser

@@ -11,12 +11,12 @@ const { EventEmitter } = events
  * @class IrcServer
  * @extends EventEmitter
  */
-module.exports = class IrcServer extends EventEmitter {
+class IrcServer extends EventEmitter {
 
   /*
    * Constructs a new IrcServer for a given hostName.
    *
-   * @access internal
+   * @access private
    * @constructor
    * @param {string} hostName The server host name.
   */
@@ -48,3 +48,5 @@ module.exports = class IrcServer extends EventEmitter {
     return this.hostName
   }
 }
+
+module.exports = IrcServer

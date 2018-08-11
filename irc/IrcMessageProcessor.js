@@ -22,14 +22,13 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
  *
  * @class IrcMessageProcessor
  * @extends EventEmitter
- * @access internal
+ * @access private
  */
-module.exports = class IrcMessageProcessor {
+class IrcMessageProcessor {
 
   /*
    * Initializes a new instance of the IrcMessageProcessor class.
    *
-   * @access internal
    * @param {IrcClient} client The IrcClient instance.
    * @constructor
   */
@@ -110,7 +109,6 @@ module.exports = class IrcMessageProcessor {
   /**
    * Processes a IRC message with the appropriate message handler.
    *
-   * @access internal
    * @param {Object} message The message object.
    */
   processMessage (message) {
@@ -952,3 +950,5 @@ module.exports = class IrcMessageProcessor {
     }
   }
 }
+
+module.exports = IrcMessageProcessor

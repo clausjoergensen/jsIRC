@@ -14,12 +14,12 @@ const IrcChannelType = require('./IrcChannelType.js')
  * @class IrcChannel
  * @extends EventEmitter
  */
-module.exports = class IrcChannel extends EventEmitter { 
+class IrcChannel extends EventEmitter { 
 
   /*
    * Constructs a new IrcChannel for a given {@link IrcClient}.
    *
-   * @access internal
+   * @access private
    * @constructor
    * @param {IrcClient} client The IrcClient instance.
    * @param {string} name The channel name.
@@ -58,7 +58,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Gets a read-only list of the modes the channel currently has.
    *
    * @public
-   * @return {Array} List of the modes the channel currently has.
+   * @return {string[]} List of the modes the channel currently has.
    */
   get modes() {
     return this._modes
@@ -68,7 +68,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Gets a list of all channel users currently in the channel.
    *
    * @public
-   * @return {Array} list of all channel users currently in the channel
+   * @return {IrcChannelUser[]} list of all channel users currently in the channel
    */
   get users() {
     return this._users
@@ -109,7 +109,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Requests a list of the current modes of the channel, or if modes is specified, the settings for the specified modes.
    *
    * @public
-   * @param {Array} [modes=null] The modes for which to get the current settings, or null for all current channel modes.
+   * @param {string[]} [modes=null] The modes for which to get the current settings, or null for all current channel modes.
    */
   getModes(modes = null) {
     this.client.getChannelModes(this, modes)
@@ -119,8 +119,8 @@ module.exports = class IrcChannel extends EventEmitter {
    * Sets the specified modes on the channel.
    * 
    * @public
-   * @param {string} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
-   * @param {Array} [modeParameters=null] A array of parameters to the modes, or null for no parameters   
+   * @param {string} modes The mode string that specifies mode changes, which takes the form <code>( "+" / "-" ) *( mode character )</code>
+   * @param {string[]} [modeParameters=null] A array of parameters to the modes, or null for no parameters   
    */
   setModes (modes, modeParameters = null) {
     this.client.setModes(this, modes, modeParameters)
@@ -301,3 +301,5 @@ module.exports = class IrcChannel extends EventEmitter {
     this.emit('type', type)
   }
 }
+
+module.exports = IrcChannel

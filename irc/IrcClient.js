@@ -25,12 +25,11 @@ const defaultPort = 6667
  * @class IrcClient
  * @extends EventEmitter
  */
-module.exports = class IrcClient extends EventEmitter {
+class IrcClient extends EventEmitter {
 
   /*
    * Initializes a new instance of the IrcClient class.
    *
-   * @access internal
    * @constructor
   */
   constructor () {
@@ -80,7 +79,7 @@ module.exports = class IrcClient extends EventEmitter {
    * Requests a list of information about the specified (or all) channels on the network.
    *
    * @public
-   * @param {Array} [channelNames=null] The names of the channels to list, or null to list all channels
+   * @param {string[]} [channelNames=null] The names of the channels to list, or null to list all channels
    */
   listChannels (channelNames = null) {
     this.sendMessageList(channelNames)
@@ -178,116 +177,41 @@ module.exports = class IrcClient extends EventEmitter {
   }
 
   /**
-   * 
+   * Sends a Who Is query to server targeting the specified nick name masks.
    *
    * @public
+   * @param {string[]} nickNameMasks A array of wildcard expressions for matching against nick names of users.
    */
   queryWhoIs (nickNameMasks) {
     this.sendMessageWhoIs(nickNameMasks)
   }
 
   /**
-   * 
+   * Sends a Who Was query to server targeting the specified nick names.
    *
    * @public
+   * @param {string} nickNames The nick names of the users to query.
+   * @param {number} [entriesCount=-1] The maximum number of entries to return from the query. A negative value specifies to return an unlimited number of entries.
    */
   queryWhoWas (nickNames, entriesCount = -1) {
     this.sendMessageWhoWas(nickNames, entriesCount)
   }
 
   /**
-   * 
+   * Quits the server, giving the specified comment.
    *
    * @public
+   * @param {string} [comment] The comment to send to the server.
    */
   quit (comment = null) {
     this.sendMessageQuit(comment)
   }
 
   /**
-   * 
+   * Sends the specified raw message to the server.
    *
    * @public
-   */
-  joinChannel(channelName) {
-    this.sendMessageJoin([channelName])
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  leaveChannel(channelName, comment) {
-    this.sendMessagePart([channelName], comment)
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  setNickName (nickName) {
-    this.sendMessageNick(nickName)
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  setTopic (channelName, topic) {
-    this.sendMessageTopic(channelName, topic)
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  kick(channel, usersNickNames, reason) {
-    this.sendMessageKick(channel.name, usersNickNames, reason)    
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  invite(channel, nickName) {
-    this.sendMessageInvite(channel.name, nickName)    
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  setModes (channel, modes, modeParameters) {
-    this.sendMessageChannelMode(channel.name, modes, modeParameters)
-  } 
-  /**
-   * 
-   *
-   * @public
-   */
-  sendMessage (targets, messageText) {
-    this.sendMessagePrivateMessage(targets, messageText)
-  }
-
-  /**
-   * 
-   *
-   * @public
-   */
-  sendNotice (targets, noticeText) {
-    this.sendMessagePrivateMessage(targets, noticeText)
-  }
-
-  /**
-   * 
-   *
-   * @public
+   * @param {string} message The text (single line) of the message to send the server.
    */
   sendRawMessage (message) {
     if (this.loggingEnabled) {
@@ -295,6 +219,44 @@ module.exports = class IrcClient extends EventEmitter {
     }
 
     this._socket.write(message + '\r\n')
+  }
+
+  // - Command Helpers
+
+  joinChannel(channelName) {
+    this.sendMessageJoin([channelName])
+  }
+
+  leaveChannel(channelName, comment) {
+    this.sendMessagePart([channelName], comment)
+  }
+
+  setNickName (nickName) {
+    this.sendMessageNick(nickName)
+  }
+
+  setTopic (channelName, topic) {
+    this.sendMessageTopic(channelName, topic)
+  }
+
+  kick(channel, usersNickNames, reason) {
+    this.sendMessageKick(channel.name, usersNickNames, reason)    
+  }
+
+  invite(channel, nickName) {
+    this.sendMessageInvite(channel.name, nickName)    
+  }
+
+  setModes (channel, modes, modeParameters) {
+    this.sendMessageChannelMode(channel.name, modes, modeParameters)
+  } 
+
+  sendMessage (targets, messageText) {
+    this.sendMessagePrivateMessage(targets, messageText)
+  }
+
+  sendNotice (targets, noticeText) {
+    this.sendMessagePrivateMessage(targets, noticeText)
   }
 
   // - Socket Operations
@@ -709,3 +671,5 @@ module.exports = class IrcClient extends EventEmitter {
     return newUser
   }
 }
+
+module.exports = IrcClient
