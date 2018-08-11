@@ -12,16 +12,16 @@ const lowLevelQuotingEscapeChar = String.fromCharCode(0x10)
 const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
 
 /**
- * @class CtcpClient
- * @extends EventEmitter
- *
  * Represents a client that communicates with a server using CTCP (Client to Client Protocol), 
  * operating over an IRC connection.
+ *
+ * @class CtcpClient
+ * @extends EventEmitter
  */
 module.exports = class CtcpClient extends EventEmitter {
 
   /*
-   * Constructs a new CtcpClient for a given IrcClient.
+   * Constructs a new CtcpClient for a given {@link IrcClient}.
    *
    * @access internal
    * @constructor
@@ -45,7 +45,7 @@ module.exports = class CtcpClient extends EventEmitter {
   }
 
   /**
-   * Gets the IRC client by which the CTCP client should communicate.
+   * Gets the {@link IrcClient} by which the CTCP client should communicate.
    *
    * @public
    * @return {IrcClient} The IRC client.
@@ -87,7 +87,7 @@ module.exports = class CtcpClient extends EventEmitter {
    *
    * @public
    * @param {Array} targets A list of users to which to send the request.
-   * @param {String} text The text of the message.
+   * @param {string} text The text of the message.
    */
   action (targets, text) {
     this.sendMessageAction(targets, text)

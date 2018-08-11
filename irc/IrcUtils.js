@@ -2,9 +2,10 @@
 'use strict'
 
 /**
- * @class
- *
  * Utilities for IRC
+ *
+ * @class
+ * @static
  */
 module.exports = class IrcUtils {
 

@@ -6,15 +6,15 @@ const events = require('events')
 const { EventEmitter } = events
 
 /**
+ * Represents an IRC user that exists on a specific {@link IrcClient}.
+ *
  * @class IrcUser
  * @extends EventEmitter
- *
- * Represents an IRC user that exists on a specific IrcClient.
  */
 module.exports = class IrcUser extends EventEmitter {
 
   /*
-   * Constructs a new IrcUser for a given IrcClient.
+   * Constructs a new IrcUser for a given {@link IrcClient}.
    *
    * @access internal
    * @constructor
@@ -262,7 +262,7 @@ module.exports = class IrcUser extends EventEmitter {
   /**
    * Returns a string representation of this instance.
    *
-   * @return {String} A string that represents this instance.
+   * @return {string} A string that represents this instance.
    */
   toString () {
     return this.nickName

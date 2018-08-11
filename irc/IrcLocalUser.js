@@ -8,10 +8,10 @@ const IrcUtils = require('./IrcUtils.js')
 const IrcUser = require('./IrcUser.js')
 
 /**
+ * Represents an local IRC user that exists on a specific {@link IrcClient}.
+ *
  * @class IrcLocalUser
  * @extends IrcUser
- *
- * Represents an local IRC user that exists on a specific IrcClient.
  */
 module.exports = class IrcLocalUser extends IrcUser {
 
@@ -31,6 +31,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Gets a read-only collection of the modes the user currently has.
    *
    * @public
+   * @return {boolean} The list of channel modes.
    */
   get isLocalUser() {
     return true
@@ -49,7 +50,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Sets the nick name of the local user to the specified text.
    *
    * @public
-   * @param {String} nickName The new nick name of the local user.
+   * @param {string} nickName The new nick name of the local user.
    */
   setNickName(nickName) {
     this.client.setNickName(nickName)
@@ -59,7 +60,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Sets the local user as away, giving the specified message.
    *
    * @public
-   * @param {String} text The text of the response sent to a user when they try to message you while away.
+   * @param {string} text The text of the response sent to a user when they try to message you while away.
    */
   setAway(text) {
     this.client.setAway(text)
@@ -79,7 +80,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    *
    * @public
    * @param {Array} targets A collection of the names of targets to which to send the notice.
-   * @param {String} text The text of the notice to send.
+   * @param {string} text The text of the notice to send.
    */
   sendMessage (targets, text) {
     this.client.sendPrivateMessage(targets, text) 
@@ -90,7 +91,7 @@ module.exports = class IrcLocalUser extends IrcUser {
 
    * @public
    * @param {Array} targets A collection of the names of targets to which to send the notice.
-   * @param {String} text The text of the notice to send.
+   * @param {string} text The text of the notice to send.
    */
   sendNotice (targets, text) {
     this.client.sendNotice(targets, text) 
@@ -109,7 +110,7 @@ module.exports = class IrcLocalUser extends IrcUser {
    * Sets the specified modes on the local user.
    *
    * @public
-   * @param {String} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
+   * @param {string} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
    */
   setModes(newModes) {
     var setModes = newModes.filter(x => !this.modes.include(x))

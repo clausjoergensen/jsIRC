@@ -18,10 +18,11 @@ const regexUserNameId = new RegExp(/([^!@]+)(?:(?:%[^%@]+)?@([^%@]+?\.[^%@]*)|%(
 const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 
 /**
+ * IRC Message Processing for a given {@link IrcClient}.
+ *
  * @class IrcMessageProcessor
  * @extends EventEmitter
- *
- * IRC Message Processing.
+ * @access internal
  */
 module.exports = class IrcMessageProcessor {
 

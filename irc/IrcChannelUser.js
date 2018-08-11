@@ -6,15 +6,15 @@ const events = require('events')
 const { EventEmitter } = events
 
 /**
+ * Represents an IRC user that exists on a specific channel on a specific IrcClient.
+ *
  * @class IrcChannelUser
  * @extends EventEmitter
- *
- * Represents an IRC user that exists on a specific channel on a specific IrcClient.
  */
 module.exports = class IrcChannelUser extends EventEmitter {
 
   /*
-   * Constructs a new IrcChannelUser for a given IrcUser.
+   * Constructs a new IrcChannelUser for a given {@link IrcUser}.
    *
    * @access internal
    * @constructor
@@ -32,6 +32,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * Gets the IrcUser that is represented by the IrcChannelUser.
    * 
    * @public
+   * @return {IrcUser} The IrcUser on the channel
    */
   get user() {
     return this._user
@@ -41,15 +42,17 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * Gets the channel.
    *
    * @public
+   * @return {IrcUser} The Irc Channel.
    */
   get channel() {
     return this._channel
   }
 
   /**
-   * Sets the channel.
+   * Sets the Irc Channel.
    *
    * @public
+   * @param {IrcChannel} The Irc Channel.
    */
   set channel(value) {
     this._channel = value
@@ -60,6 +63,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * Gets a read-only list of the channel modes the user currently has.
    *
    * @public
+   * @return {Array} The list of channel modes.
    */
   get modes() {
     return this._modes
@@ -69,7 +73,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * Kicks the user from the channel, giving the specified comment.
    * 
    * @public
-   * @param {String} [comment=null] The comment to give for the kick, or null for none.
+   * @param {string} [comment=null] The comment to give for the kick, or null for none.
    */
   kick (comment = null) {
     this.channel.kick(this.user.nickName, comment)
@@ -123,7 +127,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
   /**
    * Returns a string representation of this instance.
    *
-   * @return {String} A string that represents this instance.
+   * @return {string} A string that represents this instance.
    */
   toString () {
     return `${this._channel.name}/${this._user.nickName}`

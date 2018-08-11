@@ -9,20 +9,20 @@ const IrcUtils = require('./IrcUtils.js')
 const IrcChannelType = require('./IrcChannelType.js')
 
 /**
+ * Represents an IRC channel that exists on a specific IrcClient.
+ *
  * @class IrcChannel
  * @extends EventEmitter
- *
- * Represents an IRC channel that exists on a specific IrcClient.
  */
 module.exports = class IrcChannel extends EventEmitter { 
 
   /*
-   * Constructs a new IrcChannel for a given IrcClient.
+   * Constructs a new IrcChannel for a given {@link IrcClient}.
    *
    * @access internal
    * @constructor
    * @param {IrcClient} client The IrcClient instance.
-   * @param {String} name The channel name.
+   * @param {string} name The channel name.
   */
   constructor (client, name) {
     super()
@@ -48,7 +48,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Gets the name of the channel.
    *
    * @public
-   * @return {String} Name of the Channel.
+   * @return {string} Name of the Channel.
    */
   get name() {
     return this._name
@@ -78,7 +78,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Gets the current topic of the channel.
    *
    * @public
-   * @return {String} The current topic of the channel.
+   * @return {string} The current topic of the channel.
    */
   get channelType() {
     return this._channelType    
@@ -88,7 +88,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Gets the current topic of the channel.
    *
    * @public
-   * @return {String} The current topic of the channel.
+   * @return {string} The current topic of the channel.
    */
   get topic() {
     return this._topic    
@@ -119,10 +119,10 @@ module.exports = class IrcChannel extends EventEmitter {
    * Sets the specified modes on the channel.
    * 
    * @public
-   * @param {String} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
-   * @param {Array} modeParameters A array of parameters to the modes, or null for no parameters   
+   * @param {string} modes The mode string that specifies mode changes, which takes the form `( "+" / "-" ) *( mode character )`.
+   * @param {Array} [modeParameters=null] A array of parameters to the modes, or null for no parameters   
    */
-  setModes (modes, modeParameters) {
+  setModes (modes, modeParameters = null) {
     this.client.setModes(this, modes, modeParameters)
   }
 
@@ -130,7 +130,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Leaves the channel, giving the specified comment.
    * 
    * @public
-   * @param {String} [comment=null] The comment to send the server upon leaving the channel, or null for no comment.
+   * @param {string} [comment=null] The comment to send the server upon leaving the channel, or null for no comment.
    */
   part (comment = null) {
     this.client.leaveChannel(this.name, comment)
@@ -140,8 +140,8 @@ module.exports = class IrcChannel extends EventEmitter {
    * Kicks a user from the channel, optionally with a reason
    * 
    * @public
-   * @param {String} userNickName The User Nick Name.
-   * @param {String} [reason=null] The kick reason.
+   * @param {string} userNickName The User Nick Name.
+   * @param {string} [reason=null] The kick reason.
    */
   kick (userNickName, reason = null) {
     this.client.kick(this, [userNickName], reason)
@@ -151,7 +151,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Invites a user to the channel.
    * 
    * @public
-   * @param {String} userNickName The User Nick Name.
+   * @param {string} userNickName The User Nick Name.
    */
   invite (userNickName) {
     this.client.invite(this, userNickName)
@@ -179,7 +179,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Sends a PRIVMSG to the current channel.
    *
    * @public
-   * @param {String} messageText The message to send.
+   * @param {string} messageText The message to send.
    */
   sendMessage (messageText) {
     this.client.sendMessage([this.name], messageText)
@@ -190,7 +190,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Sends a NOTICE to the current channel.
    *
    * @public
-   * @param {String} noticeText The notice to send.
+   * @param {string} noticeText The notice to send.
    */
   sendNotice (noticeText) {
     this.client.sendNotice([this.name], noticeText)
@@ -200,7 +200,7 @@ module.exports = class IrcChannel extends EventEmitter {
   /**
    * Returns a string representation of this instance.
    *
-   * @return {String} A string that represents this instance.
+   * @return {string} A string that represents this instance.
    */
   toString () {
     return this.name

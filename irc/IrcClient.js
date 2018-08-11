@@ -20,10 +20,10 @@ const maxParamsCount = 15
 const defaultPort = 6667
 
 /**
+ * Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
+ *
  * @class IrcClient
  * @extends EventEmitter
- *
- * Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
  */
 module.exports = class IrcClient extends EventEmitter {
 
@@ -59,8 +59,8 @@ module.exports = class IrcClient extends EventEmitter {
    * Connects to the specified server.
    *
    * @public
-   * @param {String} hostName The name of the remote host.
-   * @param {Int} port The port number of the remote host.
+   * @param {string} hostName The name of the remote host.
+   * @param {number} port The port number of the remote host.
    * @param {Object} registrationInfo The information used for registering the client.
    */
   connect (hostName, port, registrationInfo) {
@@ -90,7 +90,7 @@ module.exports = class IrcClient extends EventEmitter {
    * Requests the Message of the Day (MOTD) from the specified server.
    *
    * @public
-   * @param {String} [targetServer=null] The name of the server from which to request the MOTD, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server from which to request the MOTD, or null for the current server.
    */
   getMessageOfTheDay (targetServer = null) {
     this.sendMessageMotd(targetServer)
@@ -104,7 +104,7 @@ module.exports = class IrcClient extends EventEmitter {
    * network
    *
    * @public
-   * @param {String} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
+   * @param {string} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
    * @param {string} [targetServer=null] The name of the server to which to forward the message, or null for the current server.
    */
   getNetworkInfo (serverMask = null, targetServer = null) {
@@ -115,7 +115,7 @@ module.exports = class IrcClient extends EventEmitter {
    * Requests the version of the specified server.
    *
    * @public
-   * @param {String} [targetServer=null] The name of the server whose version to request, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server whose version to request, or null for the current server.
    */
   getServerVersion (targetServer = null) {
     this.sendMessageVersion(targetServer)
@@ -125,8 +125,8 @@ module.exports = class IrcClient extends EventEmitter {
    * Requests statistics about the specified server.
    *
    * @public
-   * @param {String} [query=null] The query character that indicates which server statistics to return.
-   * @param {String} [targetServer=null] The name of the server whose statistics to request, or null for the current server.
+   * @param {string} [query=null] The query character that indicates which server statistics to return.
+   * @param {string} [targetServer=null] The name of the server whose statistics to request, or null for the current server.
    */
   getServerStatistics (query = null, targetServer = null) {
     this.sendMessageStats(query == null ? null : query, targetServer)
@@ -139,8 +139,8 @@ module.exports = class IrcClient extends EventEmitter {
    * formed by the servers whose names match the mask; otherwise, the information concerns the whole network.
    *
    * @public
-   * @param {String} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
-   * @param {String} [targetServer=null] The name of the server to which to forward the request, or null for the current server.
+   * @param {string} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
+   * @param {string} [targetServer=null] The name of the server to which to forward the request, or null for the current server.
    */
   getServerLinks (serverMask = null, targetServer = null) {
     this.sendMessageLinks(serverMask, targetServer)
@@ -150,7 +150,7 @@ module.exports = class IrcClient extends EventEmitter {
    * Requests the local time on the specified server.
    * 
    * @public
-   * @param {String} [targetServer=null] The name of the server whose local time to request, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server whose local time to request, or null for the current server.
    */
   getServerTime (targetServer = null) {
     this.sendMessageTime(targetServer)
@@ -160,7 +160,7 @@ module.exports = class IrcClient extends EventEmitter {
    * Sends a ping to the specified server.
    *
    * @public
-   * @param {String} [targetServer=null] The name of the server to ping, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server to ping, or null for the current server.
    */
   ping (targetServer = null) {
     this.sendMessagePing(this.localUser.nickName, targetServer)
@@ -170,8 +170,8 @@ module.exports = class IrcClient extends EventEmitter {
    * Sends a Who query to the server targeting the specified channel or user masks.
    *
    * @public
-   * @param {String} [mask=null] A wildcard expression for matching against channel names. If the value is null, all users are matched.
-   * @param {Boolean} [onlyOperators=true] true to match only server operators, to match all users.
+   * @param {string} [mask=null] A wildcard expression for matching against channel names. If the value is null, all users are matched.
+   * @param {boolean} [onlyOperators=true] true to match only server operators, to match all users.
    */
   queryWho (mask = null, onlyOperators = false) {
     this.sendMessageWho(mask, onlyOperators)
