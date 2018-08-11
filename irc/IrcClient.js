@@ -221,7 +221,7 @@ class IrcClient extends EventEmitter {
     this._socket.write(message + '\r\n')
   }
 
-  // - Command Helpers
+  // - Proxy Methods
 
   joinChannel(channelName) {
     this.sendMessageJoin([channelName])
@@ -247,7 +247,11 @@ class IrcClient extends EventEmitter {
     this.sendMessageInvite(channel.name, nickName)    
   }
 
-  setModes (channel, modes, modeParameters) {
+  getChannelModes (channel, modes = null) {
+    this.sendMessageChannelMode(channel.name, modes)
+  }
+
+  setChannelModes (channel, modes, modeParameters) {
     this.sendMessageChannelMode(channel.name, modes, modeParameters)
   } 
 

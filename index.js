@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
   //var server = 'irc.quakenet.org' 
 
   client.connect(server, 6667, {
-    'nickName': 'Twoflower',
+    'nickName': 'Binky',
     'password': null,
     'userName': 'claus.joergensen@outlook.com',
     'realName': 'Claus Joergensen',
@@ -35,6 +35,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
   })
 
   client.on('registered', () => {
-    client.sendRawMessage('join :#c#')
+    client.sendRawMessage('join :#foobar')
   })
 })

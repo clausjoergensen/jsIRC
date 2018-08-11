@@ -84,6 +84,7 @@ class IrcMessageProcessor {
       '319': this.processMessageReplyWhoIsChannels.bind(this),
       '322': this.processMessageReplyList.bind(this),
       '323': this.processMessageReplyListEnd.bind(this),
+      '324': this.processMessageReplyChannelModes.bind(this),
       '331': this.processMessageReplyNoTopic.bind(this),
       '332': this.processMessageReplyTopic.bind(this),
       '341': this.processMessageReplyInviting.bind(this),
@@ -93,6 +94,8 @@ class IrcMessageProcessor {
       '364': this.processMessageReplyLinks.bind(this),
       '365': this.processMessageReplyEndOfLinks.bind(this),
       '366': this.processMessageReplyEndOfNames.bind(this),
+      '367': this.processMessageReplyBanList.bind(this),
+      '368': this.processMessageReplyBanListEnd.bind(this),
       '369': this.processMessageReplyEndOfWhoWas.bind(this),
       '372': this.processMessageReplyMotd.bind(this),
       '375': this.processMessageReplyMotdStart.bind(this),
@@ -192,22 +195,6 @@ class IrcMessageProcessor {
 
   // Process MODE messages received from the server.
   processMessageMode (message) {
-    function getModeAndParameters(messageParameters) {
-      var modes = ''
-      var modeParameters = []
-      messageParameters.forEach(p => {
-        if (p == null) { return }
-        if (p.length != 0) {
-          if (p[0] == '+' || p[0] == '-') {
-              modes += p
-          } else {
-              modeParameters.push(p)
-          }
-        }
-      })
-      return { 'modes': modes.split(''), 'parameters': modeParameters}
-    }
-
     function isChannelName (channelName) {
       return channelName.match(regexChannelName) != null
     }
@@ -215,7 +202,7 @@ class IrcMessageProcessor {
     var newModes = message.parameters[1]
     if (isChannelName(message.parameters[0])) {
       var channel = this.getChannelFromName(message.parameters[0])
-      var modesAndParameters = getModeAndParameters(message.parameters.slice(1))
+      var modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
       channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
       this.client.emit('channelMode', channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
     } else if (message.parameters[0] == this.client.localUser.nickName) {
@@ -645,6 +632,17 @@ class IrcMessageProcessor {
     this.listedChannels = []
   }
 
+  // Process processMessageReplyListEnd responses from the server
+  processMessageReplyChannelModes (message) {
+    var channel = this.getChannelFromName(message.parameters[0])
+    var modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
+    
+    channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
+    
+    this.client.emit('channelMode', 
+      channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
+  }
+
   // Process RPL_NOTOPIC responses from the server.
   processMessageReplyNoTopic (message) {
     var channel = this.getChannelFromName(message.parameters[1])
@@ -781,6 +779,29 @@ class IrcMessageProcessor {
   processMessageReplyEndOfNames (message) {
     var channel = this.getChannelFromName(message.parameters[1])
     channel.usersListReceived()
+  }
+
+  // Process RPL_BANLIST responses from the server.
+  processMessageReplyBanList (message) {
+    if (this.banList == undefined) {
+      this.banList = []
+    }
+    
+    var [source, channel, banMask, bannedBy, time] = message.parameters
+    
+    this.banList.push({
+      'channel': channel,
+      'banMask': banMask,
+      'bannedBy': bannedBy,
+      'time': parseInt(time),
+    })
+  }
+
+  // Process RPL_ENDOFBANLIST responses from the server.
+  processMessageReplyBanListEnd (message) {
+    var channel = this.getChannelFromName(message.parameters[1])
+    channel.emit('banList', this.banList)
+    this.banList = []
   }
 
   // Process RPL_ENDOFWHOWAS responses from the server.
@@ -948,6 +969,22 @@ class IrcMessageProcessor {
         this.client.channelUserModesPrefixes[prefixes[i]] = this.client.channelUserModes[i]
       }
     }
+  }
+  
+  getModeAndParameters(messageParameters) {
+    var modes = ''
+    var modeParameters = []
+    messageParameters.forEach(p => {
+      if (p == null) { return }
+      if (p.length != 0) {
+        if (p[0] == '+' || p[0] == '-') {
+            modes += p
+        } else {
+            modeParameters.push(p)
+        }
+      }
+    })
+    return { 'modes': modes.split(''), 'parameters': modeParameters}
   }
 }
 

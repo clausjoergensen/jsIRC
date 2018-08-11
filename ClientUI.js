@@ -166,6 +166,12 @@ ClientUI.prototype.localUserJoinedChannel = function (channel) {
   channel.on('userLeftChannel', (_) => { this.displayChannelUsers(channel) })
   channel.on('userKicked', (_) => { this.displayChannelUsers(channel) })
 
+  /*channel.on('banList', (banList) => {
+    console.log(banList)
+  })*/
+
+  channel.getModes('b')
+
   this.addChannelToList(channel)
   this.viewChannel(channel)
 }

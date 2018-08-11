@@ -123,7 +123,7 @@ class IrcChannel extends EventEmitter {
    * @param {string[]} [modeParameters=null] A array of parameters to the modes, or null for no parameters   
    */
   setModes (modes, modeParameters = null) {
-    this.client.setModes(this, modes, modeParameters)
+    this.client.setChannelModes(this, modes, modeParameters)
   }
 
   /**

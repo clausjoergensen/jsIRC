@@ -71,6 +71,7 @@ describe('IRC Tests', function() {
 
   after(function() {
     client1.quit()
+    client2.quit()
   })
 
   describe('IrcClient', function() {
@@ -254,6 +255,18 @@ describe('IRC Tests', function() {
       })
 
       channelUser2.ban()
+    })
+
+    it('getModes', function(done) {
+      var expectedBanMask = `${nickName2}!*@*`
+      
+      client1.channels[0].once('banList', (banList) => {
+        if (banList[0].banMask == expectedBanMask) {
+          done()
+        }
+      })
+
+      client1.channels[0].getModes('b')
     })
 
     it('unban', function(done) {
