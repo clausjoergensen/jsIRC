@@ -17,7 +17,6 @@ const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
 const IrcMessageProcessor = require('./IrcMessageProcessor.js')
 
 const maxParamsCount = 15
-const defaultPort = 6667
 
 /**
  * Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
