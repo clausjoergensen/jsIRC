@@ -17,7 +17,7 @@ class IrcUser extends EventEmitter {
    * Constructs a new IrcUser for a given {@link IrcClient}.
    *
    * @access private
-   * @constructor
+   * @hideconstructor 
    * @param {IrcClient} client The IrcClient instance.
   */
   constructor (client) {
