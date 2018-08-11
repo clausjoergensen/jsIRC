@@ -75,6 +75,7 @@ describe('IRC Tests', function() {
   })
 
   describe('IrcClient', function() {
+    this.slow(2500)
 
     it('connect', function(done) {
       connectedPromise1.then(connectedPromise2).then(done)
@@ -335,6 +336,7 @@ describe('IRC Tests', function() {
   })
 
   describe('CtcpClient', function() {
+    this.slow(2500)
     
     it('ctcp ping', function(done) {
       ctcpClient1.once('ping', (source, pingTime) => {
