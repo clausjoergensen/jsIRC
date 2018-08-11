@@ -718,7 +718,7 @@ class IrcMessageProcessor {
     }
 
     var lastParamParts = message.parameters[7].split(' ')
-    user.HopCount = parseInt(lastParamParts[0])
+    user.hopCount = parseInt(lastParamParts[0])
     if (lastParamParts.length > 1) {
       user.realName = lastParamParts[1]
     }
