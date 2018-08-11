@@ -73,6 +73,7 @@ class IrcUser extends EventEmitter {
 
   set isOnline(value) {
     this._isOnline = value
+    this.emit('isOnline')
   }
 
   /**
@@ -86,6 +87,7 @@ class IrcUser extends EventEmitter {
 
   set nickName(value) {
     this._nickName = value
+    this.emit('nickName')
   }
 
   /**
@@ -99,19 +101,7 @@ class IrcUser extends EventEmitter {
 
   set userName(value) {
     this._userName = value
-  }
-
-  /**
-   * Gets the real name of the user. This value never changes until the user reconnects.
-   *
-   * @public
-   */
-  get realName() {
-    return this._realName
-  }
-
-  set realName(value) {
-    this._realName = value
+    this.emit('userName')
   }
 
   /**
@@ -125,6 +115,7 @@ class IrcUser extends EventEmitter {
 
   set realName(value) {
     this._realName = value
+    this.emit('realName')
   }
 
   /**
@@ -138,6 +129,7 @@ class IrcUser extends EventEmitter {
 
   set idleDuration(value) {
     this._idleDuration = value
+    this.emit('idleDuration')
   }
 
   /**
@@ -151,6 +143,7 @@ class IrcUser extends EventEmitter {
 
   set isOperator(value) {
     this._isOperator = value
+    this.emit('isOperator')
   }
 
   /**
@@ -164,6 +157,7 @@ class IrcUser extends EventEmitter {
 
   set serverName(value) {
     this._serverName = value
+    this.emit('serverName')
   }
 
   /**
@@ -177,6 +171,7 @@ class IrcUser extends EventEmitter {
 
   set serverInfo(value) {
     this._serverInfo = value
+    this.emit('serverInfo')
   }
 
   /**
@@ -192,6 +187,7 @@ class IrcUser extends EventEmitter {
 
   set isAway(value) {
     this._isAway = value
+    this.emit('isAway')
   }
 
   /**
@@ -205,6 +201,7 @@ class IrcUser extends EventEmitter {
 
   set awayMessage(value) {
     this._awayMessage = value
+    this.emit('awayMessage')
   }
 
    /**
@@ -219,6 +216,7 @@ class IrcUser extends EventEmitter {
 
   set hopCount(value) {
     this._hopCount = value
+    this.emit('hopCount')
   }
 
   /**
