@@ -769,8 +769,7 @@ class IrcMessageProcessor {
     let userModeFlags = message.parameters[6]
     if (userModeFlags.includes('H')) {
       user.IsAway = false;
-    }
-    else if (userModeFlags.includes('G')) {
+    } else if (userModeFlags.includes('G')) {
       user.IsAway = true;
     }
     
@@ -779,8 +778,7 @@ class IrcMessageProcessor {
     if (channel != null)
     {
         let channelUser = channel.getChannelUser(user)
-        if (channelUser == null)
-        {
+        if (channelUser == null) {
             channelUser = new IrcChannelUser(user)
             channel.userJoined(channelUser)
         }
