@@ -34,8 +34,6 @@ module.exports = class IrcChannel extends EventEmitter {
     this._users = []
   }
 
-  // - Public Properties -
-
   /**
    * Gets the client to which the channel belongs.
    *
@@ -96,8 +94,6 @@ module.exports = class IrcChannel extends EventEmitter {
     return this._topic    
   }
 
-  // - Public Methods -
-
   /**
    * Gets the IrcChannelUser in the channel that corresponds to the specified IrcUser, or null if none is found.
    *
@@ -113,7 +109,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Requests a list of the current modes of the channel, or if modes is specified, the settings for the specified modes.
    *
    * @public
-   * @param {Array} [modes] The modes for which to get the current settings, or null for all current channel modes.
+   * @param {Array} [modes=null] The modes for which to get the current settings, or null for all current channel modes.
    */
   getModes(modes = null) {
     this.client.getChannelModes(this, modes)
@@ -134,7 +130,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * Leaves the channel, giving the specified comment.
    * 
    * @public
-   * @param {String} [comment] The comment to send the server upon leaving the channel, or null for no comment.
+   * @param {String} [comment=null] The comment to send the server upon leaving the channel, or null for no comment.
    */
   part (comment = null) {
     this.client.leaveChannel(this.name, comment)
@@ -145,7 +141,7 @@ module.exports = class IrcChannel extends EventEmitter {
    * 
    * @public
    * @param {String} userNickName The User Nick Name.
-   * @param {String} [reason] The kick reason.
+   * @param {String} [reason=null] The kick reason.
    */
   kick (userNickName, reason = null) {
     this.client.kick(this, [userNickName], reason)

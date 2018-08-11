@@ -20,7 +20,7 @@ module.exports = class IrcUser extends EventEmitter {
    * @constructor
    * @param {IrcClient} client The IrcClient instance.
   */
-  constructor (client, isLocalUser = false) {
+  constructor (client) {
     super()
     this._client = client
     this._isOnline = false

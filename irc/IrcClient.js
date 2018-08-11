@@ -37,12 +37,14 @@ module.exports = class IrcClient extends EventEmitter {
     super()
 
     this.loggingEnabled = false
-    this.socket = new net.Socket()
-    this.socket.setEncoding('utf8')
+    
+    this._socket = new net.Socket()
+    this._socket.setEncoding('utf8')
+    this._messageProcessor = new IrcMessageProcessor(this)
+
     this.users = []
     this.channels = []
-    this.servers = []
-    
+    this.servers = []    
     this.serverAvailableUserModes = []
     this.serverAvailableChannelModes = []
     this.serverSupportedFeatures = {}
@@ -51,103 +53,125 @@ module.exports = class IrcClient extends EventEmitter {
     this.listedServerLinks = []
     this.listedChannels = []
     this.listedStatsEntries = []
-
-    this._messageProcessor = new IrcMessageProcessor(this)
   }
 
   /**
-   * 
+   * Connects to the specified server.
    *
    * @public
+   * @param {String} hostName The name of the remote host.
+   * @param {Int} port The port number of the remote host.
+   * @param {Object} registrationInfo The information used for registering the client.
    */
   connect (hostName, port, registrationInfo) {
     this.registrationInfo = registrationInfo
 
-    this.socket.on('data', this.dataReceived.bind(this))
-    this.socket.on('close', this.connectionClosed.bind(this))
-    this.socket.on('error', this.connectionError.bind(this))
-    this.socket.on('disconnect', this.disconnected.bind(this))
+    this._socket.on('data', this.dataReceived.bind(this))
+    this._socket.on('close', this.connectionClosed.bind(this))
+    this._socket.on('error', this.connectionError.bind(this))
+    this._socket.on('disconnect', this.disconnected.bind(this))
 
     this.emit('connecting', hostName, port)
-    this.socket.connect(port, hostName, this.connected.bind(this))
+
+    this._socket.connect(port, hostName, this.connected.bind(this))
   }
 
   /**
-   * 
+   * Requests a list of information about the specified (or all) channels on the network.
    *
    * @public
+   * @param {Array} [channelNames=null] The names of the channels to list, or null to list all channels
    */
   listChannels (channelNames = null) {
     this.sendMessageList(channelNames)
   }
 
   /**
-   * 
+   * Requests the Message of the Day (MOTD) from the specified server.
    *
    * @public
+   * @param {String} [targetServer=null] The name of the server from which to request the MOTD, or null for the current server.
    */
   getMessageOfTheDay (targetServer = null) {
     this.sendMessageMotd(targetServer)
   }
 
   /**
-   * 
+   * Requests statistics about the connected IRC network.
+   *
+   * If the serverMask is specified, then the server only returns information about the part of
+   * the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
+   * network
    *
    * @public
+   * @param {String} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
+   * @param {string} [targetServer=null] The name of the server to which to forward the message, or null for the current server.
    */
   getNetworkInfo (serverMask = null, targetServer = null) {
     this.sendMessageLUsers(serverMask, targetServer)
   }
 
   /**
-   * 
+   * Requests the version of the specified server.
    *
    * @public
+   * @param {String} [targetServer=null] The name of the server whose version to request, or null for the current server.
    */
   getServerVersion (targetServer = null) {
     this.sendMessageVersion(targetServer)
   }
 
   /**
-   * 
+   * Requests statistics about the specified server.
    *
    * @public
+   * @param {String} [query=null] The query character that indicates which server statistics to return.
+   * @param {String} [targetServer=null] The name of the server whose statistics to request, or null for the current server.
    */
   getServerStatistics (query = null, targetServer = null) {
     this.sendMessageStats(query == null ? null : query, targetServer)
   }
 
   /**
+   * Requests a list of all servers known by the target server. 
    * 
+   * If serverMask is specified, then the server only returns information about the part of the network 
+   * formed by the servers whose names match the mask; otherwise, the information concerns the whole network.
    *
    * @public
+   * @param {String} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
+   * @param {String} [targetServer=null] The name of the server to which to forward the request, or null for the current server.
    */
   getServerLinks (serverMask = null, targetServer = null) {
     this.sendMessageLinks(serverMask, targetServer)
   }
 
   /**
+   * Requests the local time on the specified server.
    * 
-   *
    * @public
+   * @param {String} [targetServer=null] The name of the server whose local time to request, or null for the current server.
    */
   getServerTime (targetServer = null) {
     this.sendMessageTime(targetServer)
   }
 
   /**
-   * 
+   * Sends a ping to the specified server.
    *
    * @public
+   * @param {String} [targetServer=null] The name of the server to ping, or null for the current server.
    */
   ping (targetServer = null) {
     this.sendMessagePing(this.localUser.nickName, targetServer)
   }
 
   /**
-   * 
+   * Sends a Who query to the server targeting the specified channel or user masks.
    *
    * @public
+   * @param {String} [mask=null] A wildcard expression for matching against channel names. If the value is null, all users are matched.
+   * @param {Boolean} [onlyOperators=true] true to match only server operators, to match all users.
    */
   queryWho (mask = null, onlyOperators = false) {
     this.sendMessageWho(mask, onlyOperators)
@@ -270,7 +294,7 @@ module.exports = class IrcClient extends EventEmitter {
       console.log('-> ' + message)
     }
 
-    this.socket.write(message + '\r\n')
+    this._socket.write(message + '\r\n')
   }
 
   // - Socket Operations
@@ -421,7 +445,7 @@ module.exports = class IrcClient extends EventEmitter {
       console.log('-> ' + message)
     }
 
-    this.socket.write(message + '\r\n')
+    this._socket.write(message + '\r\n')
   }
 
   // - Message Sending

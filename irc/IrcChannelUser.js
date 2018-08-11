@@ -69,7 +69,7 @@ module.exports = class IrcChannelUser extends EventEmitter {
    * Kicks the user from the channel, giving the specified comment.
    * 
    * @public
-   * @param {String} [comment] The comment to give for the kick, or null for none.
+   * @param {String} [comment=null] The comment to give for the kick, or null for none.
    */
   kick (comment = null) {
     this.channel.kick(this.user.nickName, comment)
