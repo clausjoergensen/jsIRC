@@ -93,7 +93,7 @@ class CtcpClient extends EventEmitter {
   }
 
   /**
-   * Gets the local date/time of the specified list of users.
+   * Gets additional information about a list of users.
    *
    * @public
    * @param {string[]} targets A list of users to which to send the request.
