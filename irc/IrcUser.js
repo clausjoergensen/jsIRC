@@ -8,15 +8,15 @@ const { EventEmitter } = events
 /**
  * Represents an IRC user that exists on a specific {@link IrcClient}.
  *
- * @class IrcUser
+ * @class
  * @extends EventEmitter
  */
 class IrcUser extends EventEmitter {
 
-  /*
+  /**
    * Constructs a new IrcUser for a given {@link IrcClient}.
    *
-   * @access private
+   * @access protected
    * @hideconstructor 
    * @param {IrcClient} client The IrcClient instance.
   */
@@ -46,12 +46,13 @@ class IrcUser extends EventEmitter {
   }
 
   /**
-   * Gets a read-only collection of the modes the user currently has.
+   * Gets wheather the user is a local user.
    *
    * @public
+   * @return {boolean} True if the user is local; otherwise false.
    */
   get isLocalUser() {
-    return true
+    return false
   }
 
   /*

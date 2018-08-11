@@ -15,17 +15,17 @@ const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
  * Represents a client that communicates with a server using CTCP (Client to Client Protocol), 
  * operating over an IRC connection.
  *
- * @class CtcpClient
+ * @public
+ * @class
  * @extends EventEmitter
  */
-class CtcpClient extends EventEmitter {
-
-  /*
+class CtcpClient {
+    
+  /**
    * Constructs a new CtcpClient for a given {@link IrcClient}.
    *
-   * @constructor
    * @param {IrcClient} client The IRC client by which the CTCP client should communicate.
-  */
+   */
   constructor (client) {
     super()
     this._client = client

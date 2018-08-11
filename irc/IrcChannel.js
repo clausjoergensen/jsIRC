@@ -11,12 +11,12 @@ const IrcChannelType = require('./IrcChannelType.js')
 /**
  * Represents an IRC channel that exists on a specific IrcClient.
  *
- * @class IrcChannel
+ * @class
  * @extends EventEmitter
  */
 class IrcChannel extends EventEmitter { 
 
-  /*
+  /**
    * Constructs a new IrcChannel for a given {@link IrcClient}.
    *
    * @access private

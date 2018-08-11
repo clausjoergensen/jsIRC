@@ -22,16 +22,17 @@ const defaultPort = 6667
 /**
  * Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
  *
- * @class IrcClient
+ * @public
+ * @class
  * @extends EventEmitter
  */
 class IrcClient extends EventEmitter {
 
-  /*
+  /**
    * Initializes a new instance of the IrcClient class.
    *
    * @constructor
-  */
+   */
   constructor () {
     super()
 

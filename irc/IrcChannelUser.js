@@ -8,16 +8,15 @@ const { EventEmitter } = events
 /**
  * Represents an IRC user that exists on a specific channel on a specific IrcClient.
  *
- * @class IrcChannelUser
+ * @class
  * @extends EventEmitter
  */
 class IrcChannelUser extends EventEmitter {
 
-  /*
+  /**
    * Constructs a new IrcChannelUser for a given {@link IrcUser}.
    *
-   * @access private
-   * @constructor
+   * @hideconstructor
    * @param {IrcUser} user The IrcUser on the channel.
    * @param {string[]} [modes] Array of channel modes.
   */

@@ -10,12 +10,12 @@ const IrcUser = require('./IrcUser.js')
 /**
  * Represents an local IRC user that exists on a specific {@link IrcClient}.
  *
- * @class IrcLocalUser
+ * @class
  * @extends IrcUser
  */
 class IrcLocalUser extends IrcUser {
 
-  /*
+  /**
    * Initializes a new instance of the IrcLocalUser class.
    *
    * @access private
@@ -28,10 +28,10 @@ class IrcLocalUser extends IrcUser {
   }
 
   /**
-   * Gets a read-only collection of the modes the user currently has.
+   * Gets wheather the user is a local user.
    *
    * @public
-   * @return {boolean} The list of channel modes.
+   * @return {boolean} True if the user is local; otherwise false.
    */
   get isLocalUser() {
     return true

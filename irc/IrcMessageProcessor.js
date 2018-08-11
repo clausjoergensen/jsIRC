@@ -20,17 +20,16 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 /**
  * IRC Message Processing for a given {@link IrcClient}.
  *
- * @class IrcMessageProcessor
+ * @class
  * @extends EventEmitter
  * @access private
  */
 class IrcMessageProcessor {
 
-  /*
+  /**
    * Initializes a new instance of the IrcMessageProcessor class.
    *
    * @param {IrcClient} client The IrcClient instance.
-   * @constructor
   */
   constructor (client) {
     this._client = client
