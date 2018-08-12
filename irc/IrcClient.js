@@ -19,6 +19,23 @@ const maxParamsCount = 15
  * @public
  * @class
  * @extends EventEmitter
+ *
+ * @example
+ *
+ * let client = new IrcClient()
+ * client.connect('irc.quakenet.org', 6667, {
+ *   'nickName': 'Ridcully',
+ *   'userName': 'archchancellor@unseen-university.edu',
+ *   'realName': 'Mustrum Ridcully'
+ * })
+ *
+ * client.on('registered', () => {
+ *    client.localUser.on('joinedChannel', (channel) => {
+ *       channel.sendMessage("What's for lunch?")
+ *    })
+ *    client.joinChannel('#greathall')
+ * })
+ *
  */
 class IrcClient extends EventEmitter {
   /**

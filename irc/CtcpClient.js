@@ -15,6 +15,18 @@ const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
  * @public
  * @class
  * @extends EventEmitter
+ *
+ * @example
+ *
+ * let ircClient = new IrcClient()
+ * let ctcpClient = new CtcpClient(ircClient)
+ *
+ * ctcpClient.on('version', (source, versionInfo) => {
+ *   console.log(`[${source.nickName} VERSION reply]: ${versionInfo}.`)  
+ * }
+ *
+ * ctcpClient.version(['Rincewind'])
+ *
  */
 class CtcpClient extends EventEmitter {
   /**
