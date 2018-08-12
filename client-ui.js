@@ -343,7 +343,7 @@ class ClientUI {
 
     this.serverView.style.display = 'block'
 
-    setWindowTitleForServer()
+    this.setWindowTitleForServer()
   }
 
   setWindowTitleForServer () {
