@@ -4,7 +4,7 @@
 const { remote } = require('electron')
 const { Menu, BrowserWindow, app } = remote
 const { shell } = remote
-const { IrcError } = require('./irc/index.js')
+const { IrcError } = require('./../irc/index.js')
 const Autolinker = require('autolinker')
 const strftime = require('strftime')
 const prompt = require('electron-prompt')

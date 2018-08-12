@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "test": "mocha --timeout 5000",
-    "gendocs": "jsdoc irc -r -t ./node_modules/docdash/  --readme ./irc/README.md"
+    "gendocs": "jsdoc irc -r -t ./node_modules/docdash/  --readme ./irc/README.md --destination docs"
   },
   "keywords": [
     "irc"

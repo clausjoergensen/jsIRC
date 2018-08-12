@@ -1,10 +1,10 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const { IrcClient, IrcFloodPreventer, CtcpClient } = require('./irc/index.js')
+const { IrcClient, IrcFloodPreventer, CtcpClient } = require('./../irc/index.js')
 
 const ClientUI = require('./client-ui.js')
-const packageInfo = require('./package.json')
+const packageInfo = require('./../package.json')
 
 // const maxListenersExceededWarning = require('max-listeners-exceeded-warning')
 // maxListenersExceededWarning()

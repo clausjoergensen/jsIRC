@@ -25,7 +25,7 @@ app.on('ready', () => {
     'title-bar-style': 'hidden'
   })
 
-  mainWindow.loadURL(path.join('file://', __dirname, '/index.html'))
+  mainWindow.loadURL(path.join('file://', __dirname, '/ui/index.html'))
 
   mainWindow.on('closed', () => {
     mainWindow = null
