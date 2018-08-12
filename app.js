@@ -69,14 +69,14 @@ app.on('ready', () => {
     {
       label: 'Help',
       submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { 
+        {
           label: 'Report Issue…',
           click: () => {
             shell.openExternal('https://github.com/clausjoergensen/jsIRC/issues/new/choose');
           }
-        }
+        },
+        { type: 'separator' },
+        { role: 'about' }
       ]
     }
   ]
