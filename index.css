@@ -89,30 +89,29 @@ div#network-list
 
 .channel-title-view
 {
-    display: table;
     width: calc(100vw - 401px);
-    max-width: calc(100vw - 401px);
     height: 40px;
-    max-height: 40px;
+    background-color: #f5f5f4;
+    border-bottom: 1px solid #ddd;
 }
 
 .channel-title-label
 {
     user-select: none;
     background-color: #f5f5f4;
-    padding: 3px;
+    padding: 13px 3px 3px 3px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
-    height: 40px;
+    height: 1em;
     text-align: center;
     vertical-align: middle;
-    display: table-cell;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .channel-message-view
 {
     width: calc(100vw - 421px);
-    height: calc(100vh - 102px);
+    height: calc(100vh - 97px);
     overflow-x: hidden;
     overflow-y: scroll;
     padding: 10px;
