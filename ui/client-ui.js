@@ -538,18 +538,32 @@ class ClientUI {
     let senderName = ''
     if (source != null) {
       if (source.nickName != null) {
-        senderName = `<${source.nickName}>`
+        senderName = `&lt;${source.nickName}&gt;`
       } else if (source.hostName != null) {
         senderName = source.hostName
       }
     }
 
+    let linkedText = Autolinker.link(text, {
+      stripPrefix: false,
+      newWindow: false,
+      replaceFn: (match) => {
+        if (match.getType() === 'url') {
+          var tag = match.buildTag()
+          tag.setAttr('title', match.getAnchorHref())
+          return tag
+        } else {
+          return true
+        }
+      }
+    })
+
     let now = new Date()
-    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${linkedText}`
 
     let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
-    paragraph.innerText = formattedText
+    paragraph.innerHTML = formattedText
 
     const channelTableView = this.channelViews[channel.name]
     const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
