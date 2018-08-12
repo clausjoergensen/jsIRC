@@ -854,8 +854,8 @@ class ClientUI {
 
     switch (action.toLowerCase()) {
       case 'msg':
-        let target = content.substr(0, content.indexOf(' '))
-        let message = content.substr(content.indexOf(' ') + 1)
+        var target = content.substr(0, content.indexOf(' '))
+        var message = content.substr(content.indexOf(' ') + 1)
         this.client.sendMessage([target], message)
         break
       case 'join':
@@ -878,6 +878,21 @@ class ClientUI {
       case 'topic':
         if (this.selectedChannel != null) {
           this.client.setTopic(this.selectedChannel.name, content)
+        }
+        break
+      case 'hop':
+        var target = content.substr(0, content.indexOf(' '))
+        var newChannel = content.substr(content.indexOf(' ') + 1).trim()
+        if (this.selectedChannel != null) {
+          var name = this.selectedChannel.name
+          this.selectedChannel.part()
+          if (newChannel.length !== 0) {
+            this.client.joinChannel(newChannel)
+          } else {
+            this.client.joinChannel(name)
+          }
+        } else {
+          this.displayServerMessage(null, '* Cannot use /hop in this view.')
         }
         break
     }
