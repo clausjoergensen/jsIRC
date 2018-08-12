@@ -384,7 +384,9 @@ class ClientUI {
     serverName = serverName || this.client.serverName
 
     let browserWindow = BrowserWindow.getFocusedWindow()
-    browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)
+    if (browserWindow != null) {
+      browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)      
+    }
   }
 
   viewChannel (channel) {
@@ -420,7 +422,9 @@ class ClientUI {
     serverName = serverName || this.client.serverName
 
     let browserWindow = BrowserWindow.getFocusedWindow()
-    browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)
+    if (browserWindow != null) {
+      browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)
+    }
   }
 
   leaveChannel (channel) {
@@ -538,13 +542,27 @@ class ClientUI {
   }
 
   displayChannelAction (channelName, source, text) {
+    let linkedText = Autolinker.link(text, {
+      stripPrefix: false,
+      newWindow: false,
+      replaceFn: (match) => {
+        if (match.getType() === 'url') {
+          var tag = match.buildTag()
+          tag.setAttr('title', match.getAnchorHref())
+          return tag
+        } else {
+          return true
+        }
+      }
+    })
+
     let senderName = '* ' + source.nickName
     let now = new Date()
-    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${linkedText}`
 
     let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
-    paragraph.innerText = formattedText
+    paragraph.innerHTML = formattedText
 
     const channelTableView = this.channelViews[channelName]
     const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
