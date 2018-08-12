@@ -37,6 +37,8 @@ class CtcpClient extends EventEmitter {
     }
     this._clientVersion = '0.0.1'
     this._clientName = ''
+    this._channelPreviewMessageEventListeners = {}
+    this._channelPreviewNoticeEventListeners = {}
   }
 
   /**
@@ -137,24 +139,40 @@ class CtcpClient extends EventEmitter {
       return
     }
 
-    localUser.on('joinedChannel', this.joinedChannel.bind(this))
-    localUser.on('leftChannel', this.leftChannel.bind(this))
-    localUser.on('previewMessage', this.previewMessage.bind(this))
-    localUser.on('previewNotice', this.previewNotice.bind(this))
+    this._joinedChannelEventListener = this.joinedChannel.bind(this)
+    this._leftChannelEventListener = this.leftChannel.bind(this)
+    this._localUserPreviewMessageEventListener = this.previewMessage.bind(this)
+    this._localUserPreviewNoticeEventListener = this.previewNotice.bind(this)
+
+    localUser.on('joinedChannel', this._joinedChannelEventListener)
+    localUser.on('leftChannel', this._leftChannelEventListener)
+    localUser.on('previewMessage', this._localUserPreviewMessageEventListener)
+    localUser.on('previewNotice', this._localUserPreviewNoticeEventListener)
   }
 
   disconnected () {
-    //
+    let localUser = this.client.localUser
+    if (localUser == null) {
+      return
+    }
+
+    localUser.off('joinedChannel', this._joinedChannelEventListener)
+    localUser.off('leftChannel', this._leftChannelEventListener)
+    localUser.off('previewMessage', this._localUserPreviewMessageEventListener)
+    localUser.off('previewNotice', this._localUserPreviewNoticeEventListener)
   }
 
   joinedChannel (channel) {
-    channel.on('previewMessage', this.previewMessage.bind(this))
-    channel.on('previewNotice', this.previewNotice.bind(this))
+    this._channelPreviewMessageEventListeners[channel] = this.previewMessage.bind(this)
+    this._channelPreviewNoticeEventListeners[channel] = this.previewNotice.bind(this)
+
+    channel.on('previewMessage', this._channelPreviewMessageEventListeners[channel])
+    channel.on('previewNotice', this._channelPreviewNoticeEventListeners[channel])
   }
 
   leftChannel (channel) {
-    channel.off('previewMessage', this.previewMessage)
-    channel.off('previewNotice', this.previewNotice)
+    channel.off('previewMessage', this._channelPreviewMessageEventListeners[channel])
+    channel.off('previewNotice', this._channelPreviewNoticeEventListeners[channel])
   }
 
   previewMessage (e) {
