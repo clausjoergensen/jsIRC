@@ -33,6 +33,11 @@ class IrcClient extends EventEmitter {
 
     this._socket = new net.Socket()
     this._socket.setEncoding('utf8')
+    this._socket.on('data', this.dataReceived.bind(this))
+    this._socket.on('close', this.connectionClosed.bind(this))
+    this._socket.on('error', this.connectionError.bind(this))
+    this._socket.on('disconnect', this.disconnected.bind(this))
+
     this._messageProcessor = new IrcMessageProcessor(this)
 
     this.users = []
@@ -59,11 +64,6 @@ class IrcClient extends EventEmitter {
    */
   connect (hostName, port, registrationInfo) {
     this.registrationInfo = registrationInfo
-
-    this._socket.on('data', this.dataReceived.bind(this))
-    this._socket.on('close', this.connectionClosed.bind(this))
-    this._socket.on('error', this.connectionError.bind(this))
-    this._socket.on('disconnect', this.disconnected.bind(this))
 
     /**
      * @event IrcClient#connecting
