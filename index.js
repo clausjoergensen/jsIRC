@@ -13,18 +13,20 @@ const ctcpClient = new CtcpClient(client)
 ctcpClient.clientName = packageInfo.name
 ctcpClient.clientVersion = packageInfo.version
 
-var clientUI = null
-
-function cmd(message) {
+// eslint-disable-next-line no-unused-vars
+function cmd (message) {
   client.sendRawMessage(message)
   return true
 }
+
+// eslint-disable-next-line no-unused-vars
+let clientUI = null
 
 document.addEventListener('DOMContentLoaded', function (event) {
   clientUI = new ClientUI(client, ctcpClient)
 
   var server = '127.0.0.1'
-  //var server = 'irc.quakenet.org' 
+  // var server = 'irc.quakenet.org'
 
   client.connect(server, 6667, {
     'nickName': 'Windcapes',

@@ -3,6 +3,7 @@
 
 const { remote } = require('electron')
 const { BrowserWindow } = remote
+const path = require('path')
 
 module.exports = function (channelName) {
   let promptWindow = new BrowserWindow({
@@ -18,5 +19,5 @@ module.exports = function (channelName) {
   })
 
   promptWindow.setMenu(null)
-  promptWindow.loadURL('file://' + __dirname + '/channel-prompt.html')
+  promptWindow.loadURL(path.join('file://', __dirname, '/channel-prompt.html'))
 }

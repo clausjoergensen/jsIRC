@@ -2,11 +2,12 @@
 'use strict'
 
 const { app, BrowserWindow, Menu } = require('electron')
+const path = require('path')
 
-var mainWindow = null
+let mainWindow = null
 
 app.on('window-all-closed', () => {
-  if (process.platform != 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit()
   }
 })
@@ -16,10 +17,10 @@ app.on('ready', () => {
     width: 1024,
     height: 768,
     'accept-first-mouse': true,
-    'title-bar-style': 'hidden',
+    'title-bar-style': 'hidden'
   })
 
-  mainWindow.loadURL('file://' + __dirname + '/index.html')
+  mainWindow.loadURL(path.join('file://', __dirname, '/index.html'))
 
   mainWindow.on('closed', () => {
     mainWindow = null

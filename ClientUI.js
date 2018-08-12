@@ -4,14 +4,15 @@
 const { remote } = require('electron')
 const { Menu } = remote
 
-const Autolinker = require('autolinker') 
-const strftime = require('strftime')
-const prompt = require('electron-prompt');
+const { IrcError } = require('./irc/index.js')
 
-const channelModesPrompt = require('./channel-prompt.js');
+const Autolinker = require('autolinker')
+const strftime = require('strftime')
+const prompt = require('electron-prompt')
+
+const channelModesPrompt = require('./channel-prompt.js')
 
 class ClientUI {
-
   constructor (client, ctcpClient) {
     this.client = client
     this.ctcpClient = ctcpClient
@@ -36,19 +37,31 @@ class ClientUI {
     serverView.classList.add('server-view')
 
     const serverMenuTemplate = [
-      { label: 'Network Info', click: () => {
-        this.client.getNetworkInfo()
-      }},
-      { label: 'Time', click: () => {
-        this.client.getServerTime()
-      }},
-      { label: 'Message of the Day', click: () => {
-        this.client.getMessageOfTheDay()
-      }},
+      {
+        label: 'Network Info',
+        click: () => {
+          this.client.getNetworkInfo()
+        }
+      },
+      {
+        label: 'Time',
+        click: () => {
+          this.client.getServerTime()
+        }
+      },
+      {
+        label: 'Message of the Day',
+        click: () => {
+          this.client.getMessageOfTheDay()
+        }
+      },
       { type: 'separator' },
-      { label: 'Quit', click: () => {
-        process.exit()
-      }}
+      {
+        label: 'Quit',
+        click: () => {
+          process.exit()
+        }
+      }
     ]
 
     const serverMenu = Menu.buildFromTemplate(serverMenuTemplate)
@@ -59,15 +72,15 @@ class ClientUI {
     }, false)
 
     document.getElementById('right-column').appendChild(serverView)
-    return serverView  
+    return serverView
   }
 
-  setupEventListeners() {
+  setupEventListeners () {
     // IRC Client Event Listeners
     this.client.on('connectionError', error => {
-      if (error.code == 'ECONNREFUSED') {
+      if (error.code === 'ECONNREFUSED') {
         this.displayServerError(`* Couldn't connect to ${error.address} (${error.port})`)
-      } else if (error.code == 'ECONNRESET') {
+      } else if (error.code === 'ECONNRESET') {
         this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
       }
     })
@@ -85,6 +98,7 @@ class ClientUI {
           break
         case 482: // ERR_CHANOPRIVSNEEDED
           this.displayChannelError(errorParameters[0], errorMessage)
+          break
         default:
           let errorName = IrcError[command]
           console.log(`Unsupported protocol error ${errorName}(${command}).`, errorParameters, errorMessage)
@@ -115,30 +129,30 @@ class ClientUI {
 
     this.client.on('motd', messageOfTheDay => {
       this.displayServerMessage(null, ` - ${this.client.serverName} Message of the Day - `)
-      
+
       messageOfTheDay
         .split('\r\n')
         .forEach(l => this.displayServerMessage(null, l))
     })
 
     // CTCP Event Listeners
-    ctcpClient.on('ping', (source, pingTime) => {
+    this.ctcpClient.on('ping', (source, pingTime) => {
       this.displayServerAction(`[${source.nickName} PING reply]: ${pingTime} seconds.`)
     })
 
-    ctcpClient.on('time', (source, dateTime) => {
+    this.ctcpClient.on('time', (source, dateTime) => {
       this.displayServerAction(`[${source.nickName} TIME reply]: ${dateTime}.`)
     })
 
-    ctcpClient.on('version', (source, versionInfo) => {
+    this.ctcpClient.on('version', (source, versionInfo) => {
       this.displayServerAction(`[${source.nickName} VERSION reply]: ${versionInfo}.`)
     })
 
-    ctcpClient.on('finger', (source, info) => {
+    this.ctcpClient.on('finger', (source, info) => {
       this.displayServerAction(`[${source.nickName} FINGER reply]: ${info}.`)
     })
 
-    ctcpClient.on('clientInfo', (source, info) => {
+    this.ctcpClient.on('clientInfo', (source, info) => {
       this.displayServerAction(`[${source.nickName} CLIENTINFO reply]: ${info}.`)
     })
 
@@ -152,7 +166,7 @@ class ClientUI {
     })
   }
 
-  clientConnected() {
+  clientConnected () {
     this.client.localUser.on('message', (source, targets, messageText) => {
       this.displayServerMessage(source, messageText)
     })
@@ -168,7 +182,7 @@ class ClientUI {
       this.displayChannelMessage(channel, source, messageText)
     })
 
-    channel.on('action', (source, messageText) => { 
+    channel.on('action', (source, messageText) => {
       this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
     })
 
@@ -183,7 +197,7 @@ class ClientUI {
   }
 
   localUserPartedChannel (channel) {
-    this.leaveChannel(channel)  
+    this.leaveChannel(channel)
   }
 
   addServerToList (serverName) {
@@ -218,8 +232,8 @@ class ClientUI {
     channelTableView.cellSpacing = 0
     channelTableView.cellPadding = 0
     channelTableView.classList.add('channel-view')
-    
-    let row = channelTableView.insertRow()  
+
+    let row = channelTableView.insertRow()
     let messagesCell = row.insertCell()
     messagesCell.classList.add('messages-panel')
     let usersCell = row.insertCell()
@@ -229,20 +243,21 @@ class ClientUI {
     channelView.classList.add('channel-content-view')
     messagesCell.appendChild(channelView)
 
-    let channelTitleView = document.createElement('div') 
+    let channelTitleView = document.createElement('div')
     channelTitleView.classList.add('channel-title-view')
     channelView.appendChild(channelTitleView)
-    
-    let channelTitleLabel = document.createElement('div') 
+
+    let channelTitleLabel = document.createElement('div')
     channelTitleLabel.classList.add('channel-title-label')
     channelTitleView.appendChild(channelTitleLabel)
 
-    let channelMessageView = document.createElement('div') 
+    let channelMessageView = document.createElement('div')
     channelMessageView.classList.add('channel-message-view')
     channelView.appendChild(channelMessageView)
 
-    const channelMessageViewMenu = Menu.buildFromTemplate([{ 
-      label: 'Channel Modes', click: () => {
+    const channelMessageViewMenu = Menu.buildFromTemplate([{
+      label: 'Channel Modes',
+      click: () => {
         channelModesPrompt(channel.name)
       }
     }])
@@ -251,7 +266,7 @@ class ClientUI {
       e.preventDefault()
       channelMessageViewMenu.popup({ window: remote.getCurrentWindow() })
     }, false)
-    
+
     this.channelViews[channel.name] = channelTableView
     document.getElementById('right-column').appendChild(channelTableView)
 
@@ -259,11 +274,13 @@ class ClientUI {
     channelElement.classList.add('channel')
     channelElement.channel = channel
     channelElement.innerText = channel.name
-    
+
     const channelMenuTemplate = [
-      { label: 'Leave Channel', click: () => {
+      {
+        label: 'Leave Channel',
+        click: () => {
           channel.part()
-        } 
+        }
       }
     ]
 
@@ -307,7 +324,7 @@ class ClientUI {
   viewChannel (channel) {
     Array.from(document.getElementsByClassName('network-title'))
       .forEach(e => e.classList.remove('network-title-selected'))
-      
+
     Object.keys(this.navigationChannelViews).forEach((key, index) => {
       this.navigationChannelViews[key].classList.remove('channel-selected')
     })
@@ -315,15 +332,15 @@ class ClientUI {
     this.navigationChannelViews[channel.name].classList.remove('nav-unread')
     this.navigationChannelViews[channel.name].classList.add('channel-selected')
 
-    this.serverView.style.display = 'none'    
+    this.serverView.style.display = 'none'
 
     if (this.selectedChannel != null) {
       this.channelViews[this.selectedChannel.name].style.display = 'none'
     }
-    
+
     this.channelViews[channel.name].style.display = 'table'
     this.selectedChannel = channel
-    
+
     this.displayChannelTopic(channel)
     this.displayChannelUsers(channel)
   }
@@ -336,11 +353,11 @@ class ClientUI {
     let channelView = this.channelViews[channel.name]
     channelView.parentElement.removeChild(channelView)
     delete this.channelViews[channel.name]
-    
-    if (Object.keys(this.channelViews).length == 0) {
+
+    if (Object.keys(this.channelViews).length === 0) {
       this.selectedChannel = null
       this.viewServer()
-    } else if (this.selectedChannel == channel) {
+    } else if (this.selectedChannel === channel) {
       this.selectedChannel = null
       // show previous channel
     } else {
@@ -357,17 +374,17 @@ class ClientUI {
     let paragraph = document.createElement('p')
     paragraph.classList.add('server-message')
     paragraph.innerText = formattedText
-    
+
     this.serverView.appendChild(paragraph)
     this.serverView.scrollTop = this.serverView.scrollHeight
 
-    if (this.serverView.style.display == 'none' && this.selectedChannel != null) {
+    if (this.serverView.style.display === 'none' && this.selectedChannel != null) {
       this.navigationServerView.firstChild.classList.add('nav-unread')
     }
   }
 
   displayServerError (text) {
-    this.displayServerMessage(null, text, ['server-error'])  
+    this.displayServerMessage(null, text, ['server-error'])
   }
 
   displayServerMessage (source, text, styles = []) {
@@ -378,7 +395,7 @@ class ClientUI {
       } else if (source.hostName != null) {
         senderName = source.hostName
       }
-    }  
+    }
 
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
@@ -387,12 +404,12 @@ class ClientUI {
     paragraph.classList.add('server-message')
     paragraph.innerText = formattedText
 
-    styles.forEach(s => paragraph.classList.add(s))    
-    
+    styles.forEach(s => paragraph.classList.add(s))
+
     this.serverView.appendChild(paragraph)
     this.serverView.scrollTop = this.serverView.scrollHeight
 
-    if (this.serverView.style.display == 'none') {
+    if (this.serverView.style.display === 'none') {
       this.navigationServerView.firstChild.classList.add('nav-unread')
     }
   }
@@ -405,7 +422,7 @@ class ClientUI {
       } else if (source.hostName != null) {
         senderName = source.hostName
       }
-    }  
+    }
 
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
@@ -413,11 +430,11 @@ class ClientUI {
     let paragraph = document.createElement('p')
     paragraph.classList.add('server-message')
     paragraph.innerText = formattedText
-    
+
     this.serverView.appendChild(paragraph)
     this.serverView.scrollTop = this.serverView.scrollHeight
 
-    if (this.serverView.style.display == 'none') {
+    if (this.serverView.style.display === 'none') {
       this.navigationServerView.firstChild.classList.add('nav-unread')
     }
   }
@@ -426,12 +443,12 @@ class ClientUI {
     let senderName = '* ' + this.client.localUser.nickName
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName}: ${errorMessage}`
-    
+
     let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
     paragraph.classList.add('channel-message-error')
     paragraph.innerText = formattedText
-    
+
     const channelTableView = this.channelViews[channelName]
     if (channelTableView != null) {
       const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
@@ -446,15 +463,15 @@ class ClientUI {
     let senderName = '* ' + source.nickName
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
-    
+
     let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
     paragraph.innerText = formattedText
-    
+
     const channelTableView = this.channelViews[channelName]
     const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
     messageView.appendChild(paragraph)
-    messageView.scrollTop = messageView.scrollHeight  
+    messageView.scrollTop = messageView.scrollHeight
   }
 
   displayChannelMessage (channel, source, text) {
@@ -465,15 +482,15 @@ class ClientUI {
       } else if (source.hostName != null) {
         senderName = source.hostName
       }
-    }  
+    }
 
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
-    
+
     let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
     paragraph.innerText = formattedText
-    
+
     const channelTableView = this.channelViews[channel.name]
     const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
     messageView.appendChild(paragraph)
@@ -481,7 +498,7 @@ class ClientUI {
 
     this.navigationServerView.firstChild.classList.remove('nav-unread')
 
-    if (this.selectedChannel != channel) {
+    if (this.selectedChannel !== channel) {
       this.navigationChannelViews[channel.name].classList.add('nav-unread')
     }
   }
@@ -489,12 +506,12 @@ class ClientUI {
   displayChannelTopic (channel, source = null) {
     const channelTableView = this.channelViews[channel.name]
     const titleView = channelTableView.getElementsByClassName('channel-title-label')[0]
-    if (channel.topic == null || channel.topic.length == 0) {
+    if (channel.topic == null || channel.topic.length === 0) {
       titleView.innerHTML = '(No Channel Topic)'
     } else {
-      titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })    
+      titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })
     }
-    
+
     if (source != null) {
       this.displayChannelAction(channel.name, source, `changed topic to '${channel.topic}'`)
     }
@@ -504,7 +521,7 @@ class ClientUI {
     const channelTableView = this.channelViews[channel.name]
     let userListElement = channelTableView.getElementsByClassName('users-panel')[0]
     while (userListElement.firstChild) {
-      userListElement.removeChild(userListElement.firstChild);
+      userListElement.removeChild(userListElement.firstChild)
     }
 
     let sortedUsers = channel.users.sort((a, b) => {
@@ -531,92 +548,132 @@ class ClientUI {
       let user = channelUser.user
 
       const userMenuTemplate = [
-        { label: 'Info', click: () => {
+        {
+          label: 'Info',
+          click: () => {
             this.ctcpClient.finger([user.nickName])
           }
         },
-        { label: 'Whois', click: () => {
+        {
+          label: 'Whois',
+          click: () => {
             this.client.queryWhoIs([user.nickName])
-          } 
+          }
         },
         { type: 'separator' },
-        { label: 'Control', submenu: [
-          { label: 'Op', click: () => {
-            channelUser.op()
-          } },
-          { label: 'Deop', click: () => {
-            channelUser.deop()          
-          } },
-          { label: 'Voice', click: () => {
-            channelUser.voice()
-          } },
-          { label: 'Devoice', click: () => {
-            channelUser.devoice()
-          } },
-          { label: 'Kick', click: () => {
-            channelUser.kick()
-          } },
-          { label: 'Kick (Why)', click: () => {
-            prompt({
-              title: `Kick ${user.nickName}`,
-              label: 'Reason:'
-            })
-            .then((r) => {
-              if (r !== null) {
-                channelUser.kick(r)
+        {
+          label: 'Control',
+          submenu: [
+            {
+              label: 'Op',
+              click: () => {
+                channelUser.op()
               }
-            })
-            .catch(console.error);
-          } },
-          { label: 'Ban', click: () => {
-            channelUser.ban()
-          } },
-          { label: 'Ban, Kick', click: () => {
-            channelUser.ban()
-            channelUser.kick()
-          } },
-          { label: 'Ban, Kick (Why)', click: () => {
-            prompt({
-              title: `Ban & Kick ${user.nickName}`,
-              label: 'Reason:'
-            })
-            .then((r) => {
-              if (r !== null) {
+            },
+            {
+              label: 'Deop',
+              click: () => {
+                channelUser.deop()
+              }
+            },
+            {
+              label: 'Voice',
+              click: () => {
+                channelUser.voice()
+              }
+            },
+            {
+              label: 'Devoice',
+              click: () => {
+                channelUser.devoice()
+              }
+            },
+            {
+              label: 'Kick',
+              click: () => {
+                channelUser.kick()
+              }
+            },
+            {
+              label: 'Kick (Why)',
+              click: () => {
+                prompt({
+                  title: `Kick ${user.nickName}`,
+                  label: 'Reason:'
+                }).then((r) => {
+                  if (r !== null) {
+                    channelUser.kick(r)
+                  }
+                }).catch(console.error)
+              }
+            },
+            {
+              label: 'Ban',
+              click: () => {
                 channelUser.ban()
-                channelUser.kick(r)
               }
-            })
-            .catch(console.error);
-          } }
-        ]},
-        { label: 'CTCP', submenu: [
-          { label: 'Ping', click: () => {
-              this.ctcpClient.ping([user.nickName])
-              this.displayServerAction(`[${user.nickName} PING]`)
-            } 
-          },
-          { label: 'Time', click: () => {
-              this.ctcpClient.time([user.nickName])
-              this.displayServerAction(`[${user.nickName} TIME]`)
-            } 
-          },
-          { label: 'Version', click: () => {
-              this.ctcpClient.version([user.nickName])
-              this.displayServerAction(`[${user.nickName} VERSION]`)
-            } 
-          }
-        ]},
+            },
+            {
+              label: 'Ban, Kick',
+              click: () => {
+                channelUser.ban()
+                channelUser.kick()
+              }
+            },
+            {
+              label: 'Ban, Kick (Why)',
+              click: () => {
+                prompt({
+                  title: `Ban & Kick ${user.nickName}`,
+                  label: 'Reason:'
+                }).then((r) => {
+                  if (r !== null) {
+                    channelUser.ban()
+                    channelUser.kick(r)
+                  }
+                }).catch(console.error)
+              }
+            }
+          ]
+        },
+        {
+          label: 'CTCP',
+          submenu: [
+            {
+              label: 'Ping',
+              click: () => {
+                this.ctcpClient.ping([user.nickName])
+                this.displayServerAction(`[${user.nickName} PING]`)
+              }
+            },
+            {
+              label: 'Time',
+              click: () => {
+                this.ctcpClient.time([user.nickName])
+                this.displayServerAction(`[${user.nickName} TIME]`)
+              }
+            }, {
+              label: 'Version',
+              click: () => {
+                this.ctcpClient.version([user.nickName])
+                this.displayServerAction(`[${user.nickName} VERSION]`)
+              }
+            }
+          ]
+        },
         { type: 'separator' },
-        { label: 'Slap', click: () => {
+        {
+          label: 'Slap',
+          click: () => {
             let slapMessage = `slaps ${user.nickName} around a bit with a large trout`
             this.ctcpClient.action([channel.name], slapMessage)
             this.displayChannelAction(channel.name, this.client.localUser, slapMessage)
-          } 
+          }
         }
       ]
 
       const userMenu = Menu.buildFromTemplate(userMenuTemplate)
-    
+
       let userElement = document.createElement('div')
       userElement.classList.add('user')
       userElement.addEventListener('contextmenu', (e) => {
@@ -624,7 +681,6 @@ class ClientUI {
         userMenu.popup({ window: remote.getCurrentWindow() })
       }, false)
 
-      
       let userNameElement = document.createElement('span')
       userNameElement.classList.add('user-name')
       userNameElement.innerText = user.nickName
@@ -644,21 +700,21 @@ class ClientUI {
       }
 
       userElement.appendChild(prefixElement)
-      userElement.appendChild(userNameElement)    
-      
-      user.once('nickName', () => {  
+      userElement.appendChild(userNameElement)
+
+      user.once('nickName', () => {
         this.displayChannelUsers(channel)
       })
 
       channelUser.once('modes', () => {
         this.displayChannelUsers(channel)
       })
-      
+
       userListElement.appendChild(userElement)
     })
   }
 
-  focusInputField() {
+  focusInputField () {
     const input = document.getElementById('chat-input')
     input.focus()
   }
@@ -668,7 +724,7 @@ class ClientUI {
     let action = text.substring(1, firstSpace + 1)
     let content = text.substring(1).substr(firstSpace + 1)
 
-    if (firstSpace == -1) {
+    if (firstSpace === -1) {
       action = text.substring(1)
       content = ''
     }
@@ -676,10 +732,10 @@ class ClientUI {
     switch (action.toLowerCase()) {
       case 'join':
         this.client.joinChannel(content)
-        break;
+        break
       case 'part':
         this.selectedChannel.part()
-        break;
+        break
       case 'me':
         if (this.selectedChannel != null) {
           this.ctcpClient.action([this.selectedChannel.name], content)
@@ -687,20 +743,20 @@ class ClientUI {
         } else {
           this.displayServerMessage(null, '* Cannot use /me in this view.')
         }
-        break;
+        break
       case 'nick':
         this.client.setNickName(content)
-        break;
+        break
       case 'topic':
         if (this.selectedChannel != null) {
           this.client.setTopic(this.selectedChannel.name, content)
         }
-        break;
+        break
     }
   }
 
   sendUserInput (text) {
-    if (text[0] == '/') {
+    if (text[0] === '/') {
       this.sendAction(text)
     } else {
       if (this.selectedChannel != null) {
