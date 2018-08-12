@@ -3,14 +3,13 @@
 
 const { remote } = require('electron')
 const { Menu } = remote
-
+const { shell } = remote
 const { IrcError } = require('./irc/index.js')
-
 const Autolinker = require('autolinker')
 const strftime = require('strftime')
 const prompt = require('electron-prompt')
-
 const channelModesPrompt = require('./channel-prompt.js')
+const $ = require("jquery")
 
 class ClientUI {
   constructor (client, ctcpClient) {
@@ -30,6 +29,11 @@ class ClientUI {
     window.onfocus = () => {
       this.focusInputField()
     }
+
+    $(document).on('click', 'a[href^="http"]', function(event) {
+        event.preventDefault();
+        shell.openExternal(this.href);
+    });
   }
 
   createServerView () {
@@ -511,6 +515,7 @@ class ClientUI {
     } else {
       titleView.innerHTML = Autolinker.link(channel.topic, {
         stripPrefix: false,
+        newWindow: false,
         replaceFn: (match) => {
           if (match.getType() === 'url') {
             var tag = match.buildTag()
@@ -726,8 +731,7 @@ class ClientUI {
   }
 
   focusInputField () {
-    const input = document.getElementById('chat-input')
-    input.focus()
+    this.chatInput.focus()
   }
 
   sendAction (text) {

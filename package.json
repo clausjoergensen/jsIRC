@@ -20,6 +20,7 @@
     "docdash": "^0.4.0",
     "electron": "^2.0.6",
     "electron-debug": "^2.0.0",
+    "jquery": "^3.3.1",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0"
   },
