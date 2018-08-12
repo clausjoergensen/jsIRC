@@ -11,7 +11,6 @@ const { EventEmitter } = events
  * @extends EventEmitter
  */
 class IrcChannelUser extends EventEmitter {
-
   /**
    * Constructs a new IrcChannelUser for a given {@link IrcUser}.
    *
@@ -28,11 +27,11 @@ class IrcChannelUser extends EventEmitter {
 
   /**
    * Gets the IrcUser that is represented by the IrcChannelUser.
-   * 
+   *
    * @public
    * @return {IrcUser} The IrcUser on the channel
    */
-  get user() {
+  get user () {
     return this._user
   }
 
@@ -42,7 +41,7 @@ class IrcChannelUser extends EventEmitter {
    * @public
    * @return {IrcUser} The Irc Channel.
    */
-  get channel() {
+  get channel () {
     return this._channel
   }
 
@@ -53,7 +52,7 @@ class IrcChannelUser extends EventEmitter {
    * @fires IrcChannelUser#channel
    * @param {IrcChannel} The Irc Channel.
    */
-  set channel(value) {
+  set channel (value) {
     this._channel = value
     /**
      * @event IrcChannelUser#channel
@@ -67,13 +66,13 @@ class IrcChannelUser extends EventEmitter {
    * @public
    * @return {string[]} The list of channel modes.
    */
-  get modes() {
+  get modes () {
     return this._modes
   }
 
   /**
    * Kicks the user from the channel, giving the specified comment.
-   * 
+   *
    * @public
    * @param {string} [comment=null] The comment to give for the kick, or null for none.
    */
@@ -95,7 +94,7 @@ class IrcChannelUser extends EventEmitter {
    *
    * @public
    */
-  deop() {
+  deop () {
     this.channel.setModes('-o', [this.user.nickName])
   }
 
@@ -104,7 +103,7 @@ class IrcChannelUser extends EventEmitter {
    *
    * @public
    */
-  voice() {
+  voice () {
     this.channel.setModes('+v', [this.user.nickName])
   }
 
@@ -113,7 +112,7 @@ class IrcChannelUser extends EventEmitter {
    *
    * @public
    */
-  devoice() {
+  devoice () {
     this.channel.setModes('-v', [this.user.nickName])
   }
 
@@ -122,7 +121,7 @@ class IrcChannelUser extends EventEmitter {
    *
    * @public
    */
-  ban() {
+  ban () {
     this.channel.setModes('+b', [this.user.nickName])
   }
 

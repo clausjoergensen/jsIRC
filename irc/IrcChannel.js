@@ -12,8 +12,7 @@ const IrcChannelType = require('./IrcChannelType.js')
  * @class
  * @extends EventEmitter
  */
-class IrcChannel extends EventEmitter { 
-
+class IrcChannel extends EventEmitter {
   /**
    * Constructs a new IrcChannel for a given {@link IrcClient}.
    *
@@ -38,9 +37,9 @@ class IrcChannel extends EventEmitter {
    * @public
    * @return {IrcClient} The IRC client.
    */
-   get client() {
+  get client () {
     return this._client
-   }
+  }
 
   /**
    * Gets the name of the channel.
@@ -48,7 +47,7 @@ class IrcChannel extends EventEmitter {
    * @public
    * @return {string} Name of the Channel.
    */
-  get name() {
+  get name () {
     return this._name
   }
 
@@ -58,7 +57,7 @@ class IrcChannel extends EventEmitter {
    * @public
    * @return {string[]} List of the modes the channel currently has.
    */
-  get modes() {
+  get modes () {
     return this._modes
   }
 
@@ -68,18 +67,8 @@ class IrcChannel extends EventEmitter {
    * @public
    * @return {IrcChannelUser[]} list of all channel users currently in the channel
    */
-  get users() {
+  get users () {
     return this._users
-  } 
-
-  /*
-   * Gets the current topic of the channel.
-   *
-   * @public
-   * @return {string} The current topic of the channel.
-   */
-  get channelType() {
-    return this._channelType    
   }
 
   /*
@@ -88,8 +77,18 @@ class IrcChannel extends EventEmitter {
    * @public
    * @return {string} The current topic of the channel.
    */
-  get topic() {
-    return this._topic    
+  get channelType () {
+    return this._channelType
+  }
+
+  /*
+   * Gets the current topic of the channel.
+   *
+   * @public
+   * @return {string} The current topic of the channel.
+   */
+  get topic () {
+    return this._topic
   }
 
   /**
@@ -100,7 +99,7 @@ class IrcChannel extends EventEmitter {
    * @return {IrcChannelUser} The corresponding IrcChannelUser.
    */
   getChannelUser (user) {
-    return this.users.find(u => u.user == user)
+    return this.users.find(u => u.user === user)
   }
 
   /**
@@ -109,16 +108,16 @@ class IrcChannel extends EventEmitter {
    * @public
    * @param {string[]} [modes=null] The modes for which to get the current settings, or null for all current channel modes.
    */
-  getModes(modes = null) {
+  getModes (modes = null) {
     this.client.getChannelModes(this, modes)
   }
 
   /**
    * Sets the specified modes on the channel.
-   * 
+   *
    * @public
    * @param {string} modes The mode string that specifies mode changes, which takes the form <code>( "+" / "-" ) *( mode character )</code>
-   * @param {string[]} [modeParameters=null] A array of parameters to the modes, or null for no parameters   
+   * @param {string[]} [modeParameters=null] A array of parameters to the modes, or null for no parameters
    */
   setModes (modes, modeParameters = null) {
     this.client.setChannelModes(this, modes, modeParameters)
@@ -126,7 +125,7 @@ class IrcChannel extends EventEmitter {
 
   /**
    * Leaves the channel, giving the specified comment.
-   * 
+   *
    * @public
    * @param {string} [comment=null] The comment to send the server upon leaving the channel, or null for no comment.
    */
@@ -136,7 +135,7 @@ class IrcChannel extends EventEmitter {
 
   /**
    * Kicks a user from the channel, optionally with a reason
-   * 
+   *
    * @public
    * @param {string} userNickName The User Nick Name.
    * @param {string} [reason=null] The kick reason.
@@ -147,7 +146,7 @@ class IrcChannel extends EventEmitter {
 
   /**
    * Invites a user to the channel.
-   * 
+   *
    * @public
    * @param {string} userNickName The User Nick Name.
    */
@@ -219,7 +218,7 @@ class IrcChannel extends EventEmitter {
   // - Internal Methods -
 
   userJoined (channelUser) {
-    if (this.users.indexOf(channelUser) != -1) {
+    if (this.users.indexOf(channelUser) !== -1) {
       return
     }
     channelUser.channel = this
@@ -234,7 +233,7 @@ class IrcChannel extends EventEmitter {
 
   userParted (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
-    if (idx != -1) {
+    if (idx !== -1) {
       this.users.splice(idx)
     }
     /**
@@ -246,7 +245,7 @@ class IrcChannel extends EventEmitter {
 
   userQuit (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
-    if (idx != -1) {
+    if (idx !== -1) {
       this.users.splice(idx)
     }
     /**
@@ -267,9 +266,9 @@ class IrcChannel extends EventEmitter {
 
   userKicked (channelUser, comment = null) {
     let idx = this.users.indexOf(channelUser)
-    if (idx != -1) {
+    if (idx !== -1) {
       this.users.splice(idx)
-    }  
+    }
     /**
      * @event IrcChannel#userKicked
      * @param {IrcChannelUser} channelUser
@@ -278,8 +277,8 @@ class IrcChannel extends EventEmitter {
     this.emit('userKicked', channelUser, comment)
   }
 
-  userNameReply(channelUser) {
-    if (this.users.indexOf(channelUser) != -1) {
+  userNameReply (channelUser) {
+    if (this.users.indexOf(channelUser) !== -1) {
       return
     }
     channelUser.channel = this
@@ -297,12 +296,12 @@ class IrcChannel extends EventEmitter {
   }
 
   modesChanged (source, newModes, newModeParameters) {
-    this._modes = IrcUtils.updateModes(this.modes, 
+    this._modes = IrcUtils.updateModes(this.modes,
       newModes,
       newModeParameters,
-      this.client.channelUserModes, 
+      this.client.channelUserModes,
       (add, mode, parameter) => {
-        let channelUser = this.users.find(u => u.user.nickName == parameter)
+        let channelUser = this.users.find(u => u.user.nickName === parameter)
         channelUser.modeChanged(add, mode)
       })
     /**
@@ -330,7 +329,7 @@ class IrcChannel extends EventEmitter {
      * @property {string} messageText
      */
     this.emit('previewMessage', previewMessageEventArgs)
-    
+
     if (!previewMessageEventArgs.handled) {
     /**
      * @event IrcChannel#message
@@ -351,7 +350,7 @@ class IrcChannel extends EventEmitter {
      * @property {string} noticeText
      */
     this.emit('previewNotice', previewNoticeEventArgs)
-    
+
     if (!previewNoticeEventArgs.handled) {
       /**
        * @event IrcChannel#notice

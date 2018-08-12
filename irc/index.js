@@ -15,13 +15,13 @@ const IrcError = require('./IrcError.js')
 const CtcpClient = require('./CtcpClient.js')
 
 module.exports = {
-  IrcUser: IrcUser, 
-  IrcLocalUser: IrcLocalUser, 
-  IrcChannel: IrcChannel, 
-  IrcServer: IrcServer, 
-  IrcChannelUser: IrcChannelUser, 
-  IrcChannelType: IrcChannelType, 
-  IrcServerStatisticalEntry: IrcServerStatisticalEntry, 
+  IrcUser: IrcUser,
+  IrcLocalUser: IrcLocalUser,
+  IrcChannel: IrcChannel,
+  IrcServer: IrcServer,
+  IrcChannelUser: IrcChannelUser,
+  IrcChannelType: IrcChannelType,
+  IrcServerStatisticalEntry: IrcServerStatisticalEntry,
   IrcClient: IrcClient,
   IrcReply: IrcReply,
   IrcError: IrcError,

@@ -32,7 +32,7 @@ class ClientUI {
   }
 
   createServerView () {
-    var serverView = document.createElement('div')
+    let serverView = document.createElement('div')
     serverView.classList.add('server-view')
 
     const serverMenuTemplate = [
@@ -86,7 +86,7 @@ class ClientUI {
         case 482: // ERR_CHANOPRIVSNEEDED
           this.displayChannelError(errorParameters[0], errorMessage)
         default:
-          var errorName = IrcError[command]
+          let errorName = IrcError[command]
           console.log(`Unsupported protocol error ${errorName}(${command}).`, errorParameters, errorMessage)
           break
       }
@@ -187,23 +187,23 @@ class ClientUI {
   }
 
   addServerToList (serverName) {
-    var serverNavigationElement = document.createElement('div')
+    let serverNavigationElement = document.createElement('div')
     serverNavigationElement.classList.add('network')
     serverNavigationElement.serverName = serverName
 
     this.navigationServerView = serverNavigationElement
 
-    var title = document.createElement('div')
+    let title = document.createElement('div')
     title.classList.add('network-title')
     title.innerText = serverName
 
-    var channelListElement = document.createElement('div')
+    let channelListElement = document.createElement('div')
     channelListElement.classList.add('channel-list')
 
     serverNavigationElement.appendChild(title)
     serverNavigationElement.appendChild(channelListElement)
 
-    var networkListElement = document.getElementById('network-list')
+    let networkListElement = document.getElementById('network-list')
     networkListElement.appendChild(serverNavigationElement)
 
     title.addEventListener('click', (e) => {
@@ -213,31 +213,31 @@ class ClientUI {
   }
 
   addChannelToList (channel) {
-    var channelTableView = document.createElement('table')
+    let channelTableView = document.createElement('table')
     channelTableView.style.display = 'none'
     channelTableView.cellSpacing = 0
     channelTableView.cellPadding = 0
     channelTableView.classList.add('channel-view')
     
-    var row = channelTableView.insertRow()  
-    var messagesCell = row.insertCell()
+    let row = channelTableView.insertRow()  
+    let messagesCell = row.insertCell()
     messagesCell.classList.add('messages-panel')
-    var usersCell = row.insertCell()
+    let usersCell = row.insertCell()
     usersCell.classList.add('users-panel')
 
-    var channelView = document.createElement('div')
+    let channelView = document.createElement('div')
     channelView.classList.add('channel-content-view')
     messagesCell.appendChild(channelView)
 
-    var channelTitleView = document.createElement('div') 
+    let channelTitleView = document.createElement('div') 
     channelTitleView.classList.add('channel-title-view')
     channelView.appendChild(channelTitleView)
     
-    var channelTitleLabel = document.createElement('div') 
+    let channelTitleLabel = document.createElement('div') 
     channelTitleLabel.classList.add('channel-title-label')
     channelTitleView.appendChild(channelTitleLabel)
 
-    var channelMessageView = document.createElement('div') 
+    let channelMessageView = document.createElement('div') 
     channelMessageView.classList.add('channel-message-view')
     channelView.appendChild(channelMessageView)
 
@@ -255,7 +255,7 @@ class ClientUI {
     this.channelViews[channel.name] = channelTableView
     document.getElementById('right-column').appendChild(channelTableView)
 
-    var channelElement = document.createElement('div')
+    let channelElement = document.createElement('div')
     channelElement.classList.add('channel')
     channelElement.channel = channel
     channelElement.innerText = channel.name
@@ -279,9 +279,9 @@ class ClientUI {
       this.viewChannel(channel)
     }, false)
 
-    var serverElement = this.navigationServerView
+    let serverElement = this.navigationServerView
 
-    var channelListElement = serverElement.children[1]
+    let channelListElement = serverElement.children[1]
     channelListElement.appendChild(channelElement)
 
     this.navigationChannelViews[channel.name] = channelElement
@@ -329,11 +329,11 @@ class ClientUI {
   }
 
   leaveChannel (channel) {
-    var channelElement = this.navigationChannelViews[channel.name]
+    let channelElement = this.navigationChannelViews[channel.name]
     channelElement.parentElement.removeChild(channelElement)
     delete this.navigationChannelViews[channel.name]
 
-    var channelView = this.channelViews[channel.name]
+    let channelView = this.channelViews[channel.name]
     channelView.parentElement.removeChild(channelView)
     delete this.channelViews[channel.name]
     
@@ -351,10 +351,10 @@ class ClientUI {
   displayServerAction (text) {
     console.log(text)
 
-    var now = new Date()
-    var formattedText = `[${strftime('%H:%M', now)}] ${text}`
+    let now = new Date()
+    let formattedText = `[${strftime('%H:%M', now)}] ${text}`
 
-    var paragraph = document.createElement('p')
+    let paragraph = document.createElement('p')
     paragraph.classList.add('server-message')
     paragraph.innerText = formattedText
     
@@ -371,7 +371,7 @@ class ClientUI {
   }
 
   displayServerMessage (source, text, styles = []) {
-    var senderName = ''
+    let senderName = ''
     if (source != null) {
       if (source.nickName != null) {
         senderName = `<${source.nickName}>`
@@ -380,10 +380,10 @@ class ClientUI {
       }
     }  
 
-    var now = new Date()
-    var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+    let now = new Date()
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
 
-    var paragraph = document.createElement('p')
+    let paragraph = document.createElement('p')
     paragraph.classList.add('server-message')
     paragraph.innerText = formattedText
 
@@ -398,7 +398,7 @@ class ClientUI {
   }
 
   displayServerNotice (source, text) {
-    var senderName = ''
+    let senderName = ''
     if (source != null) {
       if (source.nickName != null) {
         senderName = ` - ${source.nickName} -`
@@ -407,10 +407,10 @@ class ClientUI {
       }
     }  
 
-    var now = new Date()
-    var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+    let now = new Date()
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
 
-    var paragraph = document.createElement('p')
+    let paragraph = document.createElement('p')
     paragraph.classList.add('server-message')
     paragraph.innerText = formattedText
     
@@ -423,11 +423,11 @@ class ClientUI {
   }
 
   displayChannelError (channelName, errorMessage) {
-    var senderName = '* ' + this.client.localUser.nickName
-    var now = new Date()
-    var formattedText = `[${strftime('%H:%M', now)}] ${senderName}: ${errorMessage}`
+    let senderName = '* ' + this.client.localUser.nickName
+    let now = new Date()
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName}: ${errorMessage}`
     
-    var paragraph = document.createElement('p')
+    let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
     paragraph.classList.add('channel-message-error')
     paragraph.innerText = formattedText
@@ -443,11 +443,11 @@ class ClientUI {
   }
 
   displayChannelAction (channelName, source, text) {
-    var senderName = '* ' + source.nickName
-    var now = new Date()
-    var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+    let senderName = '* ' + source.nickName
+    let now = new Date()
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
     
-    var paragraph = document.createElement('p')
+    let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
     paragraph.innerText = formattedText
     
@@ -458,7 +458,7 @@ class ClientUI {
   }
 
   displayChannelMessage (channel, source, text) {
-    var senderName = ''
+    let senderName = ''
     if (source != null) {
       if (source.nickName != null) {
         senderName = `<${source.nickName}>`
@@ -467,10 +467,10 @@ class ClientUI {
       }
     }  
 
-    var now = new Date()
-    var formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
+    let now = new Date()
+    let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
     
-    var paragraph = document.createElement('p')
+    let paragraph = document.createElement('p')
     paragraph.classList.add('channel-message')
     paragraph.innerText = formattedText
     
@@ -502,12 +502,12 @@ class ClientUI {
 
   displayChannelUsers (channel) {
     const channelTableView = this.channelViews[channel.name]
-    var userListElement = channelTableView.getElementsByClassName('users-panel')[0]
+    let userListElement = channelTableView.getElementsByClassName('users-panel')[0]
     while (userListElement.firstChild) {
       userListElement.removeChild(userListElement.firstChild);
     }
 
-    var sortedUsers = channel.users.sort((a, b) => {
+    let sortedUsers = channel.users.sort((a, b) => {
       if (a.modes.includes('o') && b.modes.includes('o')) {
         return a.user.nickName.localeCompare(b.user.nickName)
       } else if (a.modes.includes('o')) {
@@ -528,7 +528,7 @@ class ClientUI {
     })
 
     sortedUsers.forEach(channelUser => {
-      var user = channelUser.user
+      let user = channelUser.user
 
       const userMenuTemplate = [
         { label: 'Info', click: () => {
@@ -608,7 +608,7 @@ class ClientUI {
         ]},
         { type: 'separator' },
         { label: 'Slap', click: () => {
-            var slapMessage = `slaps ${user.nickName} around a bit with a large trout`
+            let slapMessage = `slaps ${user.nickName} around a bit with a large trout`
             this.ctcpClient.action([channel.name], slapMessage)
             this.displayChannelAction(channel.name, this.client.localUser, slapMessage)
           } 
@@ -617,14 +617,34 @@ class ClientUI {
 
       const userMenu = Menu.buildFromTemplate(userMenuTemplate)
     
-      var userElement = document.createElement('div')
+      let userElement = document.createElement('div')
       userElement.classList.add('user')
       userElement.addEventListener('contextmenu', (e) => {
         e.preventDefault()
         userMenu.popup({ window: remote.getCurrentWindow() })
       }, false)
 
-      userElement.innerHTML += (' ' + this.getChannelUserModePrefix(channelUser) + '<span class="user-name">' + user.nickName + '</span>')
+      
+      let userNameElement = document.createElement('span')
+      userNameElement.classList.add('user-name')
+      userNameElement.innerText = user.nickName
+
+      let prefixElement = document.createElement('span')
+      prefixElement.classList.add('user-mode')
+
+      if (channelUser.modes.includes('o')) {
+        prefixElement.classList.add('user-mode-op')
+        prefixElement.innerText = '@'
+      } else if (channelUser.modes.includes('v')) {
+        prefixElement.classList.add('user-mode-voice')
+        prefixElement.innerText = '+'
+      } else {
+        prefixElement.classList.add('user-mode-none')
+        prefixElement.innerText = 'x'
+      }
+
+      userElement.appendChild(prefixElement)
+      userElement.appendChild(userNameElement)    
       
       user.once('nickName', () => {  
         this.displayChannelUsers(channel)
@@ -638,25 +658,15 @@ class ClientUI {
     })
   }
 
-  getChannelUserModePrefix (channelUser) {
-    var modePrefix = ''
-    if (channelUser.modes.includes('o')) {
-      return '<span class="user-mode user-mode-op">@</span>'
-    } else if (channelUser.modes.includes('v')) {
-      return '<span class="user-mode user-mode-voice" />+</span>'
-    }
-    return '<span class="user-mode user-mode-none" />x</span>'
-  }
-
   focusInputField() {
     const input = document.getElementById('chat-input')
     input.focus()
   }
 
   sendAction (text) {
-    var firstSpace = text.substring(1).indexOf(' ')
-    var action = text.substring(1, firstSpace + 1)
-    var content = text.substring(1).substr(firstSpace + 1)
+    let firstSpace = text.substring(1).indexOf(' ')
+    let action = text.substring(1, firstSpace + 1)
+    let content = text.substring(1).substr(firstSpace + 1)
 
     if (firstSpace == -1) {
       action = text.substring(1)

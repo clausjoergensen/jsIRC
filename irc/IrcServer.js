@@ -6,17 +6,16 @@ const { EventEmitter } = events
 
 /**
  * Represents an IRC server that exists on a specific {@link IrcClient}.
- * 
+ *
  * @class
  * @extends EventEmitter
  */
 class IrcServer extends EventEmitter {
-
   /**
    * Constructs a new IrcServer for a given hostName.
    *
    * @access private
-   * @hideconstructor 
+   * @hideconstructor
    * @param {string} hostName The server host name.
   */
   constructor (hostName) {
@@ -27,16 +26,16 @@ class IrcServer extends EventEmitter {
   /**
    * Gets the host name of the server.
    */
-  get hostName() {
+  get hostName () {
     return this._hostName
   }
 
   /*
    * Gets the name of the source, as understood by the IRC protocol.
    */
-  get name() {
+  get name () {
     return this.hostName
-  } 
+  }
 
   /**
    * Returns a string representation of this instance.

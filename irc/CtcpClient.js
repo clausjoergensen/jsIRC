@@ -9,7 +9,7 @@ const lowLevelQuotingEscapeChar = String.fromCharCode(0x10)
 const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
 
 /**
- * Represents a client that communicates with a server using CTCP (Client to Client Protocol), 
+ * Represents a client that communicates with a server using CTCP (Client to Client Protocol),
  * operating over an IRC connection.
  *
  * @public
@@ -17,7 +17,6 @@ const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
  * @extends EventEmitter
  */
 class CtcpClient extends EventEmitter {
-    
   /**
    * Constructs a new CtcpClient for a given {@link IrcClient}.
    *
@@ -46,9 +45,9 @@ class CtcpClient extends EventEmitter {
    * @public
    * @return {IrcClient} The IRC client.
    */
-   get client() {
+  get client () {
     return this._client
-   }
+  }
 
   /**
    * Gets the client version.
@@ -116,7 +115,7 @@ class CtcpClient extends EventEmitter {
    * @param {string[]} targets A list of users to which to send the request.
    */
   version (targets) {
-   this.sendMessageVersion(targets, null, false) 
+    this.sendMessageVersion(targets, null, false)
   }
 
   /**
@@ -167,10 +166,10 @@ class CtcpClient extends EventEmitter {
   }
 
   readMessage (e, isNotice) {
-    if (!(e.text[0] == taggedDataDelimeterChar && e.text[e.text.length - 1] == taggedDataDelimeterChar)) {
+    if (!(e.text[0] === taggedDataDelimeterChar && e.text[e.text.length - 1] === taggedDataDelimeterChar)) {
       return false
     }
-    
+
     let message = {
       'source': e.source,
       'targets': e.targets,
@@ -179,14 +178,12 @@ class CtcpClient extends EventEmitter {
 
     let dequotedText = lowLevelDequote(ctcpDequote(e.text.substr(1, e.text.length - 2)))
     let firstSpaceIndex = dequotedText.indexOf(' ')
-    if (firstSpaceIndex == -1) {
-        message['tag'] = dequotedText
-        message['data'] = null
-    }
-    else
-    {
-        message['tag'] = dequotedText.substr(0, firstSpaceIndex)
-        message['data'] = trimStart(':', dequotedText.substr(firstSpaceIndex + 1))
+    if (firstSpaceIndex === -1) {
+      message['tag'] = dequotedText
+      message['data'] = null
+    } else {
+      message['tag'] = dequotedText.substr(0, firstSpaceIndex)
+      message['data'] = trimStart(':', dequotedText.substr(firstSpaceIndex + 1))
     }
 
     /**
@@ -210,7 +207,7 @@ class CtcpClient extends EventEmitter {
   processMessageAction (message) {
     if (message.isResponse) {
       return
-    } 
+    }
 
     message.targets.forEach(t => t.actionReceived(message.source, message.targets, message.data))
   }
@@ -330,13 +327,13 @@ class CtcpClient extends EventEmitter {
 function ctcpQuote (value) {
   return quote(value, ctcpQuotingEscapeChar, {
     taggedDataDelimeterChar: 'a'
-  });
+  })
 }
 
 function ctcpDequote (value) {
   return dequote(value, ctcpQuotingEscapeChar, {
     'a': taggedDataDelimeterChar
-  });
+  })
 }
 
 function lowLevelQuote (value) {
@@ -355,15 +352,15 @@ function lowLevelDequote (value) {
   })
 }
 
-function quote(value, escapeChar, quotedChars) {
+function quote (value, escapeChar, quotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
-    if (value[i] == escapeChar) {
-      if (dequotedChars[value[i]] != null || value[i] == escapeChar) {
+    if (value[i] === escapeChar) {
+      if (quotedChars[value[i]] != null || value[i] === escapeChar) {
         output += escapeChar
-        output += dequotedChars[value[i]] || escapeChar
+        output += quotedChars[value[i]] || escapeChar
       } else {
-        throw 'Invalid Quote Character.'
+        throw new Error('Invalid Quote Character.')
       }
     } else {
       output += value[i]
@@ -372,15 +369,15 @@ function quote(value, escapeChar, quotedChars) {
   return output
 }
 
-function dequote(value, escapeChar, dequotedChars) {
+function dequote (value, escapeChar, dequotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
-    if (value[i] == escapeChar) {
+    if (value[i] === escapeChar) {
       i++
-      if (dequotedChars[value[i]] != null || value[i] == escapeChar) {
+      if (dequotedChars[value[i]] != null || value[i] === escapeChar) {
         output += dequotedChars[value[i]] || escapeChar
       } else {
-        throw 'Invalid Quote Character.'
+        throw new Error('Invalid Quote Character.')
       }
     } else {
       output += value[i]
@@ -389,9 +386,9 @@ function dequote(value, escapeChar, dequotedChars) {
   return output
 }
 
-function trimStart(chr, string) {
+function trimStart (chr, string) {
   let output = string
-  while (output[0] == chr) {
+  while (output[0] === chr) {
     output = output.splice(1)
   }
   return output

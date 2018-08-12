@@ -11,7 +11,6 @@ const IrcUser = require('./IrcUser.js')
  * @extends IrcUser
  */
 class IrcLocalUser extends IrcUser {
-
   /**
    * Initializes a new instance of the IrcLocalUser class.
    *
@@ -30,7 +29,7 @@ class IrcLocalUser extends IrcUser {
    * @public
    * @return {boolean} True if the user is local; otherwise false.
    */
-  get isLocalUser() {
+  get isLocalUser () {
     return true
   }
 
@@ -39,7 +38,7 @@ class IrcLocalUser extends IrcUser {
    *
    * @public
    */
-  get modes() {
+  get modes () {
     return this._modes
   }
 
@@ -49,7 +48,7 @@ class IrcLocalUser extends IrcUser {
    * @public
    * @param {string} nickName The new nick name of the local user.
    */
-  setNickName(nickName) {
+  setNickName (nickName) {
     this.client.setNickName(nickName)
   }
 
@@ -59,16 +58,16 @@ class IrcLocalUser extends IrcUser {
    * @public
    * @param {string} text The text of the response sent to a user when they try to message you while away.
    */
-  setAway(text) {
+  setAway (text) {
     this.client.setAway(text)
   }
 
   /**
    * Sets the local user as here (no longer away).
-   * 
+   *
    * @public
    */
-  unsetAway() {
+  unsetAway () {
     this.client.unsetAway()
   }
 
@@ -80,7 +79,7 @@ class IrcLocalUser extends IrcUser {
    * @param {string} text The text of the notice to send.
    */
   sendMessage (targets, text) {
-    this.client.sendPrivateMessage(targets, text) 
+    this.client.sendPrivateMessage(targets, text)
   }
 
   /**
@@ -91,7 +90,7 @@ class IrcLocalUser extends IrcUser {
    * @param {string} text The text of the notice to send.
    */
   sendNotice (targets, text) {
-    this.client.sendNotice(targets, text) 
+    this.client.sendNotice(targets, text)
   }
 
   /**
@@ -99,9 +98,9 @@ class IrcLocalUser extends IrcUser {
    *
    * @public
    */
-  getModes() {
+  getModes () {
     this.client.getLocalUserModes(this)
-  } 
+  }
 
   /**
    * Sets the specified modes on the local user.
@@ -109,11 +108,11 @@ class IrcLocalUser extends IrcUser {
    * @public
    * @param {string} modes The mode string that specifies mode changes, which takes the form <code>( "+" / "-" ) *( mode character )</code>
    */
-  setModes(newModes) {
+  setModes (newModes) {
     var setModes = newModes.filter(x => !this.modes.include(x))
     var unsetModes = this.modes.filter(x => !newModes.include(x))
     this.client.SetLocalUserModes(this, `+${setModes.join('')}-${unsetModes.join('')}`)
-  } 
+  }
 
   // - Internal Methods
 

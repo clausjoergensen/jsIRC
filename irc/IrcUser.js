@@ -11,12 +11,11 @@ const { EventEmitter } = events
  * @extends EventEmitter
  */
 class IrcUser extends EventEmitter {
-
   /**
    * Constructs a new IrcUser for a given {@link IrcClient}.
    *
    * @access protected
-   * @hideconstructor 
+   * @hideconstructor
    * @param {IrcClient} client The IrcClient instance.
   */
   constructor (client) {
@@ -59,12 +58,12 @@ class IrcUser extends EventEmitter {
    */
   get name() {
     return this.nickName
-  } 
+  }
 
   /**
-   * Gets whether the user is currently connected to the IRC network. 
+   * Gets whether the user is currently connected to the IRC network.
    * This value may not be always be up-to-date.
-   * 
+   *
    * @public
    */
   get isOnline() {
@@ -187,7 +186,7 @@ class IrcUser extends EventEmitter {
     this._isOperator = value
     /**
      * @event IrcUser#isOperator
-     */    
+     */
     this.emit('isOperator')
   }
 
@@ -308,7 +307,7 @@ class IrcUser extends EventEmitter {
    * Sends a Who Is query to server for the user.
    *
    * @public
-   */ 
+   */
   whoIs () {
     this.client.queryWhoIs(this._nickName)
   }
@@ -377,7 +376,7 @@ class IrcUser extends EventEmitter {
      * @event IrcUser#joinedChannel
      * @param {IrcChannel} channel
      */
-    this.emit('joinedChannel', channel) 
+    this.emit('joinedChannel', channel)
   }
 
   partChannel (channel) {
@@ -385,7 +384,7 @@ class IrcUser extends EventEmitter {
      * @event IrcUser#partedChannel
      * @param {IrcChannel} channel
      */
-   this.emit('partedChannel', channel)  
+   this.emit('partedChannel', channel)
   }
 
   inviteReceived (source, channel) {
@@ -416,7 +415,7 @@ class IrcUser extends EventEmitter {
      * @property {string} messageText
      */
     this.emit('previewMessage', previewMessageEventArgs)
-    
+
     if (!previewMessageEventArgs.handled) {
       /**
        * @event IrcUser#message
@@ -437,7 +436,7 @@ class IrcUser extends EventEmitter {
      * @property {string} noticeText
      */
     this.emit('previewNotice', previewNoticeEventArgs)
-    
+
     if (!previewNoticeEventArgs.handled) {
       /**
        * @event IrcUser#notice

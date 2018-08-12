@@ -21,7 +21,6 @@ const maxParamsCount = 15
  * @extends EventEmitter
  */
 class IrcClient extends EventEmitter {
-
   /**
    * Initializes a new instance of the IrcClient class.
    *
@@ -31,14 +30,14 @@ class IrcClient extends EventEmitter {
     super()
 
     this.loggingEnabled = false
-    
+
     this._socket = new net.Socket()
     this._socket.setEncoding('utf8')
     this._messageProcessor = new IrcMessageProcessor(this)
 
     this.users = []
     this.channels = []
-    this.servers = []    
+    this.servers = []
     this.serverAvailableUserModes = []
     this.serverAvailableChannelModes = []
     this.serverSupportedFeatures = {}
@@ -70,7 +69,7 @@ class IrcClient extends EventEmitter {
      * @event IrcClient#connecting
      * @property {string} hostName
      * @property {number} port
-     */      
+     */
     this.emit('connecting', hostName, port)
 
     this._socket.connect(port, hostName, this.connected.bind(this))
@@ -133,9 +132,9 @@ class IrcClient extends EventEmitter {
   }
 
   /**
-   * Requests a list of all servers known by the target server. 
-   * 
-   * If serverMask is specified, then the server only returns information about the part of the network 
+   * Requests a list of all servers known by the target server.
+   *
+   * If serverMask is specified, then the server only returns information about the part of the network
    * formed by the servers whose names match the mask; otherwise, the information concerns the whole network.
    *
    * @public
@@ -148,7 +147,7 @@ class IrcClient extends EventEmitter {
 
   /**
    * Requests the local time on the specified server.
-   * 
+   *
    * @public
    * @param {string} [targetServer=null] The name of the server whose local time to request, or null for the current server.
    */
@@ -235,11 +234,11 @@ class IrcClient extends EventEmitter {
 
   // - Proxy Methods
 
-  joinChannel(channelName) {
+  joinChannel (channelName) {
     this.sendMessageJoin([channelName])
   }
 
-  leaveChannel(channelName, comment) {
+  leaveChannel (channelName, comment) {
     this.sendMessagePart([channelName], comment)
   }
 
@@ -251,12 +250,12 @@ class IrcClient extends EventEmitter {
     this.sendMessageTopic(channelName, topic)
   }
 
-  kick(channel, usersNickNames, reason) {
-    this.sendMessageKick(channel.name, usersNickNames, reason)    
+  kick (channel, usersNickNames, reason) {
+    this.sendMessageKick(channel.name, usersNickNames, reason)
   }
 
-  invite(channel, nickName) {
-    this.sendMessageInvite(channel.name, nickName)    
+  invite (channel, nickName) {
+    this.sendMessageInvite(channel.name, nickName)
   }
 
   getChannelModes (channel, modes = null) {
@@ -265,7 +264,7 @@ class IrcClient extends EventEmitter {
 
   setChannelModes (channel, modes, modeParameters) {
     this.sendMessageChannelMode(channel.name, modes, modeParameters)
-  } 
+  }
 
   sendMessage (targets, messageText) {
     this.sendMessagePrivateMessage(targets, messageText)
@@ -281,11 +280,11 @@ class IrcClient extends EventEmitter {
     if (this.registrationInfo.password != null) {
       this.sendMessagePassword(this.registrationInfo.password)
     }
-    
+
     this.sendMessageNick(this.registrationInfo.nickName)
-    this.sendMessageUser(this.registrationInfo.userName, 
-                         this.getNumericUserMode(this.registrationInfo.userModes),
-                         this.registrationInfo.realName)
+    this.sendMessageUser(this.registrationInfo.userName,
+      this.getNumericUserMode(this.registrationInfo.userModes),
+      this.registrationInfo.realName)
 
     let localUser = new IrcLocalUser(this)
     localUser.isOnline = true
@@ -299,7 +298,7 @@ class IrcClient extends EventEmitter {
 
     /**
      * @event IrcClient#connected
-     */      
+     */
     this.emit('connected')
   }
 
@@ -311,7 +310,7 @@ class IrcClient extends EventEmitter {
     /**
      * @event IrcClient#connectionError
      * @param {Object} error
-     */      
+     */
     this.emit('connectionError', error)
   }
 
@@ -319,7 +318,7 @@ class IrcClient extends EventEmitter {
     /**
      * @event IrcClient#disconnected
      * @param {string} reason
-     */      
+     */
     this.emit('disconnected', reason)
   }
 
@@ -331,10 +330,10 @@ class IrcClient extends EventEmitter {
 
     let lines = str.split('\r\n')
     lines.forEach(line => {
-      if (line.length == 0) {
+      if (line.length === 0) {
         return
       }
-      this.parseMessage(line)    
+      this.parseMessage(line)
     })
   }
 
@@ -344,7 +343,7 @@ class IrcClient extends EventEmitter {
     let prefix = null
     let lineAfterPrefix = null
 
-    if (line[0] == ':') {
+    if (line[0] === ':') {
       let firstSpaceIndex = line.indexOf(' ')
       prefix = line.substr(1, firstSpaceIndex - 1)
       lineAfterPrefix = line.substr(firstSpaceIndex + 1)
@@ -361,27 +360,26 @@ class IrcClient extends EventEmitter {
     let paramEndIndex = -1
 
     let lineColonIndex = paramsLine.indexOf(' :')
-    if (lineColonIndex == -1 && !paramsLine.startsWith(':')) {
+    if (lineColonIndex === -1 && !paramsLine.startsWith(':')) {
       lineColonIndex = paramsLine.length
     }
 
-    for (let i = 0; i < maxParamsCount; i++)
-    {
+    for (let i = 0; i < maxParamsCount; i++) {
       paramStartIndex = paramEndIndex + 1
       paramEndIndex = paramsLine.indexOf(' ', paramStartIndex)
-      
-      if (paramEndIndex == -1) {
+
+      if (paramEndIndex === -1) {
         paramEndIndex = paramsLine.length
       }
 
       if (paramEndIndex > lineColonIndex) {
-          paramStartIndex++
-          paramEndIndex = paramsLine.length
+        paramStartIndex++
+        paramEndIndex = paramsLine.length
       }
-      
+
       parameters[i] = paramsLine.substr(paramStartIndex, paramEndIndex - paramStartIndex)
-      
-      if (paramEndIndex == paramsLine.length) {
+
+      if (paramEndIndex === paramsLine.length) {
         break
       }
     }
@@ -390,10 +388,10 @@ class IrcClient extends EventEmitter {
       console.log('<- ' + line)
     }
 
-    this.readMessage({ 
-      'client': this, 
-      'prefix': prefix, 
-      'command': command, 
+    this.readMessage({
+      'client': this,
+      'prefix': prefix,
+      'command': command,
       'parameters': parameters,
       'source': this.getSourceFromPrefix(prefix)
     }, line)
@@ -405,10 +403,10 @@ class IrcClient extends EventEmitter {
 
   writeMessage (prefix, command, parameters = []) {
     if (command == null) {
-      throw 'Invalid Command.'
+      throw new Error('Invalid Command.')
     }
     if (parameters.length > maxParamsCount) {
-      throw 'Too many parameters.'
+      throw new Error('Too many parameters.')
     }
 
     let message = ''
@@ -422,7 +420,7 @@ class IrcClient extends EventEmitter {
         message += ' ' + parameters[i]
       }
     }
-    
+
     if (parameters.length > 0) {
       let lastParameter = parameters[parameters.length - 1]
       if (lastParameter != null) {
@@ -579,10 +577,6 @@ class IrcClient extends EventEmitter {
     this.writeMessage(null, 'WHO', [mask, onlyOperators ? 'o' : null])
   }
 
-  sendMessageJoin (channelName) {
-    this.writeMessage(null, 'JOIN', [channelName])
-  }
-
   sendMessagePing (server, targetServer = null) {
     this.writeMessage(null, 'PING', [server, targetServer])
   }
@@ -649,32 +643,34 @@ class IrcClient extends EventEmitter {
     let atIdx = prefix.indexOf('@', bangIdx) + 1
 
     if (bangIdx > 0) {
-        let nickName = prefix.slice(0, bangIdx - 1)
-        let user = this.getUserFromNickName(nickName, true)
-        if (atIdx > 0) {
-            user.userName = prefix.slice(bangIdx, atIdx - 1)
-            user.hostName = prefix.slice(atIdx)
-        } else {
-            user.userName = prefix.slice(bangIdx)
-        }
-        return user
-    } else if (atIdx > 0) {
-        let nickName = prefix.slice(0, atIdx - 1)
-        let user = this.getUserFromNickName(nickName, true)
+      let nickName = prefix.slice(0, bangIdx - 1)
+      let user = this.getUserFromNickName(nickName, true)
+      if (atIdx > 0) {
+        user.userName = prefix.slice(bangIdx, atIdx - 1)
         user.hostName = prefix.slice(atIdx)
-        return user
+      } else {
+        user.userName = prefix.slice(bangIdx)
+      }
+      return user
+    } else if (atIdx > 0) {
+      let nickName = prefix.slice(0, atIdx - 1)
+      let user = this.getUserFromNickName(nickName, true)
+      user.hostName = prefix.slice(atIdx)
+      return user
     } else if (dotIdx > 0) {
-        return this.getServerFromHostName(prefix)
+      return this.getServerFromHostName(prefix)
     } else {
-        let user = this.getUserFromNickName(prefix, true)
+      let user = this.getUserFromNickName(prefix, true)
+      if (user != null) {
         return user
+      }
     }
 
-    throw 'The source of the message was not recognised as either a server or user.'
+    throw new Error('The source of the message was not recognised as either a server or user.')
   }
 
   getServerFromHostName (hostName) {
-    let existingServer = this.servers.find(s => s.hostName == hostName)
+    let existingServer = this.servers.find(s => s.hostName === hostName)
     if (existingServer != null) {
       return existingServer
     }
@@ -684,11 +680,11 @@ class IrcClient extends EventEmitter {
   }
 
   getUserFromNickName (nickName, isOnline = true) {
-    let existingUser = this.users.find(u => u.nickName == nickName)
+    let existingUser = this.users.find(u => u.nickName === nickName)
     if (existingUser != null) {
       return existingUser
     }
-    
+
     let newUser = new IrcUser(this)
     newUser.nickName = nickName
     newUser.isOnline = isOnline

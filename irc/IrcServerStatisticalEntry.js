@@ -1,7 +1,7 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-/** 
+/**
  * These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
  *
  * @readonly
