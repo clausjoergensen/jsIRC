@@ -2,7 +2,7 @@
 'use strict'
 
 const { remote } = require('electron')
-const { Menu } = remote
+const { Menu, BrowserWindow, app } = remote
 const { shell } = remote
 const { IrcError } = require('./irc/index.js')
 const Autolinker = require('autolinker')
@@ -342,6 +342,19 @@ class ClientUI {
     this.navigationServerView.firstChild.classList.add('network-title-selected')
 
     this.serverView.style.display = 'block'
+
+    setWindowTitleForServer()
+  }
+
+  setWindowTitleForServer () {
+    let userModes = this.client.localUser.modes.join('')
+    userModes = userModes.length > 0 ? `+${userModes}` : ''
+
+    let serverName = this.client.serverSupportedFeatures['NETWORK']
+    serverName = serverName ? serverName : this.client.serverName
+
+    let browserWindow = BrowserWindow.getFocusedWindow()
+    browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)
   }
 
   viewChannel (channel) {
@@ -366,6 +379,18 @@ class ClientUI {
 
     this.displayChannelTopic(channel)
     this.displayChannelUsers(channel)
+
+    this.setWindowTitleForChannel(channel)
+  }
+
+  setWindowTitleForChannel (channel) {
+    let topic = channel.topic ? `: ${channel.topic}` : ''
+
+    let serverName = this.client.serverSupportedFeatures['NETWORK']
+    serverName = serverName ? serverName : this.client.serverName
+
+    let browserWindow = BrowserWindow.getFocusedWindow()
+    browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)    
   }
 
   leaveChannel (channel) {
@@ -550,6 +575,8 @@ class ClientUI {
     if (source != null) {
       this.displayChannelAction(channel.name, source, `changed topic to '${channel.topic}'`)
     }
+
+    this.setWindowTitleForChannel(channel)
   }
 
   displayChannelUsers (channel) {
