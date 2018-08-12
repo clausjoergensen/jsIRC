@@ -2,13 +2,12 @@
 'use strict'
 
 const { remote } = require('electron')
-const { Menu, BrowserWindow, app } = remote
-const { shell } = remote
+const { Menu, BrowserWindow, app, shell } = remote
 const { IrcError } = require('./../irc/index.js')
 const Autolinker = require('autolinker')
 const strftime = require('strftime')
 const prompt = require('electron-prompt')
-const channelModesPrompt = require('./channel-prompt.js')
+const path = require('path')
 const $ = require('jquery')
 
 class ClientUI {
@@ -281,7 +280,20 @@ class ClientUI {
     const channelMessageViewMenu = Menu.buildFromTemplate([{
       label: 'Channel Modes',
       click: () => {
-        channelModesPrompt(channel.name)
+        let promptWindow = new BrowserWindow({
+          width: 500,
+          height: 300,
+          resizable: false,
+          parent: null,
+          skipTaskbar: true,
+          alwaysOnTop: false,
+          useContentSize: false,
+          modal: true,
+          title: `[${channel.name}] Channel Modes`
+        })
+
+        promptWindow.setMenu(null)
+        promptWindow.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
       }
     }])
 

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
         <style>
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -72,17 +72,7 @@
         }
 
         </style>
-        <script type="text/javascript">
-        const { remote } = require('electron')
-        document.addEventListener('DOMContentLoaded', function (event) {
-          document.getElementById('ok').addEventListener('click', () => {
-            remote.getCurrentWindow().close()
-          });
-          document.getElementById('cancel').addEventListener('click', () => {
-            remote.getCurrentWindow().close()
-          });
-        })
-        </script>
+        <script type="text/javascript" src="channel-modes.js"></script>
     </head>
     <body>
         <p style="margin-top: 0px; margin-bottom: 0px;">Topic</p>
