@@ -52,7 +52,7 @@ class IrcFloodPreventer {
   getSendDelay () {
     // Subtract however many counter periods have elapsed since last decrement of counter.
     let now = new Date()
-    let currentTime = now.getTime() / 10000
+    let currentTime = now.getTime()
     let elapsedMilliseconds = currentTime - this._lastCounterDecrementTime
     let tempMessageCounter = Math.max(0, this._messageCounter - (elapsedMilliseconds / this.counterPeriod))
 
