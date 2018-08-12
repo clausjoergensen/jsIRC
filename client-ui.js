@@ -745,6 +745,10 @@ class ClientUI {
     }
 
     switch (action.toLowerCase()) {
+      case 'msg':
+        let target = content.substr(0, content.indexOf(' '))
+        let message = content.substr(content.indexOf(' ') + 1)
+        this.client.sendMessage([target], message)
       case 'join':
         this.client.joinChannel(content)
         break
