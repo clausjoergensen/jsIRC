@@ -23,7 +23,7 @@ const ctcpQuotingEscapeChar = String.fromCharCode(0x5C)
  * let ctcpClient = new CtcpClient(ircClient)
  *
  * ctcpClient.on('version', (source, versionInfo) => {
- *   console.log(`[${source.nickName} VERSION reply]: ${versionInfo}.`)  
+ *   console.log(`[${source.nickName} VERSION reply]: ${versionInfo}.`)
  * }
  *
  * ctcpClient.version(['Rincewind'])

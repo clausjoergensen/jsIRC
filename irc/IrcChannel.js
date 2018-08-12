@@ -106,7 +106,7 @@ class IrcChannel extends EventEmitter {
    * Requests a list of the current modes of the channel, or if modes is specified, the settings for the specified modes.
    *
    * @public
-   * @param {string[]} [modes=null] The modes for which to get the current settings, 
+   * @param {string[]} [modes=null] The modes for which to get the current settings,
    * or null for all current channel modes.
    */
   getModes (modes = null) {

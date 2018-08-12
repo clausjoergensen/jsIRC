@@ -1,7 +1,7 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const log = require('electron-log');
+const log = require('electron-log')
 
 const IrcChannel = require('./IrcChannel.js')
 const IrcChannelType = require('./IrcChannelType.js')

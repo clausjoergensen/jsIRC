@@ -3,7 +3,7 @@
 
 const net = require('net')
 const events = require('events')
-const log = require('electron-log');
+const log = require('electron-log')
 
 const { EventEmitter } = events
 
@@ -80,9 +80,9 @@ class IrcClient extends EventEmitter {
 
   /**
    * Gets an object that limits the rate of outgoing messages in order to prevent flooding the server.
-   * 
+   *
    * The value is null by default, which indicates that no flood prevention should be performed.
-   * 
+   *
    * @public
    * @return {IrcFloodPreventer} A flood preventer object.
    */
@@ -92,7 +92,7 @@ class IrcClient extends EventEmitter {
 
   /**
    * Sets an object that limits the rate of outgoing messages in order to prevent flooding the server.
-   * 
+   *
    * @public
    * @param {IrcFloodPreventer} value A flood preventer object.
    */
