@@ -61,6 +61,8 @@ app.on('ready', () => {
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
+        { role: 'reload' },
+        { role: 'forcereload' },
         { role: 'toggledevtools' }
       ]
     },
