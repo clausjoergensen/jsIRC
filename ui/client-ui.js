@@ -64,7 +64,7 @@ class ClientUI {
       {
         label: 'Quit',
         click: () => {
-          process.exit()
+          app.quit()
         }
       }
     ]
