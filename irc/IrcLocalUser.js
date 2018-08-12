@@ -106,7 +106,7 @@ class IrcLocalUser extends IrcUser {
    * Sets the specified modes on the local user.
    *
    * @public
-   * @param {string} modes The mode string that specifies mode changes, 
+   * @param {string} modes The mode string that specifies mode changes,
    * which takes the form <code>( "+" / "-" ) *( mode character )</code>
    */
   setModes (newModes) {
