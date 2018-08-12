@@ -1,4 +1,4 @@
-html, body 
+html, body
 {
     padding: 0;
     margin: 0;
@@ -16,7 +16,7 @@ table#window-content
 
 td#left-column
 {
-  width: 200px; 
+  width: 200px;
   border-right: 1px solid #ddd;
 }
 
@@ -37,7 +37,7 @@ div#network-list
 
 .network-title-selected
 {
-    background-color: #dcdfe1;  
+    background-color: #dcdfe1;
 }
 
 .network-title:hover
@@ -72,7 +72,7 @@ div#network-list
 .channel-selected
 {
     background-color: #dcdfe1;
-    cursor: pointer;    
+    cursor: pointer;
 }
 
 .channel-view
@@ -91,7 +91,9 @@ div#network-list
 {
     display: table;
     width: calc(100vw - 401px);
+    max-width: calc(100vw - 401px);
     height: 40px;
+    max-height: 40px;
 }
 
 .channel-title-label
@@ -199,7 +201,7 @@ input#chat-input:focus
 .user:hover
 {
     cursor: pointer;
-    background: #ddd;   
+    background: #ddd;
 }
 
 .user-name
