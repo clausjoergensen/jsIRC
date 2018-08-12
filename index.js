@@ -3,7 +3,7 @@
 
 const { IrcClient, CtcpClient } = require('./irc/index.js')
 
-const ClientUI = require('./ClientUI.js')
+const ClientUI = require('./client-ui.js')
 const packageInfo = require('./package.json')
 
 const client = new IrcClient()
