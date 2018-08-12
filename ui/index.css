@@ -2,7 +2,7 @@ html, body
 {
     padding: 0;
     margin: 0;
-    font-family: system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", Helvetica, "Segoe UI", sans-serif;
+    font-family: "Segoe UI", "San Francisco", "Helvetica Neue", "Helvetica", sans-serif;
     overflow-y: hidden;
 }
 
@@ -116,6 +116,8 @@ div#network-list
     overflow-y: scroll;
     padding: 10px;
     float: left;
+    font-family: "Segoe UI", "San Francisco", "Helvetica Neue", "Helvetica";
+    font-size: 11pt;
 }
 
 .channel-message
@@ -147,7 +149,9 @@ div#network-list
     margin-top: 0px;
     margin-bottom: 3px;
     margin-left: 0px;
-    margin-right: 0px
+    margin-right: 0px;
+    font-family: "Segoe UI", "San Francisco", "Helvetica Neue", "Helvetica";
+    font-size: 11pt;
 }
 
 .server-error
@@ -216,7 +220,7 @@ input#chat-input:focus
     border-radius: 5px;
     text-align: center;
     margin-right: 5px;
-    margin-top: -2px;
+    margin-top: -1px;
 }
 
 .user-mode-op
@@ -225,8 +229,6 @@ input#chat-input:focus
     color: white;
     border: 1px solid #665EB3;
     font-size: 12px;
-    padding-top: 1px;
-    height: 17px;
 }
 
 .user-mode-voice
