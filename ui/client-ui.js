@@ -222,6 +222,29 @@ class ClientUI {
     this.leaveChannel(channel)
   }
 
+  showChannelModes (channel) {
+    let prompt = new BrowserWindow({
+      width: 500,
+      height: 300,
+      resizable: false,
+      parent: null,
+      skipTaskbar: true,
+      alwaysOnTop: false,
+      useContentSize: false,
+      modal: true,
+      title: `[${channel.name}] Channel Modes`
+    })
+
+    prompt.setMenu(null)
+    prompt.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
+
+    prompt.on('keyup', (e) => {
+      if (e.keyCode == 27) {
+        prompt.close()
+      }
+    })
+  }
+
   addServerToList (serverName) {
     let serverNavigationElement = document.createElement('div')
     serverNavigationElement.classList.add('network')
@@ -273,6 +296,18 @@ class ClientUI {
     channelTitleLabel.classList.add('channel-title-label')
     channelTitleView.appendChild(channelTitleLabel)
 
+    const channelTitleMenu = Menu.buildFromTemplate([{
+      label: 'Set Topic',
+      click: () => {
+        this.showChannelModes(channel)
+      }
+    }])
+
+    channelTitleLabel.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+      channelTitleMenu.popup({ window: remote.getCurrentWindow() })
+    }, false)
+
     let channelMessageView = document.createElement('div')
     channelMessageView.classList.add('channel-message-view')
     channelView.appendChild(channelMessageView)
@@ -280,20 +315,7 @@ class ClientUI {
     const channelMessageViewMenu = Menu.buildFromTemplate([{
       label: 'Channel Modes',
       click: () => {
-        let promptWindow = new BrowserWindow({
-          width: 500,
-          height: 300,
-          resizable: false,
-          parent: null,
-          skipTaskbar: true,
-          alwaysOnTop: false,
-          useContentSize: false,
-          modal: true,
-          title: `[${channel.name}] Channel Modes`
-        })
-
-        promptWindow.setMenu(null)
-        promptWindow.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
+        this.showChannelModes(channel)
       }
     }])
 
@@ -310,16 +332,12 @@ class ClientUI {
     channelElement.channel = channel
     channelElement.innerText = channel.name
 
-    const channelMenuTemplate = [
-      {
-        label: 'Leave Channel',
-        click: () => {
-          channel.part()
-        }
+    const channelMenu = Menu.buildFromTemplate([{
+      label: 'Leave Channel',
+      click: () => {
+        channel.part()
       }
-    ]
-
-    const channelMenu = Menu.buildFromTemplate(channelMenuTemplate)
+    }])
 
     channelElement.addEventListener('contextmenu', (e) => {
       e.preventDefault()
