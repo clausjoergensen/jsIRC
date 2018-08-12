@@ -543,6 +543,8 @@ class ClientUI {
       }
     }
 
+    text = text.replace(/[^\x20-\xFF]/g, "");
+
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
 
@@ -569,6 +571,8 @@ class ClientUI {
         senderName = source.hostName
       }
     }
+
+    text = text.replace(/[^\x20-\xFF]/g, "");
 
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
@@ -606,6 +610,8 @@ class ClientUI {
   }
 
   displayChannelAction (channelName, source, text) {
+    text = text.replace(/[^\x20-\xFF]/g, "");
+    
     let linkedText = Autolinker.link(text, {
       stripPrefix: false,
       newWindow: false,
@@ -643,6 +649,8 @@ class ClientUI {
         senderName = source.hostName
       }
     }
+
+    text = text.replace(/[^\x20-\xFF]/g, "");
 
     let linkedText = Autolinker.link(text, {
       stripPrefix: false,
