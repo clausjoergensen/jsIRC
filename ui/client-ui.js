@@ -179,8 +179,12 @@ class ClientUI {
     })
 
     window.addEventListener('keyup', e => {
-      if (e.ctrlKey && e.keyCode === 78) {
-        this.viewNextChannel()
+      if (e.ctrlKey) {
+        if (e.keyCode === 78) { // ctrl+n
+          this.viewNextChannel()
+        } else if (e.keyCode === 87) { // ctrl+w
+          this.selectedChannel.part()
+        }
       }
     })
 
@@ -416,6 +420,17 @@ class ClientUI {
     }
   }
 
+  viewPreviousChannel (channel) {
+    let keys = Object.keys(this.navigationChannelViews)
+    let index = keys.indexOf(channel.name)
+    let previousChannelElement = this.navigationChannelViews[keys[index - 1]]
+    if (previousChannelElement) {
+      this.viewChannel(previousChannelElement.channel)
+    } else {
+      this.viewServer()
+    }
+  }
+
   viewNextChannel () {
     if (this.selectedChannel) {
       let keys = Object.keys(this.navigationChannelViews)
@@ -478,21 +493,18 @@ class ClientUI {
   leaveChannel (channel) {
     let channelElement = this.navigationChannelViews[channel.name]
     channelElement.parentElement.removeChild(channelElement)
-    delete this.navigationChannelViews[channel.name]
 
     let channelView = this.channelViews[channel.name]
     channelView.parentElement.removeChild(channelView)
-    delete this.channelViews[channel.name]
 
     if (Object.keys(this.channelViews).length === 0) {
-      this.selectedChannel = null
       this.viewServer()
-    } else if (this.selectedChannel === channel) {
-      this.selectedChannel = null
-      // show previous channel
     } else {
-      // show previous channel
+      this.viewPreviousChannel(channel)
     }
+
+    delete this.navigationChannelViews[channel.name]
+    delete this.channelViews[channel.name]
   }
 
   displayServerAction (text) {
