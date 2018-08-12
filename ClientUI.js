@@ -509,7 +509,18 @@ class ClientUI {
     if (channel.topic == null || channel.topic.length === 0) {
       titleView.innerHTML = '(No Channel Topic)'
     } else {
-      titleView.innerHTML = Autolinker.link(channel.topic, { 'stripPrefix': false })
+      titleView.innerHTML = Autolinker.link(channel.topic, {
+        stripPrefix: false,
+        replaceFn: (match) => {
+          if (match.getType() === 'url') {
+            var tag = match.buildTag()
+            tag.setAttr('title', match.getAnchorHref())
+            return tag
+          } else {
+            return true
+          }
+        }
+      })
     }
 
     if (source != null) {
