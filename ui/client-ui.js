@@ -135,7 +135,7 @@ class ClientUI {
       }
     })
 
-    this.client.on('clientInfo', () => {
+    this.client.once('clientInfo', () => {
       this.addServerToList(this.client.serverName)
     })
 
@@ -303,6 +303,10 @@ class ClientUI {
   }
 
   addChannelToList (channel) {
+    if (this.navigationChannelViews[channel.name]) {
+      return
+    }
+
     let channelTableView = document.createElement('table')
     channelTableView.style.display = 'none'
     channelTableView.cellSpacing = 0
