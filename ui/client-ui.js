@@ -650,7 +650,7 @@ class ClientUI {
       }
     }
 
-    text = text.replace(/[^\x20-\xFF]/g, "");
+    text = text.replace(/[\x00-\x1F]/g, "");
 
     let linkedText = Autolinker.link(text, {
       stripPrefix: false,
