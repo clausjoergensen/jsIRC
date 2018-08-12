@@ -5,6 +5,10 @@ const assert = require('assert');
 const events = require('events')
 
 const { IrcClient, CtcpClient } = require('./../irc/index.js')
+const log = require('electron-log')
+
+log.transports.file.level = false
+log.transports.console.level = false
 
 describe('IRC Tests', function() {
 

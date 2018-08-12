@@ -3,6 +3,7 @@
 
 const net = require('net')
 const events = require('events')
+const log = require('electron-log');
 
 const { EventEmitter } = events
 
@@ -235,9 +236,7 @@ class IrcClient extends EventEmitter {
    * @param {string} message The text (single line) of the message to send the server.
    */
   sendRawMessage (message) {
-    if (this.loggingEnabled) {
-      console.log('-> ' + message)
-    }
+    log.verbose('-> ' + message)
 
     this._socket.write(message + '\r\n')
   }
@@ -434,9 +433,7 @@ class IrcClient extends EventEmitter {
       }
     }
 
-    if (this.loggingEnabled) {
-      console.log('<- ' + line)
-    }
+    log.verbose('<- ' + line)
 
     this.readMessage({
       'client': this,
@@ -478,9 +475,7 @@ class IrcClient extends EventEmitter {
       }
     }
 
-    if (this.loggingEnabled) {
-      console.log('-> ' + message)
-    }
+    log.verbose('-> ' + message)
 
     this._socket.write(message + '\r\n')
   }

@@ -3,6 +3,10 @@
 
 const { app, shell, BrowserWindow, Menu } = require('electron')
 const path = require('path')
+const log = require('electron-log')
+
+log.transports.file.level = 'verbose'
+log.transports.console.level = 'debug'
 
 let mainWindow = null
 

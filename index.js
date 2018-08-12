@@ -10,7 +10,6 @@ const packageInfo = require('./package.json')
 // maxListenersExceededWarning()
 
 const client = new IrcClient()
-client.loggingEnabled = true
 
 const ctcpClient = new CtcpClient(client)
 ctcpClient.clientName = packageInfo.name
