@@ -84,11 +84,7 @@ class ClientUI {
     this.reconnectAttempt++
     this.displayServerMessage(null, `* Connect retry #${this.reconnectAttempt} ${this.client.hostName}  (${this.client.port})`)
     this.client.connect(this.client.hostName, this.client.port, this.client.registrationInfo)
-    if (this.reconnectAttempt == 12) {
-      clearInterval(this.reconnectTimer)
-      this.reconnectTimer = null
-      this.reconnectAttempt = 0
-    }
+    clearInterval(this.reconnectTimer)
   }
 
   setupEventListeners () {
@@ -98,8 +94,18 @@ class ClientUI {
         this.displayServerError(`* Couldn't connect to server (Connection refused)`)
       } else if (error.code === 'ECONNRESET') {
         this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
+      } else {
+        console.log(error)
       }
-      this.reconnectTimer = setInterval(() => this.reconnect(), 3000)
+    })
+
+    this.client.on('connectionClosed', () => {
+      if (this.reconnectAttempt == 12) {
+        this.reconnectAttempt = 0
+        this.reconnectTimer = null
+      } else {
+        this.reconnectTimer = setInterval(() => this.reconnect(), 2000)
+      }
     })
 
     this.client.on('error', errorMessage => {
