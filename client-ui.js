@@ -826,7 +826,8 @@ class ClientUI {
       this.sendAction(text)
     } else {
       if (this.selectedChannel != null) {
-        this.selectedChannel.sendMessage(text)
+        var chunks = text.match(/.{1,398}/g)
+        chunks.forEach(c => this.selectedChannel.sendMessage(c))
       } else {
         this.displayServerMessage(null, '* You are not on a channel')
       }
