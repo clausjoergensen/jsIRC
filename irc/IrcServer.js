@@ -14,7 +14,7 @@ class IrcServer extends EventEmitter {
   /**
    * Constructs a new IrcServer for a given hostName.
    *
-   * @access private
+   * @private
    * @hideconstructor
    * @param {string} hostName The server host name.
   */

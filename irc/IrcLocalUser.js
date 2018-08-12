@@ -14,7 +14,7 @@ class IrcLocalUser extends IrcUser {
   /**
    * Initializes a new instance of the IrcLocalUser class.
    *
-   * @access private
+   * @private
    * @hideconstructor
    * @param {IrcClient} client The IrcClient instance.
   */

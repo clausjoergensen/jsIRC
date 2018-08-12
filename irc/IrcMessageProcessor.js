@@ -20,7 +20,7 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
  *
  * @class
  * @extends EventEmitter
- * @access private
+ * @private
  */
 class IrcMessageProcessor {
   /**

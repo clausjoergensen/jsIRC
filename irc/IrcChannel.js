@@ -16,7 +16,7 @@ class IrcChannel extends EventEmitter {
   /**
    * Constructs a new IrcChannel for a given {@link IrcClient}.
    *
-   * @access private
+   * @private
    * @hideconstructor
    * @param {IrcClient} client The IrcClient instance.
    * @param {string} name The channel name.
