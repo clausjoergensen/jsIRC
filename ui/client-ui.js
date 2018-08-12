@@ -209,9 +209,30 @@ class ClientUI {
     })
 
     channel.on('topic', (source, topic) => { this.displayChannelTopic(channel, source) })
-    channel.on('userList', () => { this.displayChannelUsers(channel) })
-    channel.on('userJoinedChannel', (_) => { this.displayChannelUsers(channel) })
-    channel.on('userLeftChannel', (_) => { this.displayChannelUsers(channel) })
+    channel.on('userList', () => {
+      channel.users.forEach(channelUser => {
+        channelUser.user.on('nickName', () => {
+          this.displayChannelUsers(channel)
+        })
+
+        channelUser.on('modes', () => {
+          this.displayChannelUsers(channel)
+        })
+      })
+      this.displayChannelUsers(channel)
+    })
+    channel.on('userJoinedChannel', (channelUser) => {
+      channelUser.user.on('nickName', () => {
+        this.displayChannelUsers(channelUser.channel)
+      })
+      channelUser.on('modes', () => {
+        this.displayChannelUsers(channelUser.channel)
+      })
+      this.displayChannelUsers(channel)
+    })
+    channel.on('userLeftChannel', (channelUser) => {
+      this.displayChannelUsers(channel)
+    })
     channel.on('userKicked', (_) => { this.displayChannelUsers(channel) })
 
     this.addChannelToList(channel)
@@ -385,7 +406,7 @@ class ClientUI {
 
     let browserWindow = BrowserWindow.getFocusedWindow()
     if (browserWindow != null) {
-      browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)      
+      browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)
     }
   }
 
@@ -695,7 +716,7 @@ class ClientUI {
     sortedUsers.forEach(channelUser => {
       let user = channelUser.user
 
-      const userMenuTemplate = [
+      const userMenu = Menu.buildFromTemplate([
         {
           label: 'Info',
           click: () => {
@@ -818,9 +839,7 @@ class ClientUI {
             this.displayChannelAction(channel.name, this.client.localUser, slapMessage)
           }
         }
-      ]
-
-      const userMenu = Menu.buildFromTemplate(userMenuTemplate)
+      ])
 
       let userElement = document.createElement('div')
       userElement.classList.add('user')
@@ -858,14 +877,6 @@ class ClientUI {
 
       userElement.appendChild(prefixElement)
       userElement.appendChild(userNameElement)
-
-      user.once('nickName', () => {
-        this.displayChannelUsers(channel)
-      })
-
-      channelUser.once('modes', () => {
-        this.displayChannelUsers(channel)
-      })
 
       userListElement.appendChild(userElement)
     })
