@@ -242,6 +242,15 @@ class IrcClient extends EventEmitter {
     this._socket.write(message + '\r\n')
   }
 
+  /**
+   * Returns a string representation of this instance.
+   *
+   * @return {string} A string that represents this instance.
+   */
+  toString () {
+    return `(${this.registrationInfo.nickName}, ${this.hostName}:${this.port})`
+  }
+
   // - Proxy Methods
 
   joinChannel (channelName) {
