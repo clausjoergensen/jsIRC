@@ -204,7 +204,8 @@ class IrcMessageProcessor {
        * @param {string[]} modes
        * @param {string[]} parameters
        */
-      this.client.emit('channelMode', channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
+      this.client.emit('channelMode',
+        channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
     } else if (message.parameters[0] === this.client.localUser.nickName) {
       this.client.localUser.modesChanged(message.parameters[1])
     } else {
@@ -673,7 +674,11 @@ class IrcMessageProcessor {
     let visibleUsersCount = parseInt(message.parameters[2])
     let topic = message.parameters[3]
 
-    this.client.listedChannels.push({ 'channelName': channelName, 'visibleUsersCount': visibleUsersCount, 'topic': topic })
+    this.client.listedChannels.push({
+      'channelName': channelName,
+      'visibleUsersCount': visibleUsersCount,
+      'topic': topic
+    })
   }
 
   // Process RPL_LISTEND responses from the server.

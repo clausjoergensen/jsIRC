@@ -89,7 +89,8 @@ class IrcClient extends EventEmitter {
    * Requests the Message of the Day (MOTD) from the specified server.
    *
    * @public
-   * @param {string} [targetServer=null] The name of the server from which to request the MOTD, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server from which to request the MOTD,
+   * or null for the current server.
    */
   getMessageOfTheDay (targetServer = null) {
     this.sendMessageMotd(targetServer)
@@ -103,8 +104,10 @@ class IrcClient extends EventEmitter {
    * network
    *
    * @public
-   * @param {string} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
-   * @param {string} [targetServer=null] The name of the server to which to forward the message, or null for the current server.
+   * @param {string} [serverMask=null] A wildcard expression for matching against server names,
+   * or null to match the entire network.
+   * @param {string} [targetServer=null] The name of the server to which to forward the message,
+   * or null for the current server.
    */
   getNetworkInfo (serverMask = null, targetServer = null) {
     this.sendMessageLUsers(serverMask, targetServer)
@@ -114,7 +117,8 @@ class IrcClient extends EventEmitter {
    * Requests the version of the specified server.
    *
    * @public
-   * @param {string} [targetServer=null] The name of the server whose version to request, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server whose version to request,
+   * or null for the current server.
    */
   getServerVersion (targetServer = null) {
     this.sendMessageVersion(targetServer)
@@ -125,7 +129,8 @@ class IrcClient extends EventEmitter {
    *
    * @public
    * @param {string} [query=null] The query character that indicates which server statistics to return.
-   * @param {string} [targetServer=null] The name of the server whose statistics to request, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server whose statistics to request,
+   * or null for the current server.
    */
   getServerStatistics (query = null, targetServer = null) {
     this.sendMessageStats(query == null ? null : query, targetServer)
@@ -138,8 +143,10 @@ class IrcClient extends EventEmitter {
    * formed by the servers whose names match the mask; otherwise, the information concerns the whole network.
    *
    * @public
-   * @param {string} [serverMask=null] A wildcard expression for matching against server names, or null to match the entire network.
-   * @param {string} [targetServer=null] The name of the server to which to forward the request, or null for the current server.
+   * @param {string} [serverMask=null] A wildcard expression for matching against server names,
+   * or null to match the entire network.
+   * @param {string} [targetServer=null] The name of the server to which to forward the request,
+   * or null for the current server.
    */
   getServerLinks (serverMask = null, targetServer = null) {
     this.sendMessageLinks(serverMask, targetServer)
@@ -149,7 +156,8 @@ class IrcClient extends EventEmitter {
    * Requests the local time on the specified server.
    *
    * @public
-   * @param {string} [targetServer=null] The name of the server whose local time to request, or null for the current server.
+   * @param {string} [targetServer=null] The name of the server whose local time to request,
+   * or null for the current server.
    */
   getServerTime (targetServer = null) {
     this.sendMessageTime(targetServer)
@@ -169,7 +177,8 @@ class IrcClient extends EventEmitter {
    * Sends a Who query to the server targeting the specified channel or user masks.
    *
    * @public
-   * @param {string} [mask=null] A wildcard expression for matching against channel names. If the value is null, all users are matched.
+   * @param {string} [mask=null] A wildcard expression for matching against channel names.
+   * If the value is null, all users are matched.
    * @param {boolean} [onlyOperators=true] true to match only server operators, to match all users.
    */
   queryWho (mask = null, onlyOperators = false) {
@@ -191,7 +200,8 @@ class IrcClient extends EventEmitter {
    *
    * @public
    * @param {string} nickNames The nick names of the users to query.
-   * @param {number} [entriesCount=-1] The maximum number of entries to return from the query. A negative value specifies to return an unlimited number of entries.
+   * @param {number} [entriesCount=-1] The maximum number of entries to return from the query.
+   * A negative value specifies to return an unlimited number of entries.
    */
   queryWhoWas (nickNames, entriesCount = -1) {
     this.sendMessageWhoWas(nickNames, entriesCount)

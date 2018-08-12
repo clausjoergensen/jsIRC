@@ -8,13 +8,22 @@
  * @enum {number}
  */
 let IrcChannelType = {
-  /** The channel type is unspecified. */
+  /**
+   *The channel type is unspecified.
+   */
   unspecified: 0,
-  /** The channel is public. The server always lists this channel. */
+  /**
+   * The channel is public. The server always lists this channel.
+   */
   public: 1,
-  /** The channel is private. The server never lists this channel. */
+  /**
+   * The channel is private. The server never lists this channel.
+   */
   private: 2,
-  /** The channel is secret. The server never lists this channel and pretends it does not exist when responding to queries. */
+  /**
+   * The channel is secret. The server never lists this channel
+   * and pretends it does not exist when responding to queries.
+   */
   secret: 3
 }
 
