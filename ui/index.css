@@ -271,8 +271,6 @@ input#chat-input:focus
     background: #3F8DAC;
     color: white;
     border: 1px solid #3F8DAC;
-    padding-top: 1px;
-    height: 17px;
 }
 
 .user-mode-none
