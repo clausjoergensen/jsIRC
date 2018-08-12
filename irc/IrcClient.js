@@ -48,6 +48,8 @@ class IrcClient extends EventEmitter {
     super()
 
     this._messageProcessor = new IrcMessageProcessor(this)
+    this._sendTimer = null
+    this._floodPreventer = null
   }
 
   /**
@@ -74,6 +76,28 @@ class IrcClient extends EventEmitter {
     this.emit('connecting', hostName, port)
 
     this._socket.connect(port, hostName)
+  }
+
+  /**
+   * Gets an object that limits the rate of outgoing messages in order to prevent flooding the server.
+   * 
+   * The value is null by default, which indicates that no flood prevention should be performed.
+   * 
+   * @public
+   * @return {IrcFloodPreventer} A flood preventer object.
+   */
+  get floodPreventer () {
+    return this._floodPreventer
+  }
+
+  /**
+   * Sets an object that limits the rate of outgoing messages in order to prevent flooding the server.
+   * 
+   * @public
+   * @param {IrcFloodPreventer} value A flood preventer object.
+   */
+  set floodPreventer (value) {
+    this._floodPreventer = value
   }
 
   /**
@@ -236,9 +260,7 @@ class IrcClient extends EventEmitter {
    * @param {string} message The text (single line) of the message to send the server.
    */
   sendRawMessage (message) {
-    log.verbose('-> ' + message)
-
-    this._socket.write(message + '\r\n')
+    this._messageSendQueue.push(message + '\r\n')
   }
 
   /**
@@ -314,6 +336,8 @@ class IrcClient extends EventEmitter {
     this.localUser = localUser
     this.users.push(localUser)
 
+    this._sendTimer = setInterval(() => this.writePendingMessages(), 0)
+
     /**
      * @event IrcClient#connected
      */
@@ -321,6 +345,9 @@ class IrcClient extends EventEmitter {
   }
 
   connectionError (error) {
+    if (this._sendTimer != null) {
+      clearInterval(this._sendTimer)
+    }
     /**
      * @event IrcClient#connectionError
      * @param {Object} error
@@ -329,6 +356,9 @@ class IrcClient extends EventEmitter {
   }
 
   connectionClosed (hadError) {
+    if (this._sendTimer != null) {
+      clearInterval(this._sendTimer)
+    }
     /**
      * @event IrcClient#connectionClosed
      * @param {boolean} hadError
@@ -337,6 +367,9 @@ class IrcClient extends EventEmitter {
   }
 
   disconnected (reason) {
+    if (this._sendTimer != null) {
+      clearInterval(this._sendTimer)
+    }
     /**
      * @event IrcClient#disconnected
      * @param {string} reason
@@ -345,7 +378,9 @@ class IrcClient extends EventEmitter {
   }
 
   resetState () {
+    this._messageSendQueue = []
     this._socket = new net.Socket()
+    this._socket.setKeepAlive(true, 5000)
     this._socket.setEncoding('utf8')
     this._socket.on('data', this.dataReceived.bind(this))
     this._socket.on('error', this.connectionError.bind(this))
@@ -448,6 +483,34 @@ class IrcClient extends EventEmitter {
     this._messageProcessor.processMessage(message)
   }
 
+  writePendingMessages () {
+    let sendDelay = 0
+
+    while (this._messageSendQueue.length > 0) {
+      if (this.floodPreventer) {
+        sendDelay = this.floodPreventer.getSendDelay()
+        if (sendDelay > 0) {
+          break
+        }
+      }
+
+      let message = this._messageSendQueue.shift()
+      log.verbose('-> ' + message)
+      this._socket.write(message)
+
+      if (this.floodPreventer) {
+        this.floodPreventer.messageSent()
+      }
+    }
+
+    if (this._sendTimer) {
+      clearInterval(this._sendTimer)
+      this._sendTimer = null
+    }
+
+    this._sendTimer = setInterval(() => this.writePendingMessages(), Math.max(sendDelay, 50))
+  }
+
   writeMessage (prefix, command, parameters = []) {
     if (command == null) {
       throw new Error('Invalid Command.')
@@ -475,9 +538,7 @@ class IrcClient extends EventEmitter {
       }
     }
 
-    log.verbose('-> ' + message)
-
-    this._socket.write(message + '\r\n')
+    this._messageSendQueue.push(message + '\r\n')
   }
 
   // - Message Sending

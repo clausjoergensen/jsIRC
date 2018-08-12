@@ -19,7 +19,7 @@ class IrcLocalUser extends IrcUser {
    * @param {IrcClient} client The IrcClient instance.
   */
   constructor (client) {
-    super(client, true)
+    super(client)
     this._modes = []
   }
 
@@ -79,7 +79,7 @@ class IrcLocalUser extends IrcUser {
    * @param {string} text The text of the notice to send.
    */
   sendMessage (targets, text) {
-    this.client.sendPrivateMessage(targets, text)
+    this.client.sendMessage(targets, text)
   }
 
   /**

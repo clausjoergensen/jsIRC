@@ -11,6 +11,7 @@ const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
 const IrcClient = require('./IrcClient.js')
 const IrcReply = require('./IrcReply.js')
 const IrcError = require('./IrcError.js')
+const IrcFloodPreventer = require('./IrcFloodPreventer.js')
 
 const CtcpClient = require('./CtcpClient.js')
 
@@ -25,5 +26,6 @@ module.exports = {
   IrcClient: IrcClient,
   IrcReply: IrcReply,
   IrcError: IrcError,
+  IrcFloodPreventer: IrcFloodPreventer,
   CtcpClient: CtcpClient
 }

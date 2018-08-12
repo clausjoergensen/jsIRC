@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "electron .",
-    "test": "mocha --timeout 10000",
+    "test": "mocha --timeout 5000",
     "gendocs": "jsdoc irc -r -t ./node_modules/docdash/  --readme ./irc/README.md"
   },
   "keywords": [
@@ -23,6 +23,7 @@
     "electron-log": "^2.2.16",
     "jquery": "^3.3.1",
     "jsdoc": "^3.5.5",
+    "long": "^4.0.0",
     "mocha": "^5.2.0"
   },
   "dependencies": {

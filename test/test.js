@@ -1,30 +1,38 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const { IrcClient, CtcpClient } = require('./../irc/index.js')
+const { IrcClient, IrcFloodPreventer, CtcpClient } = require('./../irc/index.js')
 const log = require('electron-log')
 
 log.transports.file.level = false
-// log.transports.console.level = false
+log.transports.console.level = false
 
 describe('IRC Tests', function () {
-  var nickName1 = 'Rincewind'
-  var nickName2 = 'Twoflower'
+  let nickName1 = 'Rincewind'
+  let nickName2 = 'Twoflower'
 
-  var client1 = null
-  var client2 = null
-  var ctcpClient1 = null
+  let client1 = null
+  let client2 = null
+  let ctcpClient1 = null
+  let ctcpClient2 = null
 
-  var connectedPromise1 = null
-  var connectedPromise2 = null
-  var registeredPromise1 = null
-  var registeredPromise2 = null
+  let floodPreventer1 = new IrcFloodPreventer(4, 2000)
+  let floodPreventer2 = new IrcFloodPreventer(4, 2000)
+
+  let connectedPromise1 = null
+  let connectedPromise2 = null
+  let registeredPromise1 = null
+  let registeredPromise2 = null
 
   before(function () {
     client1 = new IrcClient()
     client2 = new IrcClient()
 
     ctcpClient1 = new CtcpClient(client1)
+    ctcpClient2 = new CtcpClient(client2)
+
+    client1.floodPreventer = floodPreventer1
+    client2.floodPreventer = floodPreventer2
 
     connectedPromise1 = new Promise((resolve, reject) => {
       client1.once('connected', () => {
@@ -132,26 +140,25 @@ describe('IRC Tests', function () {
     })
 
     it('joinChannel', function (done) {
-      var userJoinedPromise1 = new Promise((resolve, reject) => {
+      let userJoinedPromise1 = new Promise((resolve, reject) => {
         client1.localUser.once('joinedChannel', (channel) => {
           resolve()
         })
+        client1.joinChannel('#discworld')
       })
 
-      var userJoinedPromise2 = new Promise((resolve, reject) => {
+      let userJoinedPromise2 = new Promise((resolve, reject) => {
         client2.localUser.once('joinedChannel', (channel) => {
           resolve()
         })
+        client2.joinChannel('#discworld')
       })
 
       userJoinedPromise1.then(userJoinedPromise2).then(done)
-
-      client1.joinChannel('#discworld')
-      client2.joinChannel('#discworld')
     })
 
     it('sendMessage', function (done) {
-      var expectedMessageText = 'Hello World'
+      let expectedMessageText = 'Hello World'
 
       client1.channels[0].once('message', (source, messageText) => {
         if (messageText === expectedMessageText) {
@@ -163,8 +170,8 @@ describe('IRC Tests', function () {
     })
 
     it('sendNotice', function (done) {
-      var expectedNoticeText = 'Hello World'
-      var expectedSource = client1.localUser
+      let expectedNoticeText = 'Hello World'
+      let expectedSource = client1.localUser
 
       client1.channels[0].once('notice', (source, noticeText) => {
         if (source === expectedSource && noticeText === expectedNoticeText) {
@@ -175,8 +182,32 @@ describe('IRC Tests', function () {
       client1.channels[0].sendNotice(expectedNoticeText)
     })
 
+    it('floodPreventing', function (done) {
+      this.timeout(25000)
+
+      let expectedSpamMessage = 'Lovely Spam! Wonderful Spam! Spam, Spam, Spam, Spam! Spam, Spam, Spam!'
+
+      let expectedMessageCount = 10
+      let actualMessageCount = 0
+
+      var remoteChannel = client2.channels[0]
+      remoteChannel.on('message', (source, messageText) => {
+        if (messageText === expectedSpamMessage) {
+          actualMessageCount++
+        }
+        if (actualMessageCount == expectedMessageCount) {
+          remoteChannel.removeAllListeners()
+          done()
+        }
+      })
+
+      for (let i = 0; i < expectedMessageCount; i++) {
+        client1.channels[0].sendMessage(expectedSpamMessage)
+      }
+    })
+
     it('setNickName', function (done) {
-      var expectedNickName = 'Ridicully'
+      let expectedNickName = 'Ridicully'
 
       client1.localUser.once('nickName', () => {
         if (client1.localUser.nickName === expectedNickName) {
@@ -188,8 +219,8 @@ describe('IRC Tests', function () {
     })
 
     it('setTopic', function (done) {
-      var expectedTopic = 'Nunc Id Vides, Nunc Ne Vides'
-      var expectedUser = client1.localUser
+      let expectedTopic = 'Nunc Id Vides, Nunc Ne Vides'
+      let expectedUser = client1.localUser
 
       client1.channels[0].once('topic', (user, topic) => {
         if (user === expectedUser && topic === expectedTopic) {
@@ -201,7 +232,7 @@ describe('IRC Tests', function () {
     })
 
     it('op', function (done) {
-      var channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
+      let channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
       channelUser2.once('modes', () => {
         if (channelUser2.modes.includes('o')) {
           done()
@@ -212,7 +243,7 @@ describe('IRC Tests', function () {
     })
 
     it('deop', function (done) {
-      var channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
+      let channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
       channelUser2.once('modes', () => {
         if (!channelUser2.modes.includes('o')) {
           done()
@@ -223,7 +254,7 @@ describe('IRC Tests', function () {
     })
 
     it('voice', function (done) {
-      var channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
+      let channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
       channelUser2.once('modes', () => {
         if (channelUser2.modes.includes('v')) {
           done()
@@ -234,7 +265,7 @@ describe('IRC Tests', function () {
     })
 
     it('devoice', function (done) {
-      var channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
+      let channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
       channelUser2.once('modes', () => {
         if (!channelUser2.modes.includes('v')) {
           done()
@@ -245,7 +276,7 @@ describe('IRC Tests', function () {
     })
 
     it('ban', function (done) {
-      var channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
+      let channelUser2 = client1.channels[0].users.find(x => x.user.nickName === nickName2)
 
       client1.channels[0].once('modes', () => {
         if (client1.channels[0].modes.includes('b')) {
@@ -257,10 +288,10 @@ describe('IRC Tests', function () {
     })
 
     it('getModes', function (done) {
-      var expectedBanMask = `${nickName2}!*@*`
+      let expectedBanMask = `${nickName2}!*@*`
 
       client1.channels[0].once('banList', (banList) => {
-        if (banList[0].banMask === expectedBanMask) {
+        if (banList && banList[0].banMask === expectedBanMask) {
           done()
         }
       })
@@ -309,6 +340,8 @@ describe('IRC Tests', function () {
     })
 
     it('who', function (done) {
+      this.timeout(10000)
+
       client1.once('whoReply', () => {
         done()
       })
@@ -369,8 +402,8 @@ describe('IRC Tests', function () {
     })
 
     it('ctcp action', function (done) {
-      var expectedMessageText = 'slaps Twoflower around a bit with a large trout'
-      var channelName = '#MendedDrum'
+      let expectedMessageText = 'slaps Twoflower around a bit with a large trout'
+      let channelName = '#MendedDrum'
       client1.joinChannel(channelName)
       client2.joinChannel(channelName)
 

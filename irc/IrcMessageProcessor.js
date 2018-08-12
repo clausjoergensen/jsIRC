@@ -853,7 +853,7 @@ class IrcMessageProcessor {
 
   // Process RPL_BANLIST responses from the server.
   processMessageReplyBanList (message) {
-    if (this.banList === undefined) {
+    if (!(this.banList)) {
       this.banList = []
     }
 
