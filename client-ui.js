@@ -22,6 +22,7 @@ class ClientUI {
     this.navigationServerView = null
     this.navigationChannelViews = {}
     this.selectedChannel = null
+    this.reconnectAttempt = 0
 
     this.setupEventListeners()
     this.focusInputField()
@@ -79,14 +80,26 @@ class ClientUI {
     return serverView
   }
 
+  reconnect () {
+    this.reconnectAttempt++
+    this.displayServerMessage(null, `* Connect retry #${this.reconnectAttempt} ${this.client.hostName}  (${this.client.port})`)
+    this.client.connect(this.client.hostName, this.client.port, this.client.registrationInfo)
+    if (this.reconnectAttempt == 12) {
+      clearInterval(this.reconnectTimer)
+      this.reconnectTimer = null
+      this.reconnectAttempt = 0
+    }
+  }
+
   setupEventListeners () {
     // IRC Client Event Listeners
     this.client.on('connectionError', error => {
       if (error.code === 'ECONNREFUSED') {
-        this.displayServerError(`* Couldn't connect to ${error.address} (${error.port})`)
+        this.displayServerError(`* Couldn't connect to server (Connection refused)`)
       } else if (error.code === 'ECONNRESET') {
         this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
       }
+      this.reconnectTimer = setInterval(() => this.reconnect(), 3000)
     })
 
     this.client.on('error', errorMessage => {

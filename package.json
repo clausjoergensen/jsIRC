@@ -27,6 +27,7 @@
   "dependencies": {
     "autolinker": "^1.7.1",
     "electron-prompt": "^1.1.0-1",
+    "max-listeners-exceeded-warning": "0.0.1",
     "strftime": "^0.10.0"
   }
 }

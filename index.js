@@ -6,6 +6,9 @@ const { IrcClient, CtcpClient } = require('./irc/index.js')
 const ClientUI = require('./client-ui.js')
 const packageInfo = require('./package.json')
 
+// const maxListenersExceededWarning = require('max-listeners-exceeded-warning')
+// maxListenersExceededWarning()
+
 const client = new IrcClient()
 client.loggingEnabled = true
 

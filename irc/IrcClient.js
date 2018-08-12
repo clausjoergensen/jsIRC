@@ -46,28 +46,15 @@ class IrcClient extends EventEmitter {
   constructor () {
     super()
 
-    this.loggingEnabled = false
-
     this._socket = new net.Socket()
     this._socket.setEncoding('utf8')
     this._socket.on('data', this.dataReceived.bind(this))
     this._socket.on('close', this.connectionClosed.bind(this))
     this._socket.on('error', this.connectionError.bind(this))
+    this._socket.on('connect', this.connected.bind(this))
     this._socket.on('disconnect', this.disconnected.bind(this))
 
     this._messageProcessor = new IrcMessageProcessor(this)
-
-    this.users = []
-    this.channels = []
-    this.servers = []
-    this.serverAvailableUserModes = []
-    this.serverAvailableChannelModes = []
-    this.serverSupportedFeatures = {}
-    this.channelUserModes = ['o', 'v']
-    this.channelUserModesPrefixes = { '@': 'o', '+': 'v' }
-    this.listedServerLinks = []
-    this.listedChannels = []
-    this.listedStatsEntries = []
   }
 
   /**
@@ -80,7 +67,11 @@ class IrcClient extends EventEmitter {
    * @param {Object} registrationInfo The information used for registering the client.
    */
   connect (hostName, port, registrationInfo) {
+    this.hostName = hostName
+    this.port = port
     this.registrationInfo = registrationInfo
+
+    this.resetState()
 
     /**
      * @event IrcClient#connecting
@@ -89,7 +80,7 @@ class IrcClient extends EventEmitter {
      */
     this.emit('connecting', hostName, port)
 
-    this._socket.connect(port, hostName, this.connected.bind(this))
+    this._socket.connect(port, hostName)
   }
 
   /**
@@ -347,6 +338,26 @@ class IrcClient extends EventEmitter {
      * @param {string} reason
      */
     this.emit('disconnected', reason)
+  }
+
+  resetState () {
+    this.localUser = null
+    this.messageOfTheDay = null
+    this.yourHostMessage = null
+    this.serverCreatedMessage = null
+    this.serverName = null
+    this.serverVersion = null
+    this.users = []
+    this.channels = []
+    this.servers = []
+    this.serverAvailableUserModes = []
+    this.serverAvailableChannelModes = []
+    this.serverSupportedFeatures = {}
+    this.channelUserModes = ['o', 'v']
+    this.channelUserModesPrefixes = { '@': 'o', '+': 'v' }
+    this.listedServerLinks = []
+    this.listedChannels = []
+    this.listedStatsEntries = []
   }
 
   dataReceived (data) {
