@@ -601,7 +601,7 @@ class ClientUI {
                   title: `Kick ${user.nickName}`,
                   label: 'Reason:'
                 }).then((r) => {
-                  if (r !== null) {
+                  if (r) {
                     channelUser.kick(r)
                   }
                 }).catch(console.error)
@@ -627,7 +627,7 @@ class ClientUI {
                   title: `Ban & Kick ${user.nickName}`,
                   label: 'Reason:'
                 }).then((r) => {
-                  if (r !== null) {
+                  if (r) {
                     channelUser.ban()
                     channelUser.kick(r)
                   }

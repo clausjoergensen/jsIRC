@@ -111,7 +111,7 @@ class IrcMessageProcessor {
    */
   processMessage (message) {
     let messageProcessor = this._messageProcessors[message.command]
-    if (messageProcessor !== null) {
+    if (messageProcessor !== undefined) {
       messageProcessor(message)
     } else {
       let numericCommand = parseInt(message.command)
@@ -120,12 +120,12 @@ class IrcMessageProcessor {
       } else {
         if (this.client.loggingEnabled) {
           let replyId = IrcReply[message.command]
-          if (replyId !== null) {
+          if (replyId !== undefined) {
             console.log(`Unsupported command ${replyId} (${message.command})`)
             return
           }
           let errorId = IrcError[message.command]
-          if (errorId !== null) {
+          if (errorId !== undefined) {
             console.log(`Unsupported command ${errorId} (${message.command})`)
             return
           }
@@ -190,7 +190,7 @@ class IrcMessageProcessor {
   // Process MODE messages received from the server.
   processMessageMode (message) {
     function isChannelName (channelName) {
-      return channelName.match(regexChannelName) !== null
+      return regexChannelName.test(channelName)
     }
 
     if (isChannelName(message.parameters[0])) {
@@ -383,7 +383,7 @@ class IrcMessageProcessor {
     } else {
       // RPL_ISUPPORT
       for (let i = 1; i < message.parameters.length - 1; i++) {
-        if (message.parameters[i + 1] === null) {
+        if (!(message.parameters[i + 1])) {
           break
         }
         let paramParts = message.parameters[i].split('=')
@@ -661,7 +661,7 @@ class IrcMessageProcessor {
       }
       let lookup = this.getUserModeAndIdentifier(channelId)
       let channel = this.getChannelFromName(lookup.identifier)
-      if (channel.getChannelUser(user) === null) {
+      if (!(channel.getChannelUser(user))) {
         channel.userJoined(new IrcChannelUser(user, lookup.mode.split('')))
       }
     })
@@ -764,16 +764,16 @@ class IrcMessageProcessor {
 
     user.IsOperator = userModeFlags.includes('*')
 
-    if (channel !== null) {
+    if (channel) {
       let channelUser = channel.getChannelUser(user)
-      if (channelUser === null) {
+      if (!channelUser) {
         channelUser = new IrcChannelUser(user)
         channel.userJoined(channelUser)
       }
 
       for (let c of userModeFlags.split('')) {
         let mode = this.client.channelUserModesPrefixes[c]
-        if (mode !== null) {
+        if (mode) {
           channelUser.modeChanged(true, mode)
         } else {
           break
@@ -804,7 +804,7 @@ class IrcMessageProcessor {
     }
 
     let channel = this.getChannelFromName(message.parameters[2])
-    if (channel !== null) {
+    if (channel) {
       channel.typeChanged(getChannelType(message.parameters[1][0]))
 
       let userIds = message.parameters[3].split(' ')
@@ -917,7 +917,7 @@ class IrcMessageProcessor {
     let errorParameters = []
     let errorMessage = null
     for (let i = 1; i < message.parameters.length; i++) {
-      if (i + 1 === message.parameters.length || message.parameters[i + 1] === null) {
+      if (i + 1 === message.parameters.length || !(message.parameters[i + 1])) {
         errorMessage = message.parameters[i]
         break
       }
@@ -937,7 +937,7 @@ class IrcMessageProcessor {
 
   getChannelFromName (channelName) {
     let existingChannel = this.client.channels.find(c => c.name === channelName)
-    if (existingChannel !== null) {
+    if (existingChannel) {
       return existingChannel
     }
     let newChannel = new IrcChannel(this.client, channelName)
@@ -946,8 +946,8 @@ class IrcMessageProcessor {
   }
 
   getMessageTarget (targetName) {
-    if (targetName === null) {
-      throw new Error('targetName is null.')
+    if (!(targetName)) {
+      throw new Error('targetName is null or undefined.')
     }
 
     if (targetName.length === 0) {
@@ -960,58 +960,58 @@ class IrcMessageProcessor {
 
     let channelName = null
     let channelNameMatch = targetName.match(regexChannelName)
-    if (channelNameMatch !== null) {
+    if (channelNameMatch) {
       channelName = channelNameMatch[1]
     }
 
     let nickName = null
     let nickNameMatch = targetName.match(regexNickNameId)
-    if (nickNameMatch !== null) {
+    if (nickNameMatch) {
       nickName = nickNameMatch[1]
     }
 
     let userName = null
     let userNameMatch = targetName.match(regexUserNameId)
-    if (userNameMatch !== null) {
+    if (userNameMatch) {
       userName = userNameMatch[1]
     }
 
     let hostName = null
     let hostNameMatch = targetName.match(regexHostName)
-    if (hostNameMatch !== null) {
+    if (hostNameMatch) {
       hostName = hostNameMatch[1]
     }
 
     let targetMask = null
     let targetMaskMatch = targetName.match(regexTargetMask)
-    if (targetMaskMatch !== null) {
+    if (targetMaskMatch) {
       targetMask = targetMaskMatch[1]
     }
 
-    if (channelName !== null) {
+    if (channelName) {
       return this.getChannelFromName(channelName)
     }
 
-    if (nickName !== null) {
+    if (nickName) {
       let user = this.client.getUserFromNickName(nickName, true)
-      if (user.userName === null) {
+      if (!(user.userName)) {
         user.userName = userName
       }
-      if (user.hostName === null) {
+      if (!(user.hostName)) {
         user.hostName = hostName
       }
       return user
     }
 
-    if (userName !== null) {
+    if (userName) {
       let user = this.client.getUserFromNickName(nickName, true)
-      if (user.hostName === null) {
+      if (!(user.hostName)) {
         user.hostName = hostName
       }
       return user
     }
 
-    if (targetMask !== null) {
+    if (targetMask) {
       if (targetMask === '$') {
         return '$' // Server Mask
       } else if (targetMask === '#') {
@@ -1027,7 +1027,7 @@ class IrcMessageProcessor {
   getUserModeAndIdentifier (identifier) {
     let mode = identifier[0]
     let channelUserMode = this.client.channelUserModesPrefixes[mode]
-    if (channelUserMode !== null) {
+    if (channelUserMode) {
       return { 'mode': channelUserMode, 'identifier': identifier.substring(1) }
     }
     return { 'mode': '', 'identifier': identifier }
@@ -1057,7 +1057,7 @@ class IrcMessageProcessor {
     let modes = ''
     let modeParameters = []
     messageParameters.forEach(p => {
-      if (p === null) { return }
+      if (!(p)) { return }
       if (p.length !== 0) {
         if (p[0] === '+' || p[0] === '-') {
           modes += p

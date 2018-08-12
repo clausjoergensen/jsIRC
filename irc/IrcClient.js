@@ -410,7 +410,7 @@ class IrcClient extends EventEmitter {
     }
 
     let message = ''
-    if (prefix !== null) {
+    if (prefix) {
       message += ':' + prefix + ' '
     }
 
