@@ -9,7 +9,6 @@
  * @hideconstructor
  */
 class IrcUtils {
-
   /**
    * Updates collection of modes from specified mode string.
    *
@@ -29,9 +28,9 @@ class IrcUtils {
     let i = 0
     let addMode = null
     newModes.forEach(mode => {
-      if (mode == '+') {
+      if (mode === '+') {
         addMode = true
-      } else if (mode == '-') {
+      } else if (mode === '-') {
         addMode = false
       } else if (addMode != null) {
         if (newModeParameters != null && modesWithParameters.includes(mode)) {

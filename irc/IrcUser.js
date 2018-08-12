@@ -39,7 +39,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get client() {
+  get client () {
     return this._client
   }
 
@@ -49,14 +49,14 @@ class IrcUser extends EventEmitter {
    * @public
    * @return {boolean} True if the user is local; otherwise false.
    */
-  get isLocalUser() {
+  get isLocalUser () {
     return false
   }
 
   /*
    * Gets the name of the source, as understood by the IRC protocol.
    */
-  get name() {
+  get name () {
     return this.nickName
   }
 
@@ -66,7 +66,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get isOnline() {
+  get isOnline () {
     return this._isOnline
   }
 
@@ -75,7 +75,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#isOnline
    */
-  set isOnline(value) {
+  set isOnline (value) {
     this._isOnline = value
     this.emit('isOnline')
   }
@@ -85,7 +85,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get nickName() {
+  get nickName () {
     return this._nickName
   }
 
@@ -94,7 +94,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#nickName
    */
-  set nickName(value) {
+  set nickName (value) {
     this._nickName = value
     /**
      * @event IrcUser#nickName
@@ -107,7 +107,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get userName() {
+  get userName () {
     return this._userName
   }
 
@@ -116,7 +116,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#userName
    */
-  set userName(value) {
+  set userName (value) {
     this._userName = value
     /**
      * @event IrcUser#userName
@@ -129,7 +129,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get realName() {
+  get realName () {
     return this._realName
   }
 
@@ -138,7 +138,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#realName
    */
-  set realName(value) {
+  set realName (value) {
     this._realName = value
     /**
      * @event IrcUser#realName
@@ -151,7 +151,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get idleDuration() {
+  get idleDuration () {
     return this._idleDuration
   }
 
@@ -160,7 +160,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#idleDuration
    */
-  set idleDuration(value) {
+  set idleDuration (value) {
     this._idleDuration = value
     /**
      * @event IrcUser#idleDuration
@@ -173,7 +173,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get isOperator() {
+  get isOperator () {
     return this._isOperator
   }
 
@@ -182,7 +182,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#isOperator
    */
-  set isOperator(value) {
+  set isOperator (value) {
     this._isOperator = value
     /**
      * @event IrcUser#isOperator
@@ -195,7 +195,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get serverName() {
+  get serverName () {
     return this._serverName
   }
 
@@ -204,7 +204,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#serverName
    */
-  set serverName(value) {
+  set serverName (value) {
     this._serverName = value
     /**
      * @event IrcUser#serverName
@@ -217,7 +217,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get serverInfo() {
+  get serverInfo () {
     return this._serverInfo
   }
 
@@ -226,7 +226,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#serverInfo
    */
-  set serverInfo(value) {
+  set serverInfo (value) {
     this._serverInfo = value
     /**
      * @event IrcUser#serverInfo
@@ -241,7 +241,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get isAway() {
+  get isAway () {
     return this._isAway
   }
 
@@ -250,7 +250,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#isAway
    */
-  set isAway(value) {
+  set isAway (value) {
     this._isAway = value
     /**
      * @event IrcUser#isAway
@@ -263,7 +263,7 @@ class IrcUser extends EventEmitter {
    *
    * @public
    */
-  get awayMessage() {
+  get awayMessage () {
     return this._awayMessage
   }
 
@@ -272,7 +272,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#awayMessage
    */
-  set awayMessage(value) {
+  set awayMessage (value) {
     this._awayMessage = value
     /**
      * @event IrcUser#awayMessage
@@ -280,13 +280,13 @@ class IrcUser extends EventEmitter {
     this.emit('awayMessage')
   }
 
-   /**
+  /**
    * Gets the hop count of the user, which is the number of servers between the user and the server on which the
    * client is connected, within the network.
    *
    * @public
    */
-  get hopCount() {
+  get hopCount () {
     return this._hopCount
   }
 
@@ -295,7 +295,7 @@ class IrcUser extends EventEmitter {
    *
    * @fires IrcUser#hopCount
    */
-  set hopCount(value) {
+  set hopCount (value) {
     this._hopCount = value
     /**
      * @event IrcUser#hopCount
@@ -333,7 +333,7 @@ class IrcUser extends EventEmitter {
     let channelUsers = []
     this.client.channels.forEach(channel => {
       channel.users.forEach(channelUser => {
-        if (channelUser.user == this) {
+        if (channelUser.user === this) {
           channelUsers.push(channelUser)
         }
       })
@@ -354,9 +354,9 @@ class IrcUser extends EventEmitter {
 
   quit (comment) {
     let allChannelUsers = []
-    client.channels.forEach(channel => {
+    this.client.channels.forEach(channel => {
       channel.users.forEach(channelUser => {
-        if (channelUser.user == this) {
+        if (channelUser.user === this) {
           allChannelUsers.push(channelUser)
         }
       })
@@ -384,7 +384,7 @@ class IrcUser extends EventEmitter {
      * @event IrcUser#partedChannel
      * @param {IrcChannel} channel
      */
-   this.emit('partedChannel', channel)
+    this.emit('partedChannel', channel)
   }
 
   inviteReceived (source, channel) {
