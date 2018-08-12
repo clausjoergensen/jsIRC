@@ -229,31 +229,57 @@ input#chat-input:focus
     text-align: center;
     margin-right: 5px;
     margin-top: -1px;
+    font-family: 'PT Sans', sans-serif;
+}
+
+.user-mode-owner
+{
+    background: #C81B00;
+    color: white;
+    border: 1px solid #C81B00;
+    font-size: 16px;  
+}
+
+.user-mode-admin
+{
+    background: #AE1E6C;
+    color: white;
+    border: 1px solid #AE1E6C;
+    font-size: 13px;
 }
 
 .user-mode-op
 {
-    background: #665EB3;
+    background: #DC7D26;
     color: white;
-    border: 1px solid #665EB3;
+    border: 1px solid #DC7D26;
     font-size: 12px;
 }
 
-.user-mode-voice
+.user-mode-halfop
 {
     background: #268248;
     color: white;
     border: 1px solid #268248;
-    padding-top: 2px;
-    height: 16px;
-    font-family: sans-serif;
+    font-size: 12px;
+    padding-top: 1px;
+    height: 17px;    
+}
+
+.user-mode-voice
+{
+    background: #3F8DAC;
+    color: white;
+    border: 1px solid #3F8DAC;
+    padding-top: 1px;
+    height: 17px;
 }
 
 .user-mode-none
 {
-    background: gray;
+    background: #3E3E3E;
     color: white;
-    border: 1px solid gray;
+    border: 1px solid #3E3E3E;
     font-family: sans-serif;
     padding-top: 1px;
     height: 17px;
@@ -311,7 +337,7 @@ input#chat-input:focus
 
 .btn-menu {
   padding-right: 22px;
-  padding-left: 22px;  
+  padding-left: 22px;
 }
 
 .btn-default {

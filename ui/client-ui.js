@@ -649,11 +649,35 @@ class ClientUI {
     }
 
     let sortedUsers = channel.users.sort((a, b) => {
+      if (a.modes.includes('q') && b.modes.includes('q')) {
+        return a.user.nickName.localeCompare(b.user.nickName)
+      } else if (a.modes.includes('q')) {
+        return -1
+      } else if (b.modes.includes('q')) {
+        return 1
+      }
+
+      if (a.modes.includes('a') && b.modes.includes('a')) {
+        return a.user.nickName.localeCompare(b.user.nickName)
+      } else if (a.modes.includes('a')) {
+        return -1
+      } else if (b.modes.includes('a')) {
+        return 1
+      }
+
       if (a.modes.includes('o') && b.modes.includes('o')) {
         return a.user.nickName.localeCompare(b.user.nickName)
       } else if (a.modes.includes('o')) {
         return -1
       } else if (b.modes.includes('o')) {
+        return 1
+      }
+
+      if (a.modes.includes('h') && b.modes.includes('h')) {
+        return a.user.nickName.localeCompare(b.user.nickName)
+      } else if (a.modes.includes('h')) {
+        return -1
+      } else if (b.modes.includes('h')) {
         return 1
       }
 
@@ -812,9 +836,18 @@ class ClientUI {
       let prefixElement = document.createElement('span')
       prefixElement.classList.add('user-mode')
 
-      if (channelUser.modes.includes('o')) {
+      if (channelUser.modes.includes('q')) {
+        prefixElement.classList.add('user-mode-owner')
+        prefixElement.innerText = '~'
+      } else if (channelUser.modes.includes('a')) {
+        prefixElement.classList.add('user-mode-admin')
+        prefixElement.innerText = '&'
+      } else if (channelUser.modes.includes('o')) {
         prefixElement.classList.add('user-mode-op')
         prefixElement.innerText = '@'
+      } else if (channelUser.modes.includes('h')) {
+        prefixElement.classList.add('user-mode-halfop')
+        prefixElement.innerText = '%'
       } else if (channelUser.modes.includes('v')) {
         prefixElement.classList.add('user-mode-voice')
         prefixElement.innerText = '+'
