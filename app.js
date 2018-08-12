@@ -1,7 +1,7 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, shell, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 let mainWindow = null
@@ -31,42 +31,46 @@ app.on('ready', () => {
     {
       label: 'File',
       submenu: [
+        { label: 'Options' },
+        { type: 'separator' },
         { role: 'quit' }
       ]
     },
     {
       label: 'Edit',
       submenu: [
-        {role: 'undo'},
-        {role: 'redo'},
-        {type: 'separator'},
-        {role: 'cut'},
-        {role: 'copy'},
-        {role: 'paste'},
-        {role: 'pasteandmatchstyle'},
-        {role: 'delete'},
-        {role: 'selectall'}
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectall' }
       ]
     },
     {
       label: 'View',
       submenu: [
-        {role: 'reload'},
-        {role: 'forcereload'},
-        {role: 'toggledevtools'},
-        {type: 'separator'},
-        {role: 'resetzoom'},
-        {role: 'zoomin'},
-        {role: 'zoomout'},
-        {type: 'separator'},
-        {role: 'togglefullscreen'}
+        { role: 'togglefullscreen' },
+        { type: 'separator' },
+        { role: 'resetzoom' },
+        { role: 'zoomin' },
+        { role: 'zoomout' },
+        { type: 'separator' },
+        { role: 'toggledevtools' }
       ]
     },
     {
-      role: 'window',
+      label: 'Help',
       submenu: [
-        {role: 'minimize'},
-        {role: 'close'}
+        { role: 'about' },
+        { type: 'separator' },
+        { 
+          label: 'Report Issue…',
+          click: () => {
+            shell.openExternal('https://github.com/clausjoergensen/jsIRC/issues/new/choose');
+          }
+        }
       ]
     }
   ]
