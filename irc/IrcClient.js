@@ -46,14 +46,6 @@ class IrcClient extends EventEmitter {
   constructor () {
     super()
 
-    this._socket = new net.Socket()
-    this._socket.setEncoding('utf8')
-    this._socket.on('data', this.dataReceived.bind(this))
-    this._socket.on('close', this.connectionClosed.bind(this))
-    this._socket.on('error', this.connectionError.bind(this))
-    this._socket.on('connect', this.connected.bind(this))
-    this._socket.on('disconnect', this.disconnected.bind(this))
-
     this._messageProcessor = new IrcMessageProcessor(this)
   }
 
@@ -320,16 +312,20 @@ class IrcClient extends EventEmitter {
     this.emit('connected')
   }
 
-  connectionClosed (reason) {
-    this.localUser = null
-  }
-
   connectionError (error) {
     /**
      * @event IrcClient#connectionError
      * @param {Object} error
      */
     this.emit('connectionError', error)
+  }
+
+  connectionClosed (hadError) {
+    /**
+     * @event IrcClient#connectionClosed
+     * @param {boolean} hadError
+     */
+    this.emit('connectionClosed', hadError)
   }
 
   disconnected (reason) {
@@ -341,6 +337,13 @@ class IrcClient extends EventEmitter {
   }
 
   resetState () {
+    this._socket = new net.Socket()
+    this._socket.setEncoding('utf8')
+    this._socket.on('data', this.dataReceived.bind(this))
+    this._socket.on('error', this.connectionError.bind(this))
+    this._socket.on('connect', this.connected.bind(this))
+    this._socket.on('disconnect', this.disconnected.bind(this))
+    this._socket.on('close', this.connectionClosed.bind(this))
     this.localUser = null
     this.messageOfTheDay = null
     this.yourHostMessage = null
