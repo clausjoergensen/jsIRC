@@ -9,7 +9,7 @@ const Autolinker = require('autolinker')
 const strftime = require('strftime')
 const prompt = require('electron-prompt')
 const channelModesPrompt = require('./channel-prompt.js')
-const $ = require("jquery")
+const $ = require('jquery')
 
 class ClientUI {
   constructor (client, ctcpClient) {
@@ -31,10 +31,10 @@ class ClientUI {
       this.focusInputField()
     }
 
-    $(document).on('click', 'a[href^="http"]', function(event) {
-        event.preventDefault();
-        shell.openExternal(this.href);
-    });
+    $(document).on('click', 'a[href^="http"]', function (event) {
+      event.preventDefault()
+      shell.openExternal(this.href)
+    })
   }
 
   createServerView () {
@@ -100,7 +100,7 @@ class ClientUI {
     })
 
     this.client.on('connectionClosed', () => {
-      if (this.reconnectAttempt == 12) {
+      if (this.reconnectAttempt === 12) {
         this.reconnectAttempt = 0
         this.reconnectTimer = null
       } else {
@@ -351,7 +351,7 @@ class ClientUI {
     userModes = userModes.length > 0 ? `+${userModes}` : ''
 
     let serverName = this.client.serverSupportedFeatures['NETWORK']
-    serverName = serverName ? serverName : this.client.serverName
+    serverName = serverName || this.client.serverName
 
     let browserWindow = BrowserWindow.getFocusedWindow()
     browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)
@@ -387,10 +387,10 @@ class ClientUI {
     let topic = channel.topic ? `: ${channel.topic}` : ''
 
     let serverName = this.client.serverSupportedFeatures['NETWORK']
-    serverName = serverName ? serverName : this.client.serverName
+    serverName = serverName || this.client.serverName
 
     let browserWindow = BrowserWindow.getFocusedWindow()
-    browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)    
+    browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)
   }
 
   leaveChannel (channel) {
@@ -795,6 +795,7 @@ class ClientUI {
         let target = content.substr(0, content.indexOf(' '))
         let message = content.substr(content.indexOf(' ') + 1)
         this.client.sendMessage([target], message)
+        break
       case 'join':
         this.client.joinChannel(content)
         break

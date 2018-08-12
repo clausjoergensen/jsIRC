@@ -13,8 +13,8 @@ describe('IRC Tests', function () {
 
   let client1 = null
   let client2 = null
-  let ctcpClient1 = null
-  let ctcpClient2 = null
+  let ctcpClient1 = null // eslint-disable-line no-unused-vars
+  let ctcpClient2 = null // eslint-disable-line no-unused-vars
 
   let floodPreventer1 = new IrcFloodPreventer(4, 2000)
   let floodPreventer2 = new IrcFloodPreventer(4, 2000)
@@ -195,7 +195,7 @@ describe('IRC Tests', function () {
         if (messageText === expectedSpamMessage) {
           actualMessageCount++
         }
-        if (actualMessageCount == expectedMessageCount) {
+        if (actualMessageCount === expectedMessageCount) {
           remoteChannel.removeAllListeners()
           done()
         }
