@@ -30,21 +30,26 @@ let clientUI = null
 document.addEventListener('DOMContentLoaded', function (event) {
   clientUI = new ClientUI(client, ctcpClient)
 
-  var server = '127.0.0.1'
-  // var server = 'irc.quakenet.org'
+  let server = '127.0.0.1'
 
   client.connect(server, 6667, {
-    'nickName': 'Windcapes',
-    'password': null,
-    'userName': 'claus.joergensen@outlook.com',
-    'realName': 'Claus Joergensen',
+    'nickName': 'Archchancellor',
+    'password': 'correcthorsebatterystaple',
+    'userName': 'mustrum.ridcully@uu.edu',
+    'realName': 'Mustrum Ridcully',
     'userModes': []
   })
 
   client.on('registered', () => {
-    client.oper('Windcapes', 'correcthorsebatterystaple')
-    client.joinChannel('#c#')
-    client.joinChannel('#hearthstone')
-    client.joinChannel('#wow')
+    client.joinChannel('#AnkhMorpork')
+    client.joinChannel('#UnseenUniversity')
+    client.joinChannel('#MendedDrum')
+    client.joinChannel('#OblongOffice')
+    client.joinChannel('#RoyalMint')
+    client.joinChannel('#TheShades')
+    client.joinChannel('#ThievesGuild')
+    client.joinChannel('#SmallGods')
+    client.joinChannel('#WatchHouse')
+    client.joinChannel('#BrassBridge')
   })
 })
