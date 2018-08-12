@@ -130,7 +130,7 @@ class ClientUI {
 
     this.client.on('serverSupportedFeatures', (serverSupportedFeatures) => {
       let networkName = serverSupportedFeatures['NETWORK']
-      if (networkName != null) {
+      if (networkName) {
         this.navigationServerView.firstChild.innerText = networkName
       }
     })
@@ -176,6 +176,12 @@ class ClientUI {
 
     this.ctcpClient.on('clientInfo', (source, info) => {
       this.displayServerAction(`[${source.nickName} CLIENTINFO reply]: ${info}.`)
+    })
+
+    window.addEventListener('keyup', e => {
+      if (e.ctrlKey && e.keyCode === 78) {
+        this.viewNextChannel()
+      }
     })
 
     // UI Event Listeners
@@ -260,7 +266,7 @@ class ClientUI {
     prompt.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
 
     prompt.on('keyup', (e) => {
-      if (e.keyCode == 27) {
+      if (e.keyCode === 27) {
         prompt.close()
       }
     })
@@ -379,7 +385,7 @@ class ClientUI {
   }
 
   viewServer () {
-    if (this.selectedChannel != null) {
+    if (this.selectedChannel) {
       this.navigationChannelViews[this.selectedChannel.name].classList.remove('channel-selected')
       this.channelViews[this.selectedChannel.name].style.display = 'none'
     }
@@ -405,8 +411,29 @@ class ClientUI {
     serverName = serverName || this.client.serverName
 
     let browserWindow = BrowserWindow.getFocusedWindow()
-    if (browserWindow != null) {
+    if (browserWindow) {
       browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)
+    }
+  }
+
+  viewNextChannel () {
+    if (this.selectedChannel) {
+      let keys = Object.keys(this.navigationChannelViews)
+      let index = keys.indexOf(this.selectedChannel.name)
+      let nextChannelElement = this.navigationChannelViews[keys[index + 1]]
+      if (nextChannelElement) {
+        this.viewChannel(nextChannelElement.channel)
+      } else {
+        this.viewServer()
+      }
+    } else {
+      let keys = Object.keys(this.navigationChannelViews)
+      let firstChannelElement = this.navigationChannelViews[keys[0]]
+      if (firstChannelElement) {
+        this.viewChannel(firstChannelElement.channel)
+      } else {
+        this.viewServer()
+      }
     }
   }
 
@@ -423,7 +450,7 @@ class ClientUI {
 
     this.serverView.style.display = 'none'
 
-    if (this.selectedChannel != null) {
+    if (this.selectedChannel) {
       this.channelViews[this.selectedChannel.name].style.display = 'none'
     }
 
@@ -443,7 +470,7 @@ class ClientUI {
     serverName = serverName || this.client.serverName
 
     let browserWindow = BrowserWindow.getFocusedWindow()
-    if (browserWindow != null) {
+    if (browserWindow) {
       browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)
     }
   }
@@ -481,7 +508,7 @@ class ClientUI {
     this.serverView.appendChild(paragraph)
     this.serverView.scrollTop = this.serverView.scrollHeight
 
-    if (this.serverView.style.display === 'none' && this.selectedChannel != null) {
+    if (this.serverView.style.display === 'none' && this.selectedChannel) {
       this.navigationServerView.firstChild.classList.add('nav-unread')
     }
   }
@@ -492,10 +519,10 @@ class ClientUI {
 
   displayServerMessage (source, text, styles = []) {
     let senderName = ''
-    if (source != null) {
-      if (source.nickName != null) {
+    if (source) {
+      if (source.nickName) {
         senderName = `<${source.nickName}>`
-      } else if (source.hostName != null) {
+      } else if (source.hostName) {
         senderName = source.hostName
       }
     }
@@ -519,10 +546,10 @@ class ClientUI {
 
   displayServerNotice (source, text) {
     let senderName = ''
-    if (source != null) {
-      if (source.nickName != null) {
+    if (source) {
+      if (source.nickName) {
         senderName = ` - ${source.nickName} -`
-      } else if (source.hostName != null) {
+      } else if (source.hostName) {
         senderName = source.hostName
       }
     }
@@ -553,7 +580,7 @@ class ClientUI {
     paragraph.innerText = formattedText
 
     const channelTableView = this.channelViews[channelName]
-    if (channelTableView != null) {
+    if (channelTableView) {
       const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
       messageView.appendChild(paragraph)
       messageView.scrollTop = messageView.scrollHeight
@@ -593,10 +620,10 @@ class ClientUI {
 
   displayChannelMessage (channel, source, text) {
     let senderName = ''
-    if (source != null) {
-      if (source.nickName != null) {
+    if (source) {
+      if (source.nickName) {
         senderName = `&lt;${source.nickName}&gt;`
-      } else if (source.hostName != null) {
+      } else if (source.hostName) {
         senderName = source.hostName
       }
     }
@@ -655,7 +682,7 @@ class ClientUI {
       })
     }
 
-    if (source != null) {
+    if (source) {
       this.displayChannelAction(channel.name, source, `changed topic to '${channel.topic}'`)
     }
 
@@ -898,9 +925,11 @@ class ClientUI {
 
     switch (action.toLowerCase()) {
       case 'msg':
-        var target = content.substr(0, content.indexOf(' '))
-        var message = content.substr(content.indexOf(' ') + 1)
-        this.client.sendMessage([target], message)
+        {
+          let target = content.substr(0, content.indexOf(' '))
+          let message = content.substr(content.indexOf(' ') + 1)
+          this.client.sendMessage([target], message)
+        }
         break
       case 'join':
         this.client.joinChannel(content)
@@ -909,7 +938,7 @@ class ClientUI {
         this.selectedChannel.part()
         break
       case 'me':
-        if (this.selectedChannel != null) {
+        if (this.selectedChannel) {
           this.ctcpClient.action([this.selectedChannel.name], content)
           this.displayChannelAction(this.selectedChannel.name, this.client.localUser, content)
         } else {
@@ -920,23 +949,24 @@ class ClientUI {
         this.client.setNickName(content)
         break
       case 'topic':
-        if (this.selectedChannel != null) {
+        if (this.selectedChannel) {
           this.client.setTopic(this.selectedChannel.name, content)
         }
         break
       case 'hop':
-        var target = content.substr(0, content.indexOf(' '))
-        var newChannel = content.substr(content.indexOf(' ') + 1).trim()
-        if (this.selectedChannel != null) {
-          var name = this.selectedChannel.name
-          this.selectedChannel.part()
-          if (newChannel.length !== 0) {
-            this.client.joinChannel(newChannel)
+        {
+          let newChannel = content.substr(content.indexOf(' ') + 1).trim()
+          if (this.selectedChannel) {
+            var name = this.selectedChannel.name
+            this.selectedChannel.part()
+            if (newChannel.length !== 0) {
+              this.client.joinChannel(newChannel)
+            } else {
+              this.client.joinChannel(name)
+            }
           } else {
-            this.client.joinChannel(name)
+            this.displayServerMessage(null, '* Cannot use /hop in this view.')
           }
-        } else {
-          this.displayServerMessage(null, '* Cannot use /hop in this view.')
         }
         break
     }
@@ -946,7 +976,7 @@ class ClientUI {
     if (text[0] === '/') {
       this.sendAction(text)
     } else {
-      if (this.selectedChannel != null) {
+      if (this.selectedChannel) {
         var chunks = text.match(/.{1,398}/g)
         chunks.forEach(c => this.selectedChannel.sendMessage(c))
       } else {
