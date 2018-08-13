@@ -141,7 +141,7 @@ class IrcChannel extends EventEmitter {
       throw new ArgumentNullException('newModes')
     }
 
-    this.client.setChannelModes(this, modes, modeParameters)
+    this.client.setChannelModes(this, newModes, modeParameters)
   }
 
   /**
