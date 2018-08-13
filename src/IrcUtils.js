@@ -1,6 +1,8 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
+const { ArgumentNullError } = require('./Errors.js')
+
 /**
  * Utilities for IRC
  *
@@ -25,6 +27,23 @@ class IrcUtils {
    * @return {IrcChannelUser} The corresponding IrcChannelUser.
    */
   static updateModes (existingModes, newModes, newModeParameters = null, modesWithParameters = null, callback = null) {
+    if (!existingModes) {
+      throw new ArgumentNullError('existingModes')
+    }
+
+    if (!newModes) {
+      throw new ArgumentNullError('existingModes')
+    }
+
+    if (newModeParameters) {
+      if (!modesWithParameters) {
+        throw new ArgumentNullError('modesWithParameters')
+      }
+      if (!callback) {
+        throw new ArgumentNullError('callback')
+      }
+    }
+
     let result = existingModes
     let i = 0
     let addMode = null

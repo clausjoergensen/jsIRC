@@ -25,6 +25,33 @@ class ArgumentNullError extends ExtendableError {
   }
 }
 
+/**
+ * @private
+ */
+class ArgumentError extends ExtendableError {
+  constructor (message) {
+    super(message)
+  }
+} 
+
+/**
+ * @private
+ */
+class InvalidOperationError extends ExtendableError {
+ constructor (message) {
+    super(message)
+  } 
+} 
+
+/**
+ * @private
+ */
+class ProtocolViolationError extends ExtendableError {
+ constructor (message) {
+    super(message)
+  } 
+} 
+
 module.exports = {
   ArgumentNullError: ArgumentNullError
 }

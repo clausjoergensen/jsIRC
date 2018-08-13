@@ -413,11 +413,11 @@ function quote (value, escapeChar, quotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
     if (value[i] === escapeChar) {
-      if (quotedChars[value[i]] != null || value[i] === escapeChar) {
+      if (quotedChars[value[i]] || value[i] === escapeChar) {
         output += escapeChar
         output += quotedChars[value[i]] || escapeChar
       } else {
-        throw new Error('Invalid Quote Character.')
+        output += value[i]
       }
     } else {
       output += value[i]
@@ -432,10 +432,10 @@ function dequote (value, escapeChar, dequotedChars) {
   for (let i = 0; i < value.length; i++) {
     if (value[i] === escapeChar) {
       i++
-      if (dequotedChars[value[i]] != null || value[i] === escapeChar) {
+      if (dequotedChars[value[i]] || value[i] === escapeChar) {
         output += dequotedChars[value[i]] || escapeChar
       } else {
-        throw new Error('Invalid Quote Character.')
+        throw new InvalidOperationError(`The quoted character '${value[i]}' was not recognised.`)
       }
     } else {
       output += value[i]

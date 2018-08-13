@@ -11,6 +11,7 @@ const IrcUser = require('./IrcUser.js')
 const IrcLocalUser = require('./IrcLocalUser.js')
 const IrcServer = require('./IrcServer.js')
 const IrcMessageProcessor = require('./IrcMessageProcessor.js')
+const { ArgumentNullError, ArgumentError } = require('./Errors.js')
 
 const maxParamsCount = 15
 
@@ -57,11 +58,24 @@ class IrcClient extends EventEmitter {
    *
    * @public
    * @fires IrcClient#connecting
+   * @throws {ArgumentNullError} if a parameter is null.
    * @param {string} hostName The name of the remote host.
    * @param {number} port The port number of the remote host.
    * @param {Object} registrationInfo The information used for registering the client.
    */
   connect (hostName, port, registrationInfo) {
+    if (!hostName) {
+      throw new ArgumentNullError('hostName')
+    }
+
+    if (!port) {
+      throw new ArgumentNullError('port')
+    }
+
+    if (!registrationInfo) {
+      throw new ArgumentNullError('registrationInfo')
+    }
+
     this.hostName = hostName
     this.port = port
     this.registrationInfo = registrationInfo
@@ -158,7 +172,7 @@ class IrcClient extends EventEmitter {
    * or null for the current server.
    */
   getServerStatistics (query = null, targetServer = null) {
-    this.sendMessageStats(query == null ? null : query, targetServer)
+    this.sendMessageStats(query === null ? null : query, targetServer)
   }
 
   /**
@@ -217,6 +231,10 @@ class IrcClient extends EventEmitter {
    * @param {string[]} nickNameMasks A array of wildcard expressions for matching against nick names of users.
    */
   queryWhoIs (nickNameMasks) {
+    if (!nickNameMasks) {
+      throw new ArgumentNullError('nickNameMasks')
+    }
+
     this.sendMessageWhoIs(nickNameMasks)
   }
 
@@ -229,6 +247,10 @@ class IrcClient extends EventEmitter {
    * A negative value specifies to return an unlimited number of entries.
    */
   queryWhoWas (nickNames, entriesCount = -1) {
+    if (!nickNames) {
+      throw new ArgumentNullError('nickNames')
+    }
+
     this.sendMessageWhoWas(nickNames, entriesCount)
   }
 
@@ -250,6 +272,13 @@ class IrcClient extends EventEmitter {
    * @param {string} userName The password.
    */
   oper (userName, password) {
+    if (!userName) {
+      throw new ArgumentNullError('userName')
+    }
+    if (!password) {
+      throw new ArgumentNullError('password')
+    }
+
     this.sendMessageOper(userName, password)
   }
 
@@ -260,6 +289,10 @@ class IrcClient extends EventEmitter {
    * @param {string} message The text (single line) of the message to send the server.
    */
   sendRawMessage (message) {
+    if (!message) {
+      throw new ArgumentNullError('message')
+    }
+
     this._messageSendQueue.push(message + '\r\n')
   }
 
@@ -425,7 +458,7 @@ class IrcClient extends EventEmitter {
   /** @private */
   dataReceived (data) {
     let str = data.toString()
-    if (str == null) {
+    if (str === null) {
       return
     }
 
@@ -533,7 +566,7 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   writeMessage (prefix, command, parameters = []) {
-    if (command == null) {
+    if (command === null) {
       throw new Error('Invalid Command.')
     }
     if (parameters.length > maxParamsCount) {
@@ -621,7 +654,7 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   sendMessageChannelMode (channel, modes = null, modeParameters = null) {
-    this.writeMessage(null, 'MODE', [channel, modes, modeParameters == null ? null : modeParameters.join(',')])
+    this.writeMessage(null, 'MODE', [channel, modes, modeParameters === null ? null : modeParameters.join(',')])
   }
 
   /** @private */
@@ -631,12 +664,12 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   sendMessageNames (channels = null, targetServer = null) {
-    this.writeMessage(null, 'NAMES', [channels == null ? null : channels.join(','), targetServer])
+    this.writeMessage(null, 'NAMES', [channels === null ? null : channels.join(','), targetServer])
   }
 
   /** @private */
   sendMessageList (channels = null, targetServer = null) {
-    this.writeMessage(null, 'LIST', [channels == null ? null : channels.join(','), targetServer])
+    this.writeMessage(null, 'LIST', [channels === null ? null : channels.join(','), targetServer])
   }
 
   /** @private */
@@ -794,7 +827,7 @@ class IrcClient extends EventEmitter {
   /** @private */
   getNumericUserMode (modes) {
     let value = 0
-    if (modes == null) {
+    if (modes === null) {
       return value
     }
     if (modes.includes('w')) {
@@ -808,7 +841,7 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   getSourceFromPrefix (prefix) {
-    if (prefix == null) {
+    if (!prefix) {
       return null
     }
 
@@ -840,7 +873,7 @@ class IrcClient extends EventEmitter {
       }
     }
 
-    throw new Error('The source of the message was not recognised as either a server or user.')
+    throw new ArgumentError('The source of the message was not recognised as either a server or user.')
   }
 
   /** @private */

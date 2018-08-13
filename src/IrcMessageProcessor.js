@@ -3,12 +3,14 @@
 
 const log = require('electron-log')
 
+const IrcUser = require('./IrcUser.js')
 const IrcChannel = require('./IrcChannel.js')
 const IrcChannelType = require('./IrcChannelType.js')
 const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcReply = require('./IrcReply.js')
 const IrcError = require('./IrcError.js')
 const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
+const { ArgumentException, ProtocolViolationException } =  require('./Errors.js')
 
 const regexHostName = new RegExp(/([^%@]+)/)
 const regexChannelName = new RegExp(/([#+!&].+)/)
@@ -140,6 +142,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageNick (message) {
+    if (!(message.source instanceof IrcUser)) {
+      throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
+    }
     let sourceUser = message.source
     let newNickName = message.parameters[0]
     sourceUser.nickName = newNickName
@@ -150,6 +155,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageQuit (message) {
+    if (!(message.source instanceof IrcUser)) {
+      throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
+    }
     let sourceUser = message.source
     let comment = message.parameters[0]
 
@@ -166,6 +174,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageJoin (message) {
+    if (!(message.source instanceof IrcUser)) {
+      throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
+    }
     let sourceUser = message.source
     let channelList = message.parameters[0].split(',')
 
@@ -184,6 +195,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessagePart (message) {
+    if (!(message.source instanceof IrcUser)) {
+      throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
+    }
     let sourceUser = message.source
     let channelList = message.parameters[0].split(',')
     let comment = message.parameters[1]
@@ -224,7 +238,7 @@ class IrcMessageProcessor {
     } else if (message.parameters[0] === this.client.localUser.nickName) {
       this.client.localUser.modesChanged(message.parameters[1])
     } else {
-      throw new Error('Cannot set User Mode.')
+      throw new ProtocolViolationException(`Cannot set user mode for '${message.parameters[0]}'`)
     }
   }
 
@@ -970,7 +984,7 @@ class IrcMessageProcessor {
         case '@':
           return IrcChannelType.secret
         default:
-          throw new Error('Invalid Channel Type')
+          throw new ArgumentException(`The channel type '${type}' sent by the server is invalid.`)
       }
     }
 
@@ -1152,11 +1166,7 @@ class IrcMessageProcessor {
   /** @private */
   getMessageTarget (targetName) {
     if (!(targetName)) {
-      throw new Error('targetName is null or undefined.')
-    }
-
-    if (targetName.length === 0) {
-      throw new Error('targetName cannot be empty string.')
+      throw new ArgumentNullError('targetName')
     }
 
     if (targetName === '*') {
@@ -1217,16 +1227,20 @@ class IrcMessageProcessor {
     }
 
     if (targetMask) {
-      if (targetMask === '$') {
+      if (targetMask.length < 2) {
+        throw new ArgumentError('The target mask must be contain at least two characters.')
+      }
+
+      if (targetMask[0] === '$') {
         return '$' // Server Mask
-      } else if (targetMask === '#') {
+      } else if (targetMask[0] === '#') {
         return '#' // Host Mask
       } else {
-        throw new Error('Invalid targetMask.')
+        throw new ArgumentError(`The type of the given target mask '${targetMask}' is invalid.`)
       }
     }
 
-    throw new Error(`Invalid targetName.`)
+    throw new ArgumentError(`The source '${targetName}' of the message was not recognised as either a server or user.`)
   }
 
   /** @private */
@@ -1247,7 +1261,8 @@ class IrcMessageProcessor {
       let modes = prefixValueMatch[1]
 
       if (prefixes.length !== modes.length) {
-        throw new Error('Message ISupport Prefix is Invalid.')
+        throw new ProtocolViolationException(
+          'The ISUPPORT message sent by the server contains an invalid PREFIX parameter.')
       }
 
       this.client.channelUserModes = []
