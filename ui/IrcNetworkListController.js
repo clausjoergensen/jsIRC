@@ -2,16 +2,16 @@
 'use strict'
 
 const { remote } = require('electron')
-const { Menu, BrowserWindow, app, shell } = remote
+const { Menu, BrowserWindow, app } = remote
 
 const events = require('events')
 const { EventEmitter } = events
 
-class NetworkListController extends EventEmitter {
+class IrcNetworkListController extends EventEmitter {
   constructor (client) {
     super()
 
-    this.client = client    
+    this.client = client
     this.selectedChannel = null
     this.serverView = null
     this.channelViews = {}
@@ -39,7 +39,7 @@ class NetworkListController extends EventEmitter {
           this.selectedChannel.part()
         }
       }
-    })        
+    })
   }
 
   get selectedChannelName () {
@@ -60,12 +60,12 @@ class NetworkListController extends EventEmitter {
       this.markAsUnread(channel)
     })
 
-    channel.on('topic', (source, topic) => { 
+    channel.on('topic', (source, topic) => {
       this.setWindowTitleForChannel(channel)
       this.markAsUnread(channel)
     })
 
-    this.addChannelToList(channel)    
+    this.addChannelToList(channel)
   }
 
   localUserPartedChannel (channel) {
@@ -74,7 +74,7 @@ class NetworkListController extends EventEmitter {
 
     if (Object.keys(this.channelViews).length === 0) {
       this.viewServer()
-    } else if (this.selectedChannel == channel) {
+    } else if (this.selectedChannel === channel) {
       this.viewPreviousChannel(channel)
     }
 
@@ -92,20 +92,19 @@ class NetworkListController extends EventEmitter {
     this.channelViews[channel.name].classList.remove('nav-unread')
     this.channelViews[channel.name].classList.add('channel-selected')
 
-    let previousSelectedChannel = this.selectedChannel
     this.selectedChannel = channel
     this.setWindowTitleForChannel(channel)
 
-    this.emit('viewChannel', previousSelectedChannel, channel)
+    this.emit('viewChannel', channel)
   }
 
   viewServer () {
     this.channelViews[this.selectedChannel.name].classList.remove('channel-selected')
     this.selectedChannel = null
-    
+
     Array.from(document.getElementsByClassName('network-title'))
       .forEach(e => e.classList.remove('network-title-selected'))
-    
+
     this.serverView.firstChild.classList.remove('nav-unread')
     this.serverView.firstChild.classList.add('network-title-selected')
 
@@ -275,7 +274,6 @@ class NetworkListController extends EventEmitter {
     }
   }
 
-
   setWindowTitleForChannel (channel) {
     let topic = channel.topic ? `: ${channel.topic}` : ''
 
@@ -286,11 +284,11 @@ class NetworkListController extends EventEmitter {
     if (browserWindow) {
       browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)
     }
-  }  
+  }
 
   markAsUnread (channel = null) {
     if (channel == null) {
-      this.serverView.firstChild.classList.add('nav-unread')      
+      this.serverView.firstChild.classList.add('nav-unread')
     } else {
       this.serverView.firstChild.classList.remove('nav-unread')
       if (this.selectedChannel !== channel) {
@@ -300,4 +298,4 @@ class NetworkListController extends EventEmitter {
   }
 }
 
-module.exports = NetworkListController
+module.exports = IrcNetworkListController

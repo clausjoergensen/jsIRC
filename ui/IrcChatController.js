@@ -2,44 +2,207 @@
 'use strict'
 
 const { remote } = require('electron')
-const { Menu, BrowserWindow, app, shell } = remote
-const { IrcError } = require('./../irc/index.js')
-const Autolinker = require('autolinker')
+const { Menu, app, shell } = remote
+
+const events = require('events')
+const { EventEmitter } = events
+
+const { IrcError, CtcpClient } = require('./../irc/index.js')
+
 const strftime = require('strftime')
+const Autolinker = require('autolinker')
 const prompt = require('electron-prompt')
-const path = require('path')
+const packageInfo = require('./../package.json')
 const $ = require('jquery')
-const NetworkListController = require('./NetworkListController.js')
 
-class ClientUI {
-  constructor (client, ctcpClient) {
+class IrcChatController extends EventEmitter {
+  constructor (client, channel) {
+    super()
+
     this.client = client
-    this.ctcpClient = ctcpClient
-    
-    this.chatInput = document.getElementById('chat-input')
+    this.ctcpClient = new CtcpClient(client)
+    this.ctcpClient.clientName = packageInfo.name
+    this.ctcpClient.clientVersion = packageInfo.version
+
     this.serverView = this.createServerView()
+    this.selectedChannel = null
     this.channelViews = {}
-    this.reconnectAttempt = 0
 
-    this.networkListController = new NetworkListController(client)
-    this.networkListController.on('viewChannel', this.viewChannel.bind(this))
-    this.networkListController.on('viewServer', this.viewServer.bind(this))
+    this.chatInput = document.getElementById('chat-input')
 
-    this.setupEventListeners()
-    this.focusInputField()
+    this.client.on('connected', () => {
+      this.clientConnected()
+    })
 
-    window.onfocus = () => {
-      this.focusInputField()
-    }
+    this.client.on('connecting', (hostName, port) => {
+      this.displayServerMessage(null, `* Connecting to ${hostName} (${port})`)
+    })
+
+    this.client.on('disconnected', (reason) => {
+      this.displayServerMessage(null, `* Disconnected (${reason})`)
+    })
+
+    this.client.on('error', errorMessage => {
+      this.displayServerError('* ' + errorMessage)
+    })
+
+    this.client.on('protocolError', (command, errorParameters, errorMessage) => {
+      switch (command) {
+        case 433: // ERR_NICKNAMEINUSE
+          this.displayServerError(`Nickname '${errorParameters[0]}' is already in use.`)
+          this.chatInput.value = '/nick '
+          this.focusInputField()
+          break
+        case 482: // ERR_CHANOPRIVSNEEDED
+          this.displayChannelError(errorParameters[0], errorMessage)
+          break
+        default:
+          let errorName = IrcError[command]
+          console.log(`Unsupported protocol error ${errorName}(${command}).`, errorParameters, errorMessage)
+          break
+      }
+    })
+
+    this.client.on('motd', messageOfTheDay => {
+      this.displayServerMessage(null, ` - ${this.client.serverName} Message of the Day - `)
+      messageOfTheDay
+        .split('\r\n')
+        .forEach(l => this.displayServerMessage(null, l))
+    })
+
+    this.client.on('connectionError', error => {
+      if (error.code === 'ECONNREFUSED') {
+        this.displayServerError(`* Couldn't connect to server (Connection refused)`)
+      } else if (error.code === 'ECONNRESET') {
+        this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
+      } else {
+        console.log(error)
+      }
+    })
+
+    this.ctcpClient.on('ping', (source, pingTime) => {
+      this.displayServerAction(`[${source.nickName} PING reply]: ${pingTime} seconds.`)
+    })
+
+    this.ctcpClient.on('time', (source, dateTime) => {
+      this.displayServerAction(`[${source.nickName} TIME reply]: ${dateTime}.`)
+    })
+
+    this.ctcpClient.on('version', (source, versionInfo) => {
+      this.displayServerAction(`[${source.nickName} VERSION reply]: ${versionInfo}.`)
+    })
+
+    this.ctcpClient.on('finger', (source, info) => {
+      this.displayServerAction(`[${source.nickName} FINGER reply]: ${info}.`)
+    })
+
+    this.ctcpClient.on('clientInfo', (source, info) => {
+      this.displayServerAction(`[${source.nickName} CLIENTINFO reply]: ${info}.`)
+    })
+
+    this.chatInput.addEventListener('keyup', e => {
+      e.preventDefault()
+      if (e.keyCode === 13) {
+        this.sendUserInput(this.chatInput.value)
+        this.chatInput.value = ''
+      }
+    })
 
     $(document).on('click', 'a[href^="http"]', function (event) {
       event.preventDefault()
       shell.openExternal(this.href)
     })
+
+    window.onfocus = () => {
+      this.focusInputField()
+    }
   }
 
-  get selectedChannel () {
-    return this.networkListController.selectedChannel
+  clientConnected () {
+    this.client.localUser.on('joinedChannel', this.localUserJoinedChannel.bind(this))
+    this.client.localUser.on('partedChannel', this.localUserPartedChannel.bind(this))
+
+    this.client.localUser.on('message', (source, targets, messageText) => {
+      this.displayServerMessage(source, messageText)
+    })
+
+    this.client.localUser.on('notice', (source, targets, noticeText) => {
+      this.displayServerNotice(source, noticeText)
+    })
+  }
+
+  localUserJoinedChannel (channel) {
+    channel.on('message', (source, messageText) => {
+      this.displayChannelMessage(channel, source, messageText)
+    })
+
+    channel.on('action', (source, messageText) => {
+      this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
+    })
+
+    channel.on('topic', (source, topic) => {
+      this.displayChannelTopic(channel, source)
+    })
+
+    channel.once('userList', () => {
+      channel.users.forEach(channelUser => {
+        channelUser.user.on('nickName', () => {
+          this.displayChannelUsers(channel)
+        })
+
+        channelUser.on('modes', () => {
+          this.displayChannelUsers(channel)
+        })
+      })
+      this.displayChannelUsers(channel)
+    })
+
+    channel.on('userJoinedChannel', (channelUser) => {
+      channelUser.user.on('nickName', () => {
+        this.displayChannelUsers(channelUser.channel)
+      })
+      channelUser.on('modes', () => {
+        this.displayChannelUsers(channelUser.channel)
+      })
+      this.displayChannelUsers(channel)
+    })
+
+    channel.on('userLeftChannel', (channelUser) => {
+      this.displayChannelUsers(channel)
+    })
+
+    channel.on('userKicked', (_) => {
+      this.displayChannelUsers(channel)
+    })
+
+    this.createChannelView(channel)
+  }
+
+  localUserPartedChannel (channel) {
+    let channelView = this.channelViews[channel.name]
+    channelView.parentElement.removeChild(channelView)
+    delete this.channelViews[channel.name]
+  }
+
+  viewServer () {
+    if (this.selectedChannel) {
+      this.channelViews[this.selectedChannel.name].style.display = 'none'
+    }
+    this.serverView.style.display = 'block'
+  }
+
+  viewChannel (channel) {
+    this.serverView.style.display = 'none'
+
+    if (this.selectedChannel) {
+      this.channelViews[this.selectedChannel.name].style.display = 'none'
+    }
+
+    this.channelViews[channel.name].style.display = 'table'
+    this.selectedChannel = channel
+
+    this.displayChannelTopic(channel)
+    this.displayChannelUsers(channel)
   }
 
   createServerView () {
@@ -85,156 +248,7 @@ class ClientUI {
     return serverView
   }
 
-  reconnect () {
-    this.reconnectAttempt++
-    this.displayServerMessage(null, `* Connect retry #${this.reconnectAttempt} ${this.client.hostName}  (${this.client.port})`)
-    this.client.connect(this.client.hostName, this.client.port, this.client.registrationInfo)
-    clearInterval(this.reconnectTimer)
-  }
-
-  setupEventListeners () {
-    // IRC Client Event Listeners
-    this.client.on('connectionError', error => {
-      if (error.code === 'ECONNREFUSED') {
-        this.displayServerError(`* Couldn't connect to server (Connection refused)`)
-      } else if (error.code === 'ECONNRESET') {
-        this.displayServerMessage(null, `* Disconnected (Connection Reset)`)
-      } else {
-        console.log(error)
-      }
-    })
-
-    this.client.on('connectionClosed', () => {
-      if (this.reconnectAttempt === 12) {
-        this.reconnectAttempt = 0
-        this.reconnectTimer = null
-      } else {
-        this.reconnectTimer = setInterval(() => this.reconnect(), 2000)
-      }
-    })
-
-    this.client.on('error', errorMessage => {
-      this.displayServerError('* ' + errorMessage)
-    })
-
-    this.client.on('protocolError', (command, errorParameters, errorMessage) => {
-      switch (command) {
-        case 433: // ERR_NICKNAMEINUSE
-          this.displayServerError(`Nickname '${errorParameters[0]}' is already in use.`)
-          this.chatInput.value = '/nick '
-          this.focusInputField()
-          break
-        case 482: // ERR_CHANOPRIVSNEEDED
-          this.displayChannelError(errorParameters[0], errorMessage)
-          break
-        default:
-          let errorName = IrcError[command]
-          console.log(`Unsupported protocol error ${errorName}(${command}).`, errorParameters, errorMessage)
-          break
-      }
-    })
-
-    this.client.on('connecting', (hostName, port) => {
-      this.displayServerMessage(null, `* Connecting to ${hostName} (${port})`)
-    })
-
-    this.client.on('connected', this.clientConnected.bind(this))
-
-    this.client.on('disconnected', (reason) => {
-      this.displayServerMessage(null, `* Disconnected (${reason})`)
-    })
-
-    this.client.on('motd', messageOfTheDay => {
-      this.displayServerMessage(null, ` - ${this.client.serverName} Message of the Day - `)
-
-      messageOfTheDay
-        .split('\r\n')
-        .forEach(l => this.displayServerMessage(null, l))
-    })
-
-    // CTCP Event Listeners
-    this.ctcpClient.on('ping', (source, pingTime) => {
-      this.displayServerAction(`[${source.nickName} PING reply]: ${pingTime} seconds.`)
-    })
-
-    this.ctcpClient.on('time', (source, dateTime) => {
-      this.displayServerAction(`[${source.nickName} TIME reply]: ${dateTime}.`)
-    })
-
-    this.ctcpClient.on('version', (source, versionInfo) => {
-      this.displayServerAction(`[${source.nickName} VERSION reply]: ${versionInfo}.`)
-    })
-
-    this.ctcpClient.on('finger', (source, info) => {
-      this.displayServerAction(`[${source.nickName} FINGER reply]: ${info}.`)
-    })
-
-    this.ctcpClient.on('clientInfo', (source, info) => {
-      this.displayServerAction(`[${source.nickName} CLIENTINFO reply]: ${info}.`)
-    })
-
-    // UI Event Listeners
-    this.chatInput.addEventListener('keyup', e => {
-      e.preventDefault()
-      if (e.keyCode === 13) {
-        this.sendUserInput(this.chatInput.value)
-        this.chatInput.value = ''
-      }
-    })
-  }
-
-  clientConnected () {
-    this.client.localUser.on('message', (source, targets, messageText) => {
-      this.displayServerMessage(source, messageText)
-    })
-    this.client.localUser.on('notice', (source, targets, noticeText) => {
-      this.displayServerNotice(source, noticeText)
-    })
-    this.client.localUser.on('joinedChannel', this.localUserJoinedChannel.bind(this))
-    this.client.localUser.on('partedChannel', this.localUserPartedChannel.bind(this))
-  }
-
-  localUserJoinedChannel (channel) {
-    channel.on('message', (source, messageText) => {
-      this.displayChannelMessage(channel, source, messageText)
-    })
-
-    channel.on('action', (source, messageText) => {
-      this.displayChannelMessage(channel, null, `* ${source.nickName} ${messageText}`)
-    })
-
-    channel.on('topic', (source, topic) => { this.displayChannelTopic(channel, source) })
-    channel.on('userList', () => {
-      channel.users.forEach(channelUser => {
-        channelUser.user.on('nickName', () => {
-          this.displayChannelUsers(channel)
-        })
-
-        channelUser.on('modes', () => {
-          this.displayChannelUsers(channel)
-        })
-      })
-      this.displayChannelUsers(channel)
-    })
-    channel.on('userJoinedChannel', (channelUser) => {
-      channelUser.user.on('nickName', () => {
-        this.displayChannelUsers(channelUser.channel)
-      })
-      channelUser.on('modes', () => {
-        this.displayChannelUsers(channelUser.channel)
-      })
-      this.displayChannelUsers(channel)
-    })
-    channel.on('userLeftChannel', (channelUser) => {
-      this.displayChannelUsers(channel)
-    })
-    channel.on('userKicked', (_) => { this.displayChannelUsers(channel) })
-
-    this.addChannelToList(channel)
-    this.networkListController.viewChannel(channel)
-  }
-
-  addChannelToList (channel) {
+  createChannelView (channel) {
     let channelTableView = document.createElement('table')
     channelTableView.style.display = 'none'
     channelTableView.cellSpacing = 0
@@ -288,61 +302,8 @@ class ClientUI {
     }, false)
 
     this.channelViews[channel.name] = channelTableView
+
     document.getElementById('right-column').appendChild(channelTableView)
-  }
-
-  localUserPartedChannel (channel) {
-    this.leaveChannel(channel)
-  }
-
-  showChannelModes (channel) {
-    let prompt = new BrowserWindow({
-      width: 500,
-      height: 300,
-      resizable: false,
-      parent: null,
-      skipTaskbar: true,
-      alwaysOnTop: false,
-      useContentSize: false,
-      modal: true,
-      title: `[${channel.name}] Channel Modes`
-    })
-
-    prompt.setMenu(null)
-    prompt.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
-
-    prompt.on('keyup', (e) => {
-      if (e.keyCode === 27) {
-        prompt.close()
-      }
-    })
-  }
-
-  viewServer () {
-    if (this.selectedChannel) {
-      this.channelViews[this.selectedChannel.name].style.display = 'none'
-    }
-    this.serverView.style.display = 'block'
-  }
-
-  viewChannel (oldChannel, newChannel) {
-    this.serverView.style.display = 'none'
-
-    if (oldChannel) {
-      this.channelViews[oldChannel.name].style.display = 'none'
-    }
-
-    this.channelViews[newChannel.name].style.display = 'table'
-
-    this.displayChannelTopic(newChannel)
-    this.displayChannelUsers(newChannel)
-  }
-
-  leaveChannel (channel) {
-    let channelView = this.channelViews[channel.name]
-    channelView.parentElement.removeChild(channelView)
-
-    delete this.channelViews[channel.name]
   }
 
   displayServerAction (text) {
@@ -375,7 +336,7 @@ class ClientUI {
       }
     }
 
-    text = text.replace(/[^\x20-\xFF]/g, "");
+    text = text.replace(/[^\x20-\xFF]/g, '')
 
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
@@ -404,7 +365,7 @@ class ClientUI {
       }
     }
 
-    text = text.replace(/[^\x20-\xFF]/g, "");
+    text = text.replace(/[^\x20-\xFF]/g, '')
 
     let now = new Date()
     let formattedText = `[${strftime('%H:%M', now)}] ${senderName} ${text}`
@@ -442,8 +403,8 @@ class ClientUI {
   }
 
   displayChannelAction (channelName, source, text) {
-    text = text.replace(/[^\x20-\xFF]/g, "");
-    
+    text = text.replace(/[^\x20-\xFF]/g, '')
+
     let linkedText = Autolinker.link(text, {
       stripPrefix: false,
       newWindow: false,
@@ -482,7 +443,7 @@ class ClientUI {
       }
     }
 
-    text = text.replace(/[\x00-\x1F]/g, "");
+    text = text.replace(/[\x00-\x1F]/g, '') // eslint-disable-line no-control-regex
 
     let linkedText = Autolinker.link(text, {
       stripPrefix: false,
@@ -757,10 +718,6 @@ class ClientUI {
     })
   }
 
-  focusInputField () {
-    this.chatInput.focus()
-  }
-
   sendAction (text) {
     let firstSpace = text.substring(1).indexOf(' ')
     let action = text.substring(1, firstSpace + 1)
@@ -832,6 +789,10 @@ class ClientUI {
       }
     }
   }
+
+  focusInputField () {
+    this.chatInput.focus()
+  }
 }
 
-module.exports = ClientUI
+module.exports = IrcChatController
