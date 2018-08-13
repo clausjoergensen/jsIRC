@@ -1,12 +1,11 @@
 {
   "name": "jsIRC",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "JavaScript IRC Client",
   "main": "app.js",
   "scripts": {
-    "start": "electron .",
     "test": "mocha --timeout 5000",
-    "gendocs": "jsdoc irc -r -t ./node_modules/docdash/  --readme ./irc/README.md --destination docs"
+    "gendocs": "jsdoc src -r -t ./node_modules/docdash/  --readme ./README.md --destination docs"
   },
   "keywords": [
     "irc"
@@ -18,18 +17,13 @@
   "license": "MIT",
   "devDependencies": {
     "docdash": "^0.4.0",
-    "electron": "^2.0.6",
-    "electron-debug": "^2.0.0",
     "electron-log": "^2.2.16",
     "jquery": "^3.3.1",
     "jsdoc": "^3.5.5",
-    "long": "^4.0.0",
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "autolinker": "^1.7.1",
-    "electron-prompt": "^1.1.0-1",
-    "max-listeners-exceeded-warning": "0.0.1",
+    "long": "^4.0.0",
     "strftime": "^0.10.0"
   }
 }

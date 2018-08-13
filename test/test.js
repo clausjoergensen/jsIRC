@@ -1,7 +1,7 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const { IrcClient, IrcFloodPreventer, CtcpClient } = require('./../irc/index.js')
+const { IrcClient, IrcFloodPreventer, CtcpClient } = require('./../src/index.js')
 const log = require('electron-log')
 
 log.transports.file.level = false

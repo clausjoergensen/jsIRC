@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>IrcChannel.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CtcpClient.html">CtcpClient</a><ul class='methods'><li data-type='method'><a href="CtcpClient.html#action">action</a></li><li data-type='method'><a href="CtcpClient.html#finger">finger</a></li><li data-type='method'><a href="CtcpClient.html#ping">ping</a></li><li data-type='method'><a href="CtcpClient.html#time">time</a></li><li data-type='method'><a href="CtcpClient.html#version">version</a></li></ul></li><li><a href="IrcChannel.html">IrcChannel</a><ul class='methods'><li data-type='method'><a href="IrcChannel.html#ban">ban</a></li><li data-type='method'><a href="IrcChannel.html#getChannelUser">getChannelUser</a></li><li data-type='method'><a href="IrcChannel.html#getModes">getModes</a></li><li data-type='method'><a href="IrcChannel.html#invite">invite</a></li><li data-type='method'><a href="IrcChannel.html#kick">kick</a></li><li data-type='method'><a href="IrcChannel.html#part">part</a></li><li data-type='method'><a href="IrcChannel.html#sendMessage">sendMessage</a></li><li data-type='method'><a href="IrcChannel.html#sendNotice">sendNotice</a></li><li data-type='method'><a href="IrcChannel.html#setModes">setModes</a></li><li data-type='method'><a href="IrcChannel.html#toString">toString</a></li><li data-type='method'><a href="IrcChannel.html#unban">unban</a></li></ul></li><li><a href="IrcChannelUser.html">IrcChannelUser</a><ul class='methods'><li data-type='method'><a href="IrcChannelUser.html#ban">ban</a></li><li data-type='method'><a href="IrcChannelUser.html#deop">deop</a></li><li data-type='method'><a href="IrcChannelUser.html#devoice">devoice</a></li><li data-type='method'><a href="IrcChannelUser.html#kick">kick</a></li><li data-type='method'><a href="IrcChannelUser.html#op">op</a></li><li data-type='method'><a href="IrcChannelUser.html#toString">toString</a></li><li data-type='method'><a href="IrcChannelUser.html#voice">voice</a></li></ul></li><li><a href="IrcClient.html">IrcClient</a><ul class='methods'><li data-type='method'><a href="IrcClient.html#connect">connect</a></li><li data-type='method'><a href="IrcClient.html#getMessageOfTheDay">getMessageOfTheDay</a></li><li data-type='method'><a href="IrcClient.html#getNetworkInfo">getNetworkInfo</a></li><li data-type='method'><a href="IrcClient.html#getServerLinks">getServerLinks</a></li><li data-type='method'><a href="IrcClient.html#getServerStatistics">getServerStatistics</a></li><li data-type='method'><a href="IrcClient.html#getServerTime">getServerTime</a></li><li data-type='method'><a href="IrcClient.html#getServerVersion">getServerVersion</a></li><li data-type='method'><a href="IrcClient.html#listChannels">listChannels</a></li><li data-type='method'><a href="IrcClient.html#oper">oper</a></li><li data-type='method'><a href="IrcClient.html#ping">ping</a></li><li data-type='method'><a href="IrcClient.html#queryWho">queryWho</a></li><li data-type='method'><a href="IrcClient.html#queryWhoIs">queryWhoIs</a></li><li data-type='method'><a href="IrcClient.html#queryWhoWas">queryWhoWas</a></li><li data-type='method'><a href="IrcClient.html#quit">quit</a></li><li data-type='method'><a href="IrcClient.html#sendRawMessage">sendRawMessage</a></li><li data-type='method'><a href="IrcClient.html#toString">toString</a></li></ul></li><li><a href="IrcFloodPreventer.html">IrcFloodPreventer</a><ul class='methods'><li data-type='method'><a href="IrcFloodPreventer.html#getSendDelay">getSendDelay</a></li><li data-type='method'><a href="IrcFloodPreventer.html#messageSent">messageSent</a></li></ul></li><li><a href="IrcLocalUser.html">IrcLocalUser</a><ul class='methods'><li data-type='method'><a href="IrcLocalUser.html#getChannelUsers">getChannelUsers</a></li><li data-type='method'><a href="IrcLocalUser.html#getModes">getModes</a></li><li data-type='method'><a href="IrcLocalUser.html#sendMessage">sendMessage</a></li><li data-type='method'><a href="IrcLocalUser.html#sendNotice">sendNotice</a></li><li data-type='method'><a href="IrcLocalUser.html#setAway">setAway</a></li><li data-type='method'><a href="IrcLocalUser.html#setModes">setModes</a></li><li data-type='method'><a href="IrcLocalUser.html#setNickName">setNickName</a></li><li data-type='method'><a href="IrcLocalUser.html#toString">toString</a></li><li data-type='method'><a href="IrcLocalUser.html#unsetAway">unsetAway</a></li><li data-type='method'><a href="IrcLocalUser.html#whoIs">whoIs</a></li><li data-type='method'><a href="IrcLocalUser.html#whoWas">whoWas</a></li></ul></li><li><a href="IrcServer.html">IrcServer</a><ul class='methods'><li data-type='method'><a href="IrcServer.html#toString">toString</a></li></ul></li><li><a href="IrcUser.html">IrcUser</a><ul class='methods'><li data-type='method'><a href="IrcUser.html#getChannelUsers">getChannelUsers</a></li><li data-type='method'><a href="IrcUser.html#toString">toString</a></li><li data-type='method'><a href="IrcUser.html#whoIs">whoIs</a></li><li data-type='method'><a href="IrcUser.html#whoWas">whoWas</a></li></ul></li><li><a href="IrcUtils.html">IrcUtils</a><ul class='methods'><li data-type='method'><a href="IrcUtils.html#.updateModes">updateModes</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="CtcpClient.html#event:clientInfo">clientInfo</a></li><li><a href="CtcpClient.html#event:finger">finger</a></li><li><a href="CtcpClient.html#event:ping">ping</a></li><li><a href="CtcpClient.html#event:rawMessage">rawMessage</a></li><li><a href="CtcpClient.html#event:time">time</a></li><li><a href="CtcpClient.html#event:version">version</a></li><li><a href="IrcChannel.html#event:action">action</a></li><li><a href="IrcChannel.html#event:message">message</a></li><li><a href="IrcChannel.html#event:modes">modes</a></li><li><a href="IrcChannel.html#event:notice">notice</a></li><li><a href="IrcChannel.html#event:previewMessage">previewMessage</a></li><li><a href="IrcChannel.html#event:previewNotice">previewNotice</a></li><li><a href="IrcChannel.html#event:topic">topic</a></li><li><a href="IrcChannel.html#event:userInvite">userInvite</a></li><li><a href="IrcChannel.html#event:userJoinedChannel">userJoinedChannel</a></li><li><a href="IrcChannel.html#event:userKicked">userKicked</a></li><li><a href="IrcChannel.html#event:userLeftChannel">userLeftChannel</a></li><li><a href="IrcChannel.html#event:userQuit">userQuit</a></li><li><a href="IrcChannelUser.html#event:channel">channel</a></li><li><a href="IrcChannelUser.html#event:modes">modes</a></li><li><a href="IrcClient.html#event:banList">banList</a></li><li><a href="IrcClient.html#event:bounce">bounce</a></li><li><a href="IrcClient.html#event:channelList">channelList</a></li><li><a href="IrcClient.html#event:channelMode">channelMode</a></li><li><a href="IrcClient.html#event:clientInfo">clientInfo</a></li><li><a href="IrcClient.html#event:connected">connected</a></li><li><a href="IrcClient.html#event:connecting">connecting</a></li><li><a href="IrcClient.html#event:connectionClosed">connectionClosed</a></li><li><a href="IrcClient.html#event:connectionError">connectionError</a></li><li><a href="IrcClient.html#event:disconnected">disconnected</a></li><li><a href="IrcClient.html#event:error">error</a></li><li><a href="IrcClient.html#event:motd">motd</a></li><li><a href="IrcClient.html#event:networkInfo">networkInfo</a></li><li><a href="IrcClient.html#event:notice">notice</a></li><li><a href="IrcClient.html#event:ping">ping</a></li><li><a href="IrcClient.html#event:pong">pong</a></li><li><a href="IrcClient.html#event:protocolError">protocolError</a></li><li><a href="IrcClient.html#event:registered">registered</a></li><li><a href="IrcClient.html#event:serverLinks">serverLinks</a></li><li><a href="IrcClient.html#event:serverStatistics">serverStatistics</a></li><li><a href="IrcClient.html#event:serverSupportedFeatures">serverSupportedFeatures</a></li><li><a href="IrcClient.html#event:serverTime">serverTime</a></li><li><a href="IrcClient.html#event:serverVersion">serverVersion</a></li><li><a href="IrcClient.html#event:whoIsReply">whoIsReply</a></li><li><a href="IrcClient.html#event:whoReply">whoReply</a></li><li><a href="IrcClient.html#event:whoWasReply">whoWasReply</a></li><li><a href="IrcLocalUser.html#event:action">action</a></li><li><a href="IrcLocalUser.html#event:awayMessage">awayMessage</a></li><li><a href="IrcLocalUser.html#event:hopCount">hopCount</a></li><li><a href="IrcLocalUser.html#event:idleDuration">idleDuration</a></li><li><a href="IrcLocalUser.html#event:invite">invite</a></li><li><a href="IrcLocalUser.html#event:isAway">isAway</a></li><li><a href="IrcLocalUser.html#event:isOperator">isOperator</a></li><li><a href="IrcLocalUser.html#event:joinedChannel">joinedChannel</a></li><li><a href="IrcLocalUser.html#event:message">message</a></li><li><a href="IrcLocalUser.html#event:modes">modes</a></li><li><a href="IrcLocalUser.html#event:nickName">nickName</a></li><li><a href="IrcLocalUser.html#event:notice">notice</a></li><li><a href="IrcLocalUser.html#event:partedChannel">partedChannel</a></li><li><a href="IrcLocalUser.html#event:previewMessage">previewMessage</a></li><li><a href="IrcLocalUser.html#event:previewNotice">previewNotice</a></li><li><a href="IrcLocalUser.html#event:quit">quit</a></li><li><a href="IrcLocalUser.html#event:realName">realName</a></li><li><a href="IrcLocalUser.html#event:serverInfo">serverInfo</a></li><li><a href="IrcLocalUser.html#event:serverName">serverName</a></li><li><a href="IrcLocalUser.html#event:userName">userName</a></li><li><a href="IrcUser.html#event:action">action</a></li><li><a href="IrcUser.html#event:awayMessage">awayMessage</a></li><li><a href="IrcUser.html#event:hopCount">hopCount</a></li><li><a href="IrcUser.html#event:idleDuration">idleDuration</a></li><li><a href="IrcUser.html#event:invite">invite</a></li><li><a href="IrcUser.html#event:isAway">isAway</a></li><li><a href="IrcUser.html#event:isOperator">isOperator</a></li><li><a href="IrcUser.html#event:joinedChannel">joinedChannel</a></li><li><a href="IrcUser.html#event:message">message</a></li><li><a href="IrcUser.html#event:nickName">nickName</a></li><li><a href="IrcUser.html#event:notice">notice</a></li><li><a href="IrcUser.html#event:partedChannel">partedChannel</a></li><li><a href="IrcUser.html#event:previewMessage">previewMessage</a></li><li><a href="IrcUser.html#event:previewNotice">previewNotice</a></li><li><a href="IrcUser.html#event:quit">quit</a></li><li><a href="IrcUser.html#event:realName">realName</a></li><li><a href="IrcUser.html#event:serverInfo">serverInfo</a></li><li><a href="IrcUser.html#event:serverName">serverName</a></li><li><a href="IrcUser.html#event:userName">userName</a></li></ul><h3>Global</h3><ul><li><a href="global.html#IrcChannelType">IrcChannelType</a></li><li><a href="global.html#IrcError">IrcError</a></li><li><a href="global.html#IrcReply">IrcReply</a></li><li><a href="global.html#IrcServerStatisticalEntry">IrcServerStatisticalEntry</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">IrcChannel.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Copyright (c) 2018 Claus Jørgensen
+'use strict'
+
+const events = require('events')
+const { EventEmitter } = events
+const IrcUtils = require('./IrcUtils.js')
+const IrcChannelType = require('./IrcChannelType.js')
+
+/**
+ * Represents an IRC channel that exists on a specific IrcClient.
+ *
+ * @class
+ * @extends EventEmitter
+ */
+class IrcChannel extends EventEmitter {
+  /**
+   * Constructs a new IrcChannel for a given {@link IrcClient}.
+   *
+   * @private
+   * @hideconstructor
+   * @param {IrcClient} client The IrcClient instance.
+   * @param {string} name The channel name.
+  */
+  constructor (client, name) {
+    super()
+    this._client = client
+    this._name = name
+    this._topic = null
+    this._channelType = IrcChannelType.unspecified
+    this._modes = []
+    this._users = []
+  }
+
+  /**
+   * Gets the client to which the channel belongs.
+   *
+   * @public
+   * @return {IrcClient} The IRC client.
+   */
+  get client () {
+    return this._client
+  }
+
+  /**
+   * Gets the name of the channel.
+   *
+   * @public
+   * @return {string} Name of the Channel.
+   */
+  get name () {
+    return this._name
+  }
+
+  /**
+   * Gets a read-only list of the modes the channel currently has.
+   *
+   * @public
+   * @return {string[]} List of the modes the channel currently has.
+   */
+  get modes () {
+    return this._modes
+  }
+
+  /*
+   * Gets a list of all channel users currently in the channel.
+   *
+   * @public
+   * @return {IrcChannelUser[]} list of all channel users currently in the channel
+   */
+  get users () {
+    return this._users
+  }
+
+  /*
+   * Gets the current topic of the channel.
+   *
+   * @public
+   * @return {string} The current topic of the channel.
+   */
+  get channelType () {
+    return this._channelType
+  }
+
+  /*
+   * Gets the current topic of the channel.
+   *
+   * @public
+   * @return {string} The current topic of the channel.
+   */
+  get topic () {
+    return this._topic
+  }
+
+  /**
+   * Gets the IrcChannelUser in the channel that corresponds to the specified IrcUser, or null if none is found.
+   *
+   * @public
+   * @param {IrcUser} user The IrcUser for which to look.
+   * @return {IrcChannelUser} The corresponding IrcChannelUser.
+   */
+  getChannelUser (user) {
+    return this.users.find(u => u.user === user)
+  }
+
+  /**
+   * Requests a list of the current modes of the channel, or if modes is specified, the settings for the specified modes.
+   *
+   * @public
+   * @param {string[]} [modes=null] The modes for which to get the current settings,
+   * or null for all current channel modes.
+   */
+  getModes (modes = null) {
+    this.client.getChannelModes(this, modes)
+  }
+
+  /**
+   * Sets the specified modes on the channel.
+   *
+   * @public
+   * @param {string} modes The mode string that specifies mode changes,
+   *  which takes the form &lt;code>( "+" / "-" ) *( mode character )&lt;/code>
+   * @param {string[]} [modeParameters=null] A array of parameters to the modes, or null for no parameters
+   */
+  setModes (modes, modeParameters = null) {
+    this.client.setChannelModes(this, modes, modeParameters)
+  }
+
+  /**
+   * Leaves the channel, giving the specified comment.
+   *
+   * @public
+   * @param {string} [comment=null] The comment to send the server upon leaving the channel, or null for no comment.
+   */
+  part (comment = null) {
+    this.client.leaveChannel(this.name, comment)
+  }
+
+  /**
+   * Kicks a user from the channel, optionally with a reason
+   *
+   * @public
+   * @param {string} userNickName The User Nick Name.
+   * @param {string} [reason=null] The kick reason.
+   */
+  kick (userNickName, reason = null) {
+    this.client.kick(this, [userNickName], reason)
+  }
+
+  /**
+   * Invites a user to the channel.
+   *
+   * @public
+   * @param {string} userNickName The User Nick Name.
+   */
+  invite (userNickName) {
+    this.client.invite(this, userNickName)
+  }
+
+  /**
+   * Bans a hostMask from the channel.
+   *
+   * @public
+   */
+  ban (hostMask) {
+    this.setModes('+b', [hostMask])
+  }
+
+  /**
+   * Unbans a hostMask from the channel.
+   *
+   * @public
+   */
+  unban (hostMask) {
+    this.setModes('-b', [hostMask])
+  }
+
+  /**
+   * Sends a PRIVMSG to the current channel.
+   *
+   * @public
+   * @fires IrcChannel#message
+   * @param {string} messageText The message to send.
+   */
+  sendMessage (messageText) {
+    this.client.sendMessage([this.name], messageText)
+    /**
+     * @event IrcChannel#message
+     * @param {IrcUser} user
+     * @param {string} messageText
+     */
+    this.emit('message', this.client.localUser, messageText)
+  }
+
+  /**
+   * Sends a NOTICE to the current channel.
+   *
+   * @public
+   * @fires IrcChannel#notice
+   * @param {string} noticeText The notice to send.
+   */
+  sendNotice (noticeText) {
+    this.client.sendNotice([this.name], noticeText)
+    /**
+     * @event IrcChannel#notice
+     * @param {IrcUser} user
+     * @param {string} noticeText
+     */
+    this.emit('notice', this.client.localUser, noticeText)
+  }
+
+  /**
+   * Returns a string representation of this instance.
+   *
+   * @return {string} A string that represents this instance.
+   */
+  toString () {
+    return this.name
+  }
+
+  // - Internal Methods -
+
+  userJoined (channelUser) {
+    if (this.users.indexOf(channelUser) !== -1) {
+      return
+    }
+    channelUser.channel = this
+    this.users.push(channelUser)
+
+    /**
+     * @event IrcChannel#userJoinedChannel
+     * @param {IrcChannelUser} channelUser
+     */
+    this.emit('userJoinedChannel', channelUser)
+  }
+
+  userParted (channelUser, comment) {
+    let idx = this.users.indexOf(channelUser)
+    if (idx !== -1) {
+      this.users.splice(idx)
+    }
+    /**
+     * @event IrcChannel#userLeftChannel
+     * @param {IrcChannelUser} channelUser
+     */
+    this.emit('userLeftChannel', channelUser, comment)
+  }
+
+  userQuit (channelUser, comment) {
+    let idx = this.users.indexOf(channelUser)
+    if (idx !== -1) {
+      this.users.splice(idx)
+    }
+    /**
+     * @event IrcChannel#userQuit
+     * @param {IrcChannelUser} channelUser
+     * @param {string} comment
+     */
+    this.emit('userQuit', channelUser, comment)
+  }
+
+  userInvited (user) {
+    /**
+     * @event IrcChannel#userInvite
+     * @param {IrcUser} user
+     */
+    this.emit('userInvite', user)
+  }
+
+  userKicked (channelUser, comment = null) {
+    let idx = this.users.indexOf(channelUser)
+    if (idx !== -1) {
+      this.users.splice(idx)
+    }
+    /**
+     * @event IrcChannel#userKicked
+     * @param {IrcChannelUser} channelUser
+     * @param {string} comment
+     */
+    this.emit('userKicked', channelUser, comment)
+  }
+
+  userNameReply (channelUser) {
+    if (this.users.indexOf(channelUser) !== -1) {
+      return
+    }
+    channelUser.channel = this
+    this.users.push(channelUser)
+  }
+
+  topicChanged (user, newTopic) {
+    this._topic = newTopic
+    /**
+     * @event IrcChannel#topic
+     * @param {IrcUser} user
+     * @param {string} newTopic
+     */
+    this.emit('topic', user, newTopic)
+  }
+
+  modesChanged (source, newModes, newModeParameters) {
+    this._modes = IrcUtils.updateModes(this.modes,
+      newModes,
+      newModeParameters,
+      this.client.channelUserModes,
+      (add, mode, parameter) => {
+        let channelUser = this.users.find(u => u.user.nickName === parameter)
+        channelUser.modeChanged(add, mode)
+      })
+    /**
+     * @event IrcChannel#modes
+     */
+    this.emit('modes')
+  }
+
+  actionReceived (source, targets, messageText) {
+    /**
+     * @event IrcChannel#action
+     * @param {IrcUser|IrcChannel} source
+     * @param {string} messageText
+     */
+    this.emit('action', source, messageText)
+  }
+
+  messageReceived (source, targets, messageText) {
+    let previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
+    /**
+     * @event IrcChannel#previewMessage
+     * @property {boolean} handled
+     * @property {IrcUser|IrcChannel} source
+     * @property {string[]} targets
+     * @property {string} messageText
+     */
+    this.emit('previewMessage', previewMessageEventArgs)
+
+    if (!previewMessageEventArgs.handled) {
+    /**
+     * @event IrcChannel#message
+     * @param {IrcUser|IrcChannel} source
+     * @param {string} messageText
+     */
+      this.emit('message', source, messageText)
+    }
+  }
+
+  noticeReceived (source, targets, noticeText) {
+    let previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
+    /**
+     * @event IrcChannel#previewNotice
+     * @property {boolean} handled
+     * @property {IrcUser|IrcChannel} source
+     * @property {string[]} targets
+     * @property {string} noticeText
+     */
+    this.emit('previewNotice', previewNoticeEventArgs)
+
+    if (!previewNoticeEventArgs.handled) {
+      /**
+       * @event IrcChannel#notice
+       * @param {IrcUser|IrcChannel} source
+       * @param {string} noticeText
+       */
+      this.emit('notice', source, noticeText)
+    }
+  }
+
+  usersListReceived () {
+    /**
+     * @event IrcChannel#notice
+     */
+    this.emit('userList')
+  }
+
+  typeChanged (type) {
+    this._type = type
+    /**
+     * @event IrcChannel#notice
+     * @param {IrcChannelType} type
+     */
+    this.emit('type', type)
+  }
+}
+
+module.exports = IrcChannel
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Aug 13 2018 18:26:30 GMT+0200 (Romance Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

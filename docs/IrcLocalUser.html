@@ -1,0 +1,4786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>IrcLocalUser - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CtcpClient.html">CtcpClient</a><ul class='methods'><li data-type='method'><a href="CtcpClient.html#action">action</a></li><li data-type='method'><a href="CtcpClient.html#finger">finger</a></li><li data-type='method'><a href="CtcpClient.html#ping">ping</a></li><li data-type='method'><a href="CtcpClient.html#time">time</a></li><li data-type='method'><a href="CtcpClient.html#version">version</a></li></ul></li><li><a href="IrcChannel.html">IrcChannel</a><ul class='methods'><li data-type='method'><a href="IrcChannel.html#ban">ban</a></li><li data-type='method'><a href="IrcChannel.html#getChannelUser">getChannelUser</a></li><li data-type='method'><a href="IrcChannel.html#getModes">getModes</a></li><li data-type='method'><a href="IrcChannel.html#invite">invite</a></li><li data-type='method'><a href="IrcChannel.html#kick">kick</a></li><li data-type='method'><a href="IrcChannel.html#part">part</a></li><li data-type='method'><a href="IrcChannel.html#sendMessage">sendMessage</a></li><li data-type='method'><a href="IrcChannel.html#sendNotice">sendNotice</a></li><li data-type='method'><a href="IrcChannel.html#setModes">setModes</a></li><li data-type='method'><a href="IrcChannel.html#toString">toString</a></li><li data-type='method'><a href="IrcChannel.html#unban">unban</a></li></ul></li><li><a href="IrcChannelUser.html">IrcChannelUser</a><ul class='methods'><li data-type='method'><a href="IrcChannelUser.html#ban">ban</a></li><li data-type='method'><a href="IrcChannelUser.html#deop">deop</a></li><li data-type='method'><a href="IrcChannelUser.html#devoice">devoice</a></li><li data-type='method'><a href="IrcChannelUser.html#kick">kick</a></li><li data-type='method'><a href="IrcChannelUser.html#op">op</a></li><li data-type='method'><a href="IrcChannelUser.html#toString">toString</a></li><li data-type='method'><a href="IrcChannelUser.html#voice">voice</a></li></ul></li><li><a href="IrcClient.html">IrcClient</a><ul class='methods'><li data-type='method'><a href="IrcClient.html#connect">connect</a></li><li data-type='method'><a href="IrcClient.html#getMessageOfTheDay">getMessageOfTheDay</a></li><li data-type='method'><a href="IrcClient.html#getNetworkInfo">getNetworkInfo</a></li><li data-type='method'><a href="IrcClient.html#getServerLinks">getServerLinks</a></li><li data-type='method'><a href="IrcClient.html#getServerStatistics">getServerStatistics</a></li><li data-type='method'><a href="IrcClient.html#getServerTime">getServerTime</a></li><li data-type='method'><a href="IrcClient.html#getServerVersion">getServerVersion</a></li><li data-type='method'><a href="IrcClient.html#listChannels">listChannels</a></li><li data-type='method'><a href="IrcClient.html#oper">oper</a></li><li data-type='method'><a href="IrcClient.html#ping">ping</a></li><li data-type='method'><a href="IrcClient.html#queryWho">queryWho</a></li><li data-type='method'><a href="IrcClient.html#queryWhoIs">queryWhoIs</a></li><li data-type='method'><a href="IrcClient.html#queryWhoWas">queryWhoWas</a></li><li data-type='method'><a href="IrcClient.html#quit">quit</a></li><li data-type='method'><a href="IrcClient.html#sendRawMessage">sendRawMessage</a></li><li data-type='method'><a href="IrcClient.html#toString">toString</a></li></ul></li><li><a href="IrcFloodPreventer.html">IrcFloodPreventer</a><ul class='methods'><li data-type='method'><a href="IrcFloodPreventer.html#getSendDelay">getSendDelay</a></li><li data-type='method'><a href="IrcFloodPreventer.html#messageSent">messageSent</a></li></ul></li><li><a href="IrcLocalUser.html">IrcLocalUser</a><ul class='methods'><li data-type='method'><a href="IrcLocalUser.html#getChannelUsers">getChannelUsers</a></li><li data-type='method'><a href="IrcLocalUser.html#getModes">getModes</a></li><li data-type='method'><a href="IrcLocalUser.html#sendMessage">sendMessage</a></li><li data-type='method'><a href="IrcLocalUser.html#sendNotice">sendNotice</a></li><li data-type='method'><a href="IrcLocalUser.html#setAway">setAway</a></li><li data-type='method'><a href="IrcLocalUser.html#setModes">setModes</a></li><li data-type='method'><a href="IrcLocalUser.html#setNickName">setNickName</a></li><li data-type='method'><a href="IrcLocalUser.html#toString">toString</a></li><li data-type='method'><a href="IrcLocalUser.html#unsetAway">unsetAway</a></li><li data-type='method'><a href="IrcLocalUser.html#whoIs">whoIs</a></li><li data-type='method'><a href="IrcLocalUser.html#whoWas">whoWas</a></li></ul></li><li><a href="IrcServer.html">IrcServer</a><ul class='methods'><li data-type='method'><a href="IrcServer.html#toString">toString</a></li></ul></li><li><a href="IrcUser.html">IrcUser</a><ul class='methods'><li data-type='method'><a href="IrcUser.html#getChannelUsers">getChannelUsers</a></li><li data-type='method'><a href="IrcUser.html#toString">toString</a></li><li data-type='method'><a href="IrcUser.html#whoIs">whoIs</a></li><li data-type='method'><a href="IrcUser.html#whoWas">whoWas</a></li></ul></li><li><a href="IrcUtils.html">IrcUtils</a><ul class='methods'><li data-type='method'><a href="IrcUtils.html#.updateModes">updateModes</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="CtcpClient.html#event:clientInfo">clientInfo</a></li><li><a href="CtcpClient.html#event:finger">finger</a></li><li><a href="CtcpClient.html#event:ping">ping</a></li><li><a href="CtcpClient.html#event:rawMessage">rawMessage</a></li><li><a href="CtcpClient.html#event:time">time</a></li><li><a href="CtcpClient.html#event:version">version</a></li><li><a href="IrcChannel.html#event:action">action</a></li><li><a href="IrcChannel.html#event:message">message</a></li><li><a href="IrcChannel.html#event:modes">modes</a></li><li><a href="IrcChannel.html#event:notice">notice</a></li><li><a href="IrcChannel.html#event:previewMessage">previewMessage</a></li><li><a href="IrcChannel.html#event:previewNotice">previewNotice</a></li><li><a href="IrcChannel.html#event:topic">topic</a></li><li><a href="IrcChannel.html#event:userInvite">userInvite</a></li><li><a href="IrcChannel.html#event:userJoinedChannel">userJoinedChannel</a></li><li><a href="IrcChannel.html#event:userKicked">userKicked</a></li><li><a href="IrcChannel.html#event:userLeftChannel">userLeftChannel</a></li><li><a href="IrcChannel.html#event:userQuit">userQuit</a></li><li><a href="IrcChannelUser.html#event:channel">channel</a></li><li><a href="IrcChannelUser.html#event:modes">modes</a></li><li><a href="IrcClient.html#event:banList">banList</a></li><li><a href="IrcClient.html#event:bounce">bounce</a></li><li><a href="IrcClient.html#event:channelList">channelList</a></li><li><a href="IrcClient.html#event:channelMode">channelMode</a></li><li><a href="IrcClient.html#event:clientInfo">clientInfo</a></li><li><a href="IrcClient.html#event:connected">connected</a></li><li><a href="IrcClient.html#event:connecting">connecting</a></li><li><a href="IrcClient.html#event:connectionClosed">connectionClosed</a></li><li><a href="IrcClient.html#event:connectionError">connectionError</a></li><li><a href="IrcClient.html#event:disconnected">disconnected</a></li><li><a href="IrcClient.html#event:error">error</a></li><li><a href="IrcClient.html#event:motd">motd</a></li><li><a href="IrcClient.html#event:networkInfo">networkInfo</a></li><li><a href="IrcClient.html#event:notice">notice</a></li><li><a href="IrcClient.html#event:ping">ping</a></li><li><a href="IrcClient.html#event:pong">pong</a></li><li><a href="IrcClient.html#event:protocolError">protocolError</a></li><li><a href="IrcClient.html#event:registered">registered</a></li><li><a href="IrcClient.html#event:serverLinks">serverLinks</a></li><li><a href="IrcClient.html#event:serverStatistics">serverStatistics</a></li><li><a href="IrcClient.html#event:serverSupportedFeatures">serverSupportedFeatures</a></li><li><a href="IrcClient.html#event:serverTime">serverTime</a></li><li><a href="IrcClient.html#event:serverVersion">serverVersion</a></li><li><a href="IrcClient.html#event:whoIsReply">whoIsReply</a></li><li><a href="IrcClient.html#event:whoReply">whoReply</a></li><li><a href="IrcClient.html#event:whoWasReply">whoWasReply</a></li><li><a href="IrcLocalUser.html#event:action">action</a></li><li><a href="IrcLocalUser.html#event:awayMessage">awayMessage</a></li><li><a href="IrcLocalUser.html#event:hopCount">hopCount</a></li><li><a href="IrcLocalUser.html#event:idleDuration">idleDuration</a></li><li><a href="IrcLocalUser.html#event:invite">invite</a></li><li><a href="IrcLocalUser.html#event:isAway">isAway</a></li><li><a href="IrcLocalUser.html#event:isOperator">isOperator</a></li><li><a href="IrcLocalUser.html#event:joinedChannel">joinedChannel</a></li><li><a href="IrcLocalUser.html#event:message">message</a></li><li><a href="IrcLocalUser.html#event:modes">modes</a></li><li><a href="IrcLocalUser.html#event:nickName">nickName</a></li><li><a href="IrcLocalUser.html#event:notice">notice</a></li><li><a href="IrcLocalUser.html#event:partedChannel">partedChannel</a></li><li><a href="IrcLocalUser.html#event:previewMessage">previewMessage</a></li><li><a href="IrcLocalUser.html#event:previewNotice">previewNotice</a></li><li><a href="IrcLocalUser.html#event:quit">quit</a></li><li><a href="IrcLocalUser.html#event:realName">realName</a></li><li><a href="IrcLocalUser.html#event:serverInfo">serverInfo</a></li><li><a href="IrcLocalUser.html#event:serverName">serverName</a></li><li><a href="IrcLocalUser.html#event:userName">userName</a></li><li><a href="IrcUser.html#event:action">action</a></li><li><a href="IrcUser.html#event:awayMessage">awayMessage</a></li><li><a href="IrcUser.html#event:hopCount">hopCount</a></li><li><a href="IrcUser.html#event:idleDuration">idleDuration</a></li><li><a href="IrcUser.html#event:invite">invite</a></li><li><a href="IrcUser.html#event:isAway">isAway</a></li><li><a href="IrcUser.html#event:isOperator">isOperator</a></li><li><a href="IrcUser.html#event:joinedChannel">joinedChannel</a></li><li><a href="IrcUser.html#event:message">message</a></li><li><a href="IrcUser.html#event:nickName">nickName</a></li><li><a href="IrcUser.html#event:notice">notice</a></li><li><a href="IrcUser.html#event:partedChannel">partedChannel</a></li><li><a href="IrcUser.html#event:previewMessage">previewMessage</a></li><li><a href="IrcUser.html#event:previewNotice">previewNotice</a></li><li><a href="IrcUser.html#event:quit">quit</a></li><li><a href="IrcUser.html#event:realName">realName</a></li><li><a href="IrcUser.html#event:serverInfo">serverInfo</a></li><li><a href="IrcUser.html#event:serverName">serverName</a></li><li><a href="IrcUser.html#event:userName">userName</a></li></ul><h3>Global</h3><ul><li><a href="global.html#IrcChannelType">IrcChannelType</a></li><li><a href="global.html#IrcError">IrcError</a></li><li><a href="global.html#IrcReply">IrcReply</a></li><li><a href="global.html#IrcServerStatisticalEntry">IrcServerStatisticalEntry</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">IrcLocalUser</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        IrcLocalUser
+        </h2>
+        
+            <div class="class-description">Represents an local IRC user that exists on a specific <a href="IrcClient.html">IrcClient</a>.</div>
+        
+    
+</header>
+
+<article>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="IrcUser.html">IrcUser</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="awayMessage"><span class="type-signature"></span>awayMessage<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line266">line 266</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#awayMessage">IrcUser#awayMessage</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the current away message received when the user was seen as away.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="client"><span class="type-signature"></span>client<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#client">IrcUser#client</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the client on which the user exists.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="hopCount"><span class="type-signature"></span>hopCount<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line289">line 289</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#hopCount">IrcUser#hopCount</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the hop count of the user, which is the number of servers between the user and the server on which theclient is connected, within the network.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="idleDuration"><span class="type-signature"></span>idleDuration<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line154">line 154</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#idleDuration">IrcUser#idleDuration</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the duration for which the user has been idle. This is set when a Who Is response is received.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isAway"><span class="type-signature"></span>isAway<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line244">line 244</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#isAway">IrcUser#isAway</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets whether the user has been been seen as away. This value is always up-to-date for the local user;though it is only updated for remote users when a private message is sent to them or a Who Is responseis received for the user.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isLocalUser"><span class="type-signature"></span>isLocalUser<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#isLocalUser">IrcUser#isLocalUser</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets wheather the user is a local user.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isOnline"><span class="type-signature"></span>isOnline<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line69">line 69</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#isOnline">IrcUser#isOnline</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets whether the user is currently connected to the IRC network.This value may not be always be up-to-date.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isOperator"><span class="type-signature"></span>isOperator<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line176">line 176</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#isOperator">IrcUser#isOperator</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets whether the user is a server operator.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="modes"><span class="type-signature"></span>modes<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets a read-only collection of the modes the user currently has.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="nickName"><span class="type-signature"></span>nickName<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line88">line 88</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#nickName">IrcUser#nickName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the current nick name of the user.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="realName"><span class="type-signature"></span>realName<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line132">line 132</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#realName">IrcUser#realName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the host name of the user.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="serverInfo"><span class="type-signature"></span>serverInfo<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line220">line 220</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#serverInfo">IrcUser#serverInfo</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets arbitrary information about the server to which the user is connected.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="serverName"><span class="type-signature"></span>serverName<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#serverName">IrcUser#serverName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the name of the server to which the user is connected.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="userName"><span class="type-signature"></span>userName<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line110">line 110</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="IrcUser.html#userName">IrcUser#userName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets the current user name of the user. This value never changes until the user reconnects.
+</div>
+
+
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="getChannelUsers"><span class="type-signature"></span>getChannelUsers<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;<a href="IrcChannelUser.html">IrcChannelUser</a>>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line332">line 332</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#getChannelUsers">IrcUser#getChannelUsers</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Gets a array of all channel users that correspond to the user.Each IrcChannelUser represents a channel of which the user is currently a member.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A array of all IrcChannelUser object that correspond to the IrcUser.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="IrcChannelUser.html">IrcChannelUser</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getModes"><span class="type-signature"></span>getModes<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line101">line 101</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Requests a list of the current modes of the user.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sendMessage"><span class="type-signature"></span>sendMessage<span class="signature">(targets, text)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line81">line 81</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sends a message to the specified target.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>targets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A array of the names of targets to which to send the notice.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The text of the notice to send.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sendNotice"><span class="type-signature"></span>sendNotice<span class="signature">(targets, text)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line92">line 92</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sends a notice to the specified target.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>targets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A array of the names of targets to which to send the notice.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The text of the notice to send.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setAway"><span class="type-signature"></span>setAway<span class="signature">(text)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sets the local user as away, giving the specified message.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The text of the response sent to a user when they try to message you while away.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setModes"><span class="type-signature"></span>setModes<span class="signature">(modes)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sets the specified modes on the local user.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>modes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The mode string that specifies mode changes,which takes the form <code>( "+" / "-" ) *( mode character )</code></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setNickName"><span class="type-signature"></span>setNickName<span class="signature">(nickName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line51">line 51</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sets the nick name of the local user to the specified text.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nickName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The new nick name of the local user.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line349">line 349</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#toString">IrcUser#toString</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Returns a string representation of this instance.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A string that represents this instance.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="unsetAway"><span class="type-signature"></span>unsetAway<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line70">line 70</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sets the local user as here (no longer away).
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="whoIs"><span class="type-signature"></span>whoIs<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line311">line 311</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#whoIs">IrcUser#whoIs</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sends a Who Is query to server for the user.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="whoWas"><span class="type-signature"></span>whoWas<span class="signature">(entriesCount<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line321">line 321</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#whoWas">IrcUser#whoWas</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Sends a Who Was query to server for the user.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>entriesCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The maximum number of entries that the server should return. Specify -1 for unlimited.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+        <h3 class="subsection-title">Events</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:action">action</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line400">line 400</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:action">IrcUser#event:action</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcUser.html">IrcUser</a></span>
+|
+
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>messageText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:awayMessage">awayMessage</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line277">line 277</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:awayMessage">IrcUser#event:awayMessage</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:hopCount">hopCount</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line300">line 300</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:hopCount">IrcUser#event:hopCount</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:idleDuration">idleDuration</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line165">line 165</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:idleDuration">IrcUser#event:idleDuration</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:invite">invite</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line391">line 391</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:invite">IrcUser#event:invite</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>channel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcUser.html">IrcUser</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:isAway">isAway</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line255">line 255</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:isAway">IrcUser#event:isAway</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:isOperator">isOperator</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line187">line 187</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:isOperator">IrcUser#event:isOperator</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:joinedChannel">joinedChannel</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line375">line 375</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:joinedChannel">IrcUser#event:joinedChannel</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>channel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:message">message</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line420">line 420</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:message">IrcUser#event:message</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcUser.html">IrcUser</a></span>
+|
+
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>messageText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:modes">modes</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcLocalUser.js.html">IrcLocalUser.js</a>, <a href="IrcLocalUser.js.html#line122">line 122</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:nickName">nickName</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line99">line 99</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:nickName">IrcUser#event:nickName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:notice">notice</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line441">line 441</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:notice">IrcUser#event:notice</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcUser.html">IrcUser</a></span>
+|
+
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>noticeText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:partedChannel">partedChannel</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line383">line 383</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:partedChannel">IrcUser#event:partedChannel</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>channel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:previewMessage">previewMessage</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line410">line 410</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:previewMessage">IrcUser#event:previewMessage</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>handled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcUser.html">IrcUser</a></span>
+|
+
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>targets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>messageText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:previewNotice">previewNotice</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line431">line 431</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:previewNotice">IrcUser#event:previewNotice</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>handled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="IrcUser.html">IrcUser</a></span>
+|
+
+<span class="param-type"><a href="IrcChannel.html">IrcChannel</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>targets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>noticeText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:quit">quit</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line367">line 367</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:quit">IrcUser#event:quit</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>comment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:realName">realName</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line143">line 143</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:realName">IrcUser#event:realName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:serverInfo">serverInfo</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:serverInfo">IrcUser#event:serverInfo</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:serverName">serverName</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line209">line 209</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:serverName">IrcUser#event:serverName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:userName">userName</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="IrcUser.js.html">IrcUser.js</a>, <a href="IrcUser.js.html#line121">line 121</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="IrcUser.html#event:userName">IrcUser#event:userName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Aug 13 2018 18:26:30 GMT+0200 (Romance Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
