@@ -2,6 +2,7 @@
 'use strict'
 
 const Long = require('long')
+const { ArgumentNullError } = require('./Errors.js')
 
 /**
  * Represents a flood protector that throttles data sent by the client according to the standard rules implemented
@@ -17,6 +18,14 @@ class IrcFloodPreventer {
    * @param {number} counterPeriod The number of milliseconds between each decrement of the message counter.
    */
   constructor (maxMessageBurst, counterPeriod) {
+    if (!maxMessageBurst) {
+      throw new ArgumentNullError('maxMessageBurst')
+    }
+    
+    if (!counterPeriod) {
+      throw new ArgumentNullError('counterPeriod')
+    }
+    
     this._lastCounterDecrementTime = Long.fromInt(0)
     this._messageCounter = 0
     this._maxMessageBurst = maxMessageBurst

@@ -3,6 +3,7 @@
 
 const events = require('events')
 const { EventEmitter } = events
+const { ArgumentNullError } = require('./Errors.js')
 
 /**
  * Represents an IRC user that exists on a specific channel on a specific IrcClient.
@@ -15,11 +16,17 @@ class IrcChannelUser extends EventEmitter {
    * Constructs a new IrcChannelUser for a given {@link IrcUser}.
    *
    * @hideconstructor
+   * @throws {ArgumentNullError} if a parameter is null.
    * @param {IrcUser} user The IrcUser on the channel.
    * @param {string[]} [modes] Array of channel modes.
   */
   constructor (user, modes = null) {
     super()
+
+    if (!user) {
+      throw new ArgumentNullError('user')
+    }
+
     this._user = user
     this._modes = modes || []
     this._channel = null
@@ -134,8 +141,7 @@ class IrcChannelUser extends EventEmitter {
     return `${this._channel.name}/${this._user.nickName}`
   }
 
-  // - Internal Methods
-
+  /** @package */
   modeChanged (add, mode) {
     if (add) {
       this._modes.push(mode)

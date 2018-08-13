@@ -274,48 +274,60 @@ class IrcClient extends EventEmitter {
 
   // - Proxy Methods
 
+  /** @package */
   joinChannel (channelName) {
     this.sendMessageJoin([channelName])
   }
 
+  /** @package */
   leaveChannel (channelName, comment) {
     this.sendMessagePart([channelName], comment)
   }
 
+  /** @package */
   setNickName (nickName) {
     this.sendMessageNick(nickName)
   }
 
+  /** @package */
   setTopic (channelName, topic) {
     this.sendMessageTopic(channelName, topic)
   }
 
+  /** @package */
   kick (channel, usersNickNames, reason) {
     this.sendMessageKick(channel.name, usersNickNames, reason)
   }
 
+  /** @package */
   invite (channel, nickName) {
     this.sendMessageInvite(channel.name, nickName)
   }
 
+  /** @package */
   getChannelModes (channel, modes = null) {
     this.sendMessageChannelMode(channel.name, modes)
   }
 
+  /** @package */
   setChannelModes (channel, modes, modeParameters) {
     this.sendMessageChannelMode(channel.name, modes, modeParameters)
   }
 
+  /** @package */
+  /** @private */
   sendMessage (targets, messageText) {
     this.sendMessagePrivateMessage(targets, messageText)
   }
 
+  /** @package */
   sendNotice (targets, noticeText) {
     this.sendMessagePrivateMessage(targets, noticeText)
   }
 
   // - Socket Operations
 
+  /** @private */
   connected () {
     if (this.registrationInfo.password != null) {
       this.sendMessagePassword(this.registrationInfo.password)
@@ -344,6 +356,7 @@ class IrcClient extends EventEmitter {
     this.emit('connected')
   }
 
+  /** @private */
   connectionError (error) {
     if (this._sendTimer != null) {
       clearInterval(this._sendTimer)
@@ -355,6 +368,7 @@ class IrcClient extends EventEmitter {
     this.emit('connectionError', error)
   }
 
+  /** @private */
   connectionClosed (hadError) {
     if (this._sendTimer != null) {
       clearInterval(this._sendTimer)
@@ -366,6 +380,7 @@ class IrcClient extends EventEmitter {
     this.emit('connectionClosed', hadError)
   }
 
+  /** @private */
   disconnected (reason) {
     if (this._sendTimer != null) {
       clearInterval(this._sendTimer)
@@ -377,6 +392,7 @@ class IrcClient extends EventEmitter {
     this.emit('disconnected', reason)
   }
 
+  /** @private */
   resetState () {
     this._messageSendQueue = []
     this._socket = new net.Socket()
@@ -406,6 +422,7 @@ class IrcClient extends EventEmitter {
     this.listedStatsEntries = []
   }
 
+  /** @private */
   dataReceived (data) {
     let str = data.toString()
     if (str == null) {
@@ -423,6 +440,7 @@ class IrcClient extends EventEmitter {
 
   // - Data Parsing
 
+  /** @private */
   parseMessage (line) {
     let prefix = null
     let lineAfterPrefix = null
@@ -479,10 +497,12 @@ class IrcClient extends EventEmitter {
     }, line)
   }
 
+  /** @private */
   readMessage (message, line) {
     this._messageProcessor.processMessage(message)
   }
 
+  /** @private */
   writePendingMessages () {
     let sendDelay = 0
 
@@ -511,6 +531,7 @@ class IrcClient extends EventEmitter {
     this._sendTimer = setInterval(() => this.writePendingMessages(), Math.max(sendDelay, 50))
   }
 
+  /** @private */
   writeMessage (prefix, command, parameters = []) {
     if (command == null) {
       throw new Error('Invalid Command.')
@@ -543,188 +564,234 @@ class IrcClient extends EventEmitter {
 
   // - Message Sending
 
+  /** @private */
   sendMessagePassword (password) {
     this.writeMessage(null, 'PASS', [password])
   }
 
+  /** @private */
   sendMessageNick (nickName) {
     this.writeMessage(null, 'NICK', [nickName])
   }
 
+  /** @private */
   sendMessageUser (userName, userMode, realName) {
     this.writeMessage(null, 'USER', [userName, userMode, '*', realName])
   }
 
+  /** @private */
   sendMessageService (nickName, distribution, description = '') {
     this.writeMessage(null, 'SERVICE', [nickName, distribution, '0', '0', description])
   }
 
+  /** @private */
   sendMessageOper (userName, password) {
     this.writeMessage(null, 'OPER', [userName, password])
   }
 
+  /** @private */
   sendMessageUserMode (nickName, modes = null) {
     this.writeMessage(null, 'MODE', [nickName, modes])
   }
 
+  /** @private */
   sendMessageQuit (comment) {
     this.writeMessage(null, 'QUIT', [comment])
   }
 
+  /** @private */
   sendMessageSQuit (targetServer, comment) {
     this.writeMessage(null, 'SQUIT', [targetServer, comment])
   }
 
+  /** @private */
   sendMessageLeaveAll () {
     this.writeMessage(null, 'JOIN', ['0'])
   }
 
+  /** @private */
   sendMessageJoin (channels) {
     this.writeMessage(null, 'JOIN', [channels.join(',')])
   }
 
+  /** @private */
   sendMessagePart (channels, comment = null) {
     this.writeMessage(null, 'PART', [channels.join(','), comment])
   }
 
+  /** @private */
   sendMessageChannelMode (channel, modes = null, modeParameters = null) {
     this.writeMessage(null, 'MODE', [channel, modes, modeParameters == null ? null : modeParameters.join(',')])
   }
 
+  /** @private */
   sendMessageTopic (channel, topic = null) {
     this.writeMessage(null, 'TOPIC', [channel, topic])
   }
 
+  /** @private */
   sendMessageNames (channels = null, targetServer = null) {
     this.writeMessage(null, 'NAMES', [channels == null ? null : channels.join(','), targetServer])
   }
 
+  /** @private */
   sendMessageList (channels = null, targetServer = null) {
     this.writeMessage(null, 'LIST', [channels == null ? null : channels.join(','), targetServer])
   }
 
+  /** @private */
   sendMessageInvite (channel, nickName) {
     this.writeMessage(null, 'INVITE', [nickName, channel])
   }
 
+  /** @private */
   sendMessageKick (channelName, nickNames, comment = null) {
     this.writeMessage(null, 'KICK', [channelName, nickNames.join(','), comment])
   }
 
+  /** @private */
   sendMessagePrivateMessage (targets, text) {
     this.writeMessage(null, 'PRIVMSG', [targets.join(','), text])
   }
 
+  /** @private */
   sendMessageNotice (targets, text) {
     this.writeMessage(null, 'NOTICE', [targets.join(','), text])
   }
 
+  /** @private */
   sendMessageMotd (targetServer = null) {
     this.writeMessage(null, 'MOTD', [targetServer])
   }
 
+  /** @private */
   sendMessageLUsers (serverMask = null, targetServer = null) {
     this.writeMessage(null, 'LUSERS', [serverMask, targetServer])
   }
 
+  /** @private */
   sendMessageVersion (targetServer = null) {
     this.writeMessage(null, 'VERSION', [targetServer])
   }
 
+  /** @private */
   sendMessageStats (query = null, targetServer = null) {
     this.writeMessage(null, 'STATS', [query, targetServer])
   }
 
+  /** @private */
   sendMessageLinks (serverMask = null, targetServer = null) {
     this.writeMessage(null, 'LINKS', [serverMask, targetServer])
   }
 
+  /** @private */
   sendMessageTime (targetServer = null) {
     this.writeMessage(null, 'TIME', [targetServer])
   }
 
+  /** @private */
   sendMessageConnect (hostName, port, targetServer = null) {
     this.writeMessage(null, 'CONNECT', [hostName, port.toString(), targetServer])
   }
 
+  /** @private */
   sendMessageTrace (targetServer = null) {
     this.writeMessage(null, 'TRACE', [targetServer])
   }
 
+  /** @private */
   sendMessageAdmin (targetServer = null) {
     this.writeMessage(null, 'ADMIN', [targetServer])
   }
 
+  /** @private */
   sendMessageInfo (targetServer = null) {
     this.writeMessage(null, 'INFO', [targetServer])
   }
 
+  /** @private */
   sendMessageServiceList (mask = null, type = null) {
     this.writeMessage(null, 'SERVLIST', [mask, type])
   }
 
+  /** @private */
   sendMessageSQuery (serviceName, text) {
     this.writeMessage(null, 'SQUERY', [serviceName, text])
   }
 
+  /** @private */
   sendMessageKill (nickName, comment) {
     this.writeMessage(null, 'KILL', [nickName, comment])
   }
 
+  /** @private */
   sendMessageWhoWas (nickNames, entriesCount = -1, targetServer = null) {
     this.writeMessage(null, 'WHOWAS', [nickNames.join(','), entriesCount.toString(), targetServer])
   }
 
+  /** @private */
   sendMessageWhoIs (nickNameMasks, targetServer = null) {
     this.writeMessage(null, 'WHOIS', [targetServer, nickNameMasks.join(',')])
   }
 
+  /** @private */
   sendMessageWho (mask = null, onlyOperators = false) {
     this.writeMessage(null, 'WHO', [mask, onlyOperators ? 'o' : null])
   }
 
+  /** @private */
   sendMessagePing (server, targetServer = null) {
     this.writeMessage(null, 'PING', [server, targetServer])
   }
 
+  /** @private */
   sendMessagePong (server, targetServer = null) {
     this.writeMessage(null, 'PONG', [server, targetServer])
   }
 
+  /** @private */
   sendMessageAway (text = null) {
     this.writeMessage(null, 'AWAY', [text])
   }
 
+  /** @private */
   sendMessageRehash () {
     this.writeMessage(null, 'REHASH')
   }
 
+  /** @private */
   sendMessageDie () {
     this.writeMessage(null, 'DIE')
   }
 
+  /** @private */
   sendMessageRestart () {
     this.writeMessage(null, 'RESTART')
   }
 
+  /** @private */
   sendMessageUsers (targetServer = null) {
     this.writeMessage(null, 'USERS', [targetServer])
   }
 
+  /** @private */
   sendMessageWallops (text) {
     this.writeMessage(null, 'WALLOPS', [text])
   }
 
+  /** @private */
   sendMessageUserHost (nickNames) {
     this.writeMessage(null, 'USERHOST', nickNames)
   }
 
+  /** @private */
   sendMessageIsOn (nickNames) {
     this.writeMessage(null, 'ISON', nickNames)
   }
 
   // -- Utils
 
+  /** @private */
   getNumericUserMode (modes) {
     let value = 0
     if (modes == null) {
@@ -739,6 +806,7 @@ class IrcClient extends EventEmitter {
     return value
   }
 
+  /** @private */
   getSourceFromPrefix (prefix) {
     if (prefix == null) {
       return null
@@ -775,6 +843,7 @@ class IrcClient extends EventEmitter {
     throw new Error('The source of the message was not recognised as either a server or user.')
   }
 
+  /** @private */
   getServerFromHostName (hostName) {
     let existingServer = this.servers.find(s => s.hostName === hostName)
     if (existingServer != null) {
@@ -785,6 +854,7 @@ class IrcClient extends EventEmitter {
     return newServer
   }
 
+  /** @private */
   getUserFromNickName (nickName, isOnline = true) {
     let existingUser = this.users.find(u => u.nickName === nickName)
     if (existingUser != null) {

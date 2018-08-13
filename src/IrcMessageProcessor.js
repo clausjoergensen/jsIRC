@@ -22,7 +22,7 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
  *
  * @class
  * @extends EventEmitter
- * @private
+ * @package
  */
 class IrcMessageProcessor {
   /**
@@ -135,14 +135,20 @@ class IrcMessageProcessor {
     }
   }
 
-  // - Internal Methods
-
+  /**
+   * Process NICK messages received from the server.
+   * @private
+   */
   processMessageNick (message) {
     let sourceUser = message.source
     let newNickName = message.parameters[0]
     sourceUser.nickName = newNickName
   }
 
+  /**
+   * Process QUIT messages received from the server.
+   * @private
+   */
   processMessageQuit (message) {
     let sourceUser = message.source
     let comment = message.parameters[0]
@@ -155,7 +161,10 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process JOIN messages received from the server.
+  /**
+   * Process JOIN messages received from the server.
+   * @private
+   */
   processMessageJoin (message) {
     let sourceUser = message.source
     let channelList = message.parameters[0].split(',')
@@ -170,7 +179,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process PART messages received from the server.
+  /**
+   * Process PART messages received from the server.
+   * @private
+   */
   processMessagePart (message) {
     let sourceUser = message.source
     let channelList = message.parameters[0].split(',')
@@ -187,7 +199,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process MODE messages received from the server.
+  /**
+   * Process MODE messages received from the server.
+   * @private
+   */
   processMessageMode (message) {
     function isChannelName (channelName) {
       return regexChannelName.test(channelName)
@@ -213,13 +228,19 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process TOPIC messages received from the server.
+  /**
+   * Process TOPIC messages received from the server.
+   * @private
+   */
   processMessageTopic (message) {
     let channel = this.getChannelFromName(message.parameters[0])
     channel.topicChanged(message.source, message.parameters[1])
   }
 
-  // Process KICK messages received from the server.
+  /**
+   * Process KICK messages received from the server.
+   * @private
+   */
   processMessageKick (message) {
     let channels = message.parameters[0].split(',').map(n => this.getChannelFromName(n))
     let users = message.parameters[1].split(',').map(n => this.client.getUserFromNickName(n))
@@ -244,14 +265,20 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process INVITE messages received from the server.
+  /**
+   * Process INVITE messages received from the server.
+   * @private
+   */
   processMessageInvite (message) {
     let user = this.client.getUserFromNickName(message.parameters[0])
     let channel = this.getChannelFromName(message.parameters[1])
     user.inviteReceived(message.source, channel)
   }
 
-  // Process PRIVMSG messages received from the server.
+  /**
+   * Process PRIVMSG messages received from the server.
+   * @private
+   */
   processMessagePrivateMessage (message) {
     let targetNames = message.parameters[0].split(',')
     let messageText = message.parameters[1]
@@ -266,7 +293,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process NOTICE messages received from the server.
+  /**
+   * Process NOTICE messages received from the server.
+   * @private
+   */
   processMessageNotice (message) {
     let targetNames = message.parameters[0].split(',')
     let noticeText = message.parameters[1]
@@ -290,7 +320,10 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process PING messages received from the server.
+  /**
+   * Process PING messages received from the server.
+   * @private
+   */
   processMessagePing (message) {
     let server = message.parameters[0]
     let targetServer = message.parameters[1]
@@ -306,7 +339,10 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process PONG messages received from the server.
+  /**
+   * Process PONG messages received from the server.
+   * @private
+   */
   processMessagePong (message) {
     let server = message.parameters[0]
     /**
@@ -316,7 +352,10 @@ class IrcMessageProcessor {
     this.client.emit('pong', server)
   }
 
-  // Process ERROR messages received from the server.
+  /**
+   * Process ERROR messages received from the server.
+   * @private
+   */
   processMessageError (message) {
     let errorMessage = message.parameters[0]
     /**
@@ -326,9 +365,10 @@ class IrcMessageProcessor {
     this.client.emit('error', errorMessage)
   }
 
-  // - Message Responding
-
-  // Process RPL_WELCOME responses from the server.
+  /**
+   * Process RPL_WELCOME responses from the server.
+   * @private
+   */
   processMessageReplyWelcome (message) {
     let welcomeMessage = message.parameters[1].split(' ')
     let hostMask = welcomeMessage[welcomeMessage.length - 1]
@@ -344,17 +384,26 @@ class IrcMessageProcessor {
     this.client.emit('registered')
   }
 
-  // Process RPL_YOURHOST responses from the server.
+  /**
+   * Process RPL_YOURHOST responses from the server.
+   * @private
+   */
   processMessageReplyYourHost (message) {
     this.client.yourHostMessage = message.parameters[1]
   }
 
-  // Process RPL_CREATED responses from the server.
+  /**
+   * Process RPL_CREATED responses from the server.
+   * @private
+   */
   processMessageReplyCreated (message) {
     this.client.serverCreatedMessage = message.parameters[1]
   }
 
-  // Process RPL_MYINFO responses from the server.
+  /**
+   * Process RPL_MYINFO responses from the server.
+   * @private
+   */
   processMessageReplyMyInfo (message) {
     this.client.serverName = message.parameters[1]
     this.client.serverVersion = message.parameters[2]
@@ -367,7 +416,10 @@ class IrcMessageProcessor {
     this.client.emit('clientInfo')
   }
 
-  // Process RPL_BOUNCE and RPL_ISUPPORT responses from the server.
+  /**
+   * Process RPL_BOUNCE and RPL_ISUPPORT responses from the server.
+   * @private
+   */
   processMessageReplyBounceOrISupport (message) {
     if (message.parameters[1].startsWith('Try Server')) {
       // RPL_BOUNCE
@@ -402,7 +454,10 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process RPL_STATSLINKINFO responses from the server.
+  /**
+   * Process RPL_STATSLINKINFO responses from the server.
+   * @private
+   */
   processMessageStatsLinkInfo (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.connection,
@@ -410,7 +465,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSCOMMANDS responses from the server.
+  /**
+   * Process RPL_STATSCOMMANDS responses from the server.
+   * @private
+   */
   processMessageStatsCommands (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.command,
@@ -418,7 +476,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSCLINE responses from the server.
+  /**
+   * Process RPL_STATSCLINE responses from the server.
+   * @private
+   */
   processMessageStatsCLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedServerConnect,
@@ -426,7 +487,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSNLINE responses from the server.
+  /**
+   * Process RPL_STATSNLINE responses from the server.
+   * @private
+   */
   processMessageStatsNLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedServerAccept,
@@ -434,7 +498,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSILINE responses from the server.
+  /**
+   * Process RPL_STATSILINE responses from the server.
+   * @private
+   */
   processMessageStatsILine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedClient,
@@ -442,7 +509,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSKLINE responses from the server.
+  /**
+   * Process RPL_STATSKLINE responses from the server.
+   * @private
+   */
   processMessageStatsKLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.bannedClient,
@@ -450,7 +520,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSYLINE responses from the server.
+  /**
+   * Process RPL_STATSYLINE responses from the server.
+   * @private
+   */
   processMessageStatsYLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.connectionClass,
@@ -458,7 +531,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_ENDOFSTATS responses from the server.
+  /**
+   * Process RPL_ENDOFSTATS responses from the server.
+   * @private
+   */
   processMessageEndOfStats (message) {
     /**
      * @event IrcClient#serverStatistics
@@ -467,7 +543,10 @@ class IrcMessageProcessor {
     this.listedStatsEntries = []
   }
 
-  // Process RPL_STATSLLINE responses from the server.
+  /**
+   * Process RPL_STATSLLINE responses from the server.
+   * @private
+   */
   processMessageStatsLLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.leafDepth,
@@ -475,7 +554,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSUPTIME responses from the server.
+  /**
+   * Process RPL_STATSUPTIME responses from the server.
+   * @private
+   */
   processMessageStatsUpTime (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.uptime,
@@ -483,7 +565,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSOLINE responses from the server.
+  /**
+   * Process RPL_STATSOLINE responses from the server.
+   * @private
+   */
   processMessageStatsOLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedOperator,
@@ -491,7 +576,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_STATSHLINE responses from the server.
+  /**
+   * Process RPL_STATSHLINE responses from the server.
+   * @private
+   */
   processMessageStatsHLine (message) {
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.hubServer,
@@ -499,7 +587,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_LUSERCLIENT responses from the server.
+  /**
+   * Process RPL_LUSERCLIENT responses from the server.
+   * @private
+   */
   processMessageLUserClient (message) {
     let info = message.parameters[1]
     let infoParts = info.split(' ')
@@ -515,7 +606,10 @@ class IrcMessageProcessor {
     this.client.emit('networkInfo', networkInfo)
   }
 
-  // Process RPL_LUSEROP responses from the server.
+  /**
+   * Process RPL_LUSEROP responses from the server.
+   * @private
+   */
   processMessageLUserOp (message) {
     let networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
     /**
@@ -524,7 +618,10 @@ class IrcMessageProcessor {
     this.client.emit('networkInfo', networkInfo)
   }
 
-  // Process RPL_LUSERUNKNOWN responses from the server.
+  /**
+   * Process RPL_LUSERUNKNOWN responses from the server.
+   * @private
+   */
   processMessageLUserUnknown (message) {
     let networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
     /**
@@ -533,7 +630,10 @@ class IrcMessageProcessor {
     this.client.emit('networkInfo', networkInfo)
   }
 
-  // Process RPL_LUSERCHANNELS responses from the server.
+  /**
+   * Process RPL_LUSERCHANNELS responses from the server.
+   * @private
+   */
   processMessageLUserChannels (message) {
     let networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
     /**
@@ -542,7 +642,10 @@ class IrcMessageProcessor {
     this.client.emit('networkInfo', networkInfo)
   }
 
-  // Process RPL_LUSERME responses from the server.
+  /**
+   * Process RPL_LUSERME responses from the server.
+   * @private
+   */
   processMessageLUserMe (message) {
     let networkInfo = {}
     let info = message.parameters[1]
@@ -571,14 +674,20 @@ class IrcMessageProcessor {
     this.client.emit('networkInfo', networkInfo)
   }
 
-  // Process RPL_AWAY responses from the server.
+  /**
+   * Process RPL_AWAY responses from the server.
+   * @private
+   */
   processMessageReplyAway (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     user.awayMessage = message.parameters[2]
     user.isAway = true
   }
 
-  // Process RPL_ISON responses from the server.
+  /**
+   * Process RPL_ISON responses from the server.
+   * @private
+   */
   processMessageReplyIsOn (message) {
     let onlineUserNames = message.parameters[1].split(' ')
     onlineUserNames.forEach(name => {
@@ -587,17 +696,26 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_UNAWAY responses from the server.
+  /**
+   * Process RPL_UNAWAY responses from the server.
+   * @private
+   */
   processMessageReplyUnAway (message) {
     this.client.localUser.isAway = false
   }
 
-  // Process RPL_NOWAWAY responses from the server.
+  /**
+   * Process RPL_NOWAWAY responses from the server.
+   * @private
+   */
   processMessageReplyNowAway (message) {
     this.client.localUser.isAway = true
   }
 
-  // Process RPL_WHOISUSER responses from the server.
+  /**
+   * Process RPL_WHOISUSER responses from the server.
+   * @private
+   */
   processMessageReplyWhoIsUser (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     user.userName = message.parameters[2]
@@ -605,20 +723,29 @@ class IrcMessageProcessor {
     user.realName = message.parameters[5]
   }
 
-  // Process RPL_WHOISSERVER responses from the server.
+  /**
+   * Process RPL_WHOISSERVER responses from the server.
+   * @private
+   */
   processMessageReplyWhoIsServer (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     user.serverName = message.parameters[2]
     user.serverInfo = message.parameters[3]
   }
 
-  // Process RPL_WHOISOPERATOR responses from the server.
+  /**
+   * Process RPL_WHOISOPERATOR responses from the server.
+   * @private
+   */
   processMessageReplyWhoIsOperator (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     user.isOperator = true
   }
 
-  // Process RPL_WHOWASUSER responses from the server.
+  /**
+   * Process RPL_WHOWASUSER responses from the server.
+   * @private
+   */
   processMessageReplyWhoWasUser (message) {
     let user = this.client.getUserFromNickName(message.parameters[1], false)
     user.userName = message.parameters[2]
@@ -626,7 +753,10 @@ class IrcMessageProcessor {
     user.realName = message.parameters[5]
   }
 
-  // Process RPL_ENDOFWHO responses from the server.
+  /**
+   * Process RPL_ENDOFWHO responses from the server.
+   * @private
+   */
   processMessageReplyEndOfWho (message) {
     let mask = message.parameters[1]
     /**
@@ -636,13 +766,19 @@ class IrcMessageProcessor {
     this.client.emit('whoReply', mask)
   }
 
-  // Process RPL_WHOISIDLE responses from the server.
+  /**
+   * Process RPL_WHOISIDLE responses from the server.
+   * @private
+   */
   processMessageReplyWhoIsIdle (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     user.idleDuration = parseInt(message.parameters[2])
   }
 
-  // Process RPL_ENDOFWHOIS responses from the server.
+  /**
+   * Process RPL_ENDOFWHOIS responses from the server.
+   * @private
+   */
   processMessageReplyEndOfWhoIs (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     /**
@@ -652,7 +788,10 @@ class IrcMessageProcessor {
     this.client.emit('whoIsReply', user)
   }
 
-  // Process RPL_WHOISCHANNELS responses from the server.
+  /**
+   * Process RPL_WHOISCHANNELS responses from the server.
+   * @private
+   */
   processMessageReplyWhoIsChannels (message) {
     let user = this.client.getUserFromNickName(message.parameters[1])
     let channelIds = message.parameters[2].split(' ')
@@ -668,7 +807,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_LIST responses from the server.
+  /**
+   * Process RPL_LIST responses from the server.
+   * @private
+   */
   processMessageReplyList (message) {
     let channelName = message.parameters[1]
     let visibleUsersCount = parseInt(message.parameters[2])
@@ -681,7 +823,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_LISTEND responses from the server.
+  /**
+   * Process RPL_LISTEND responses from the server.
+   * @private
+   */
   processMessageReplyListEnd (message) {
     /**
      * @event IrcClient#channelList
@@ -691,7 +836,10 @@ class IrcMessageProcessor {
     this.client.listedChannels = []
   }
 
-  // Process processMessageReplyListEnd responses from the server
+  /**
+   * Process processMessageReplyListEnd responses from the server
+   * @private
+   */
   processMessageReplyChannelModes (message) {
     let channel = this.getChannelFromName(message.parameters[0])
     let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
@@ -709,26 +857,38 @@ class IrcMessageProcessor {
       channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
   }
 
-  // Process RPL_NOTOPIC responses from the server.
+  /**
+   * Process RPL_NOTOPIC responses from the server.
+   * @private
+   */
   processMessageReplyNoTopic (message) {
     let channel = this.getChannelFromName(message.parameters[1])
     channel.topicChanged(null, null)
   }
 
-  // Process RPL_TOPIC responses from the server.
+  /**
+   * Process RPL_TOPIC responses from the server.
+   * @private
+   */
   processMessageReplyTopic (message) {
     let channel = this.getChannelFromName(message.parameters[1])
     channel.topicChanged(null, message.parameters[2])
   }
 
-  // Process RPL_INVITING responses from the server.
+  /**
+   * Process RPL_INVITING responses from the server.
+   * @private
+   */
   processMessageReplyInviting (message) {
     let invitedUser = this.client.getUserFromNickName(message.parameters[1])
     let channel = this.getChannelFromName(message.parameters[2])
     channel.userInvited(invitedUser)
   }
 
-  // Process RPL_VERSION responses from the server.
+  /**
+   * Process RPL_VERSION responses from the server.
+   * @private
+   */
   processMessageReplyVersion (message) {
     let versionInfo = message.parameters[1]
     let versionSplitIndex = versionInfo.lastIndexOf('.')
@@ -752,7 +912,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_WHOREPLY responses from the server.
+  /**
+   * Process RPL_WHOREPLY responses from the server.
+   * @private
+   */
   processMessageReplyWhoReply (message) {
     let channel = message.parameters[1] === '*' ? null : this.getChannelFromName(message.parameters[1])
     let user = this.client.getUserFromNickName(message.parameters[5])
@@ -793,7 +956,10 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process RPL_NAMEREPLY responses from the server.
+  /**
+   * Process RPL_NAMEREPLY responses from the server.
+   * @private
+   */
   processMessageReplyNameReply (message) {
     function getChannelType (type) {
       switch (type) {
@@ -825,7 +991,10 @@ class IrcMessageProcessor {
     }
   }
 
-  // Process RPL_LINKS responses from the server.
+  /**
+   * Process RPL_LINKS responses from the server.
+   * @private
+   */
   processMessageReplyLinks (message) {
     let hostName = message.parameters[1]
     let infoParts = message.parameters[3].split(' ')
@@ -835,7 +1004,10 @@ class IrcMessageProcessor {
     this.client.listedServerLinks.push({ 'hostName': hostName, 'hopCount': hopCount, 'info': info })
   }
 
-  // Process RPL_ENDOFLINKS responses from the server.
+  /**
+   * Process RPL_ENDOFLINKS responses from the server.
+   * @private
+   */
   processMessageReplyEndOfLinks (message) {
     /**
      * @event IrcClient#serverLinks
@@ -845,13 +1017,19 @@ class IrcMessageProcessor {
     this.client.listedServerLinks = []
   }
 
-  // Process RPL_ENDOFNAMES responses from the server.
+  /**
+   * Process RPL_ENDOFNAMES responses from the server.
+   * @private
+   */
   processMessageReplyEndOfNames (message) {
     let channel = this.getChannelFromName(message.parameters[1])
     channel.usersListReceived()
   }
 
-  // Process RPL_BANLIST responses from the server.
+  /**
+   * Process RPL_BANLIST responses from the server.
+   * @private
+   */
   processMessageReplyBanList (message) {
     if (!(this.banList)) {
       this.banList = []
@@ -867,7 +1045,10 @@ class IrcMessageProcessor {
     })
   }
 
-  // Process RPL_ENDOFBANLIST responses from the server.
+  /**
+   * Process RPL_ENDOFBANLIST responses from the server.
+   * @private
+   */
   processMessageReplyBanListEnd (message) {
     let channel = this.getChannelFromName(message.parameters[1])
     /**
@@ -878,7 +1059,10 @@ class IrcMessageProcessor {
     this.banList = []
   }
 
-  // Process RPL_ENDOFWHOWAS responses from the server.
+  /**
+   * Process RPL_ENDOFWHOWAS responses from the server.
+   * @private
+   */
   processMessageReplyEndOfWhoWas (message) {
     /**
      * @event IrcClient#whoWasReply
@@ -887,17 +1071,26 @@ class IrcMessageProcessor {
     this.client.emit('whoWasReply', this.client.getUserFromNickName(message.parameters[1], false))
   }
 
-  // Process RPL_MOTD responses from the server.
+  /**
+   * Process RPL_MOTD responses from the server.
+   * @private
+   */
   processMessageReplyMotd (message) {
     this.client.messageOfTheDay += message.parameters[1] + '\r\n'
   }
 
-  // Process RPL_MOTDSTART responses from the server.
+  /**
+   * Process RPL_MOTDSTART responses from the server.
+   * @private
+   */
   processMessageReplyMotdStart (message) {
     this.client.messageOfTheDay = ''
   }
 
-  // Process RPL_ENDOFMOTD responses from the server.
+  /**
+   * Process RPL_ENDOFMOTD responses from the server.
+   * @private
+   */
   processMessageReplyMotdEnd (message) {
     this.client.messageOfTheDay += message.parameters[1]
     /**
@@ -907,7 +1100,10 @@ class IrcMessageProcessor {
     this.client.emit('motd', this.client.messageOfTheDay)
   }
 
-  // Process RPL_TIME responses from the server.
+  /**
+   * Process RPL_TIME responses from the server.
+   * @private
+   */
   processMessageReplyTime (message) {
     let [server, dateTime] = message.parameters
     /**
@@ -918,6 +1114,10 @@ class IrcMessageProcessor {
     this.client.emit('serverTime', server, dateTime)
   }
 
+  /**
+   * Process Numeric Errors responses from the server.
+   * @private
+   */
   processMessageNumericError (message) {
     let errorParameters = []
     let errorMessage = null
@@ -938,8 +1138,7 @@ class IrcMessageProcessor {
     this.client.emit('protocolError', parseInt(message.command), errorParameters, errorMessage)
   }
 
-  // -- Utils
-
+  /** @private */
   getChannelFromName (channelName) {
     let existingChannel = this.client.channels.find(c => c.name === channelName)
     if (existingChannel) {
@@ -950,6 +1149,7 @@ class IrcMessageProcessor {
     return newChannel
   }
 
+  /** @private */
   getMessageTarget (targetName) {
     if (!(targetName)) {
       throw new Error('targetName is null or undefined.')
@@ -1029,6 +1229,7 @@ class IrcMessageProcessor {
     throw new Error(`Invalid targetName.`)
   }
 
+  /** @private */
   getUserModeAndIdentifier (identifier) {
     let mode = identifier[0]
     let channelUserMode = this.client.channelUserModesPrefixes[mode]
@@ -1038,6 +1239,7 @@ class IrcMessageProcessor {
     return { 'mode': '', 'identifier': identifier }
   }
 
+  /** @private */
   handleISupportParameter (name, value) {
     if (name.toLowerCase() === 'prefix') {
       let prefixValueMatch = value.match(regexISupportPrefix)
@@ -1058,6 +1260,7 @@ class IrcMessageProcessor {
     }
   }
 
+  /** @private */
   getModeAndParameters (messageParameters) {
     let modes = ''
     let modeParameters = []

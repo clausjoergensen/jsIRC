@@ -6,6 +6,7 @@
  *
  * @class
  * @static
+ * @package
  * @hideconstructor
  */
 class IrcUtils {
@@ -14,7 +15,7 @@ class IrcUtils {
    *
    * The mode string is of form <code>( "+" | "-" ) ( mode character )+</code>
    *
-   * @public
+   * @package
    * @static
    * @param {string[]} existingModes
    * @param {string[]} newModes

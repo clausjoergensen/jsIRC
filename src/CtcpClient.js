@@ -4,6 +4,7 @@
 const events = require('events')
 const { EventEmitter } = events
 const log = require('electron-log')
+const { ArgumentNullError } = require('./Errors.js')
 
 const taggedDataDelimeterChar = String.fromCharCode(0x01)
 const lowLevelQuotingEscapeChar = String.fromCharCode(0x10)
@@ -33,10 +34,16 @@ class CtcpClient extends EventEmitter {
   /**
    * Constructs a new CtcpClient for a given {@link IrcClient}.
    *
+   * @throws {ArgumentNullError} if a parameter is null.
    * @param {IrcClient} client The IRC client by which the CTCP client should communicate.
    */
   constructor (client) {
     super()
+
+    if (!client) {
+      throw new ArgumentNullError('client')
+    }
+
     this._client = client
     this._client.on('connected', this.connected.bind(this))
     this._client.on('disconnected', this.disconnected.bind(this))
@@ -144,8 +151,7 @@ class CtcpClient extends EventEmitter {
     this.sendMessagePing(targets, now.getTime(), false)
   }
 
-  // - Event Handlers
-
+  /** @private */
   connected () {
     let localUser = this.client.localUser
     if (localUser == null) {
@@ -163,6 +169,7 @@ class CtcpClient extends EventEmitter {
     localUser.on('previewNotice', this._localUserPreviewNoticeEventListener)
   }
 
+  /** @private */
   disconnected () {
     let localUser = this.client.localUser
     if (localUser == null) {
@@ -175,6 +182,7 @@ class CtcpClient extends EventEmitter {
     localUser.off('previewNotice', this._localUserPreviewNoticeEventListener)
   }
 
+  /** @private */
   joinedChannel (channel) {
     this._channelPreviewMessageEventListeners[channel] = this.previewMessage.bind(this)
     this._channelPreviewNoticeEventListeners[channel] = this.previewNotice.bind(this)
@@ -183,19 +191,23 @@ class CtcpClient extends EventEmitter {
     channel.on('previewNotice', this._channelPreviewNoticeEventListeners[channel])
   }
 
+  /** @private */
   leftChannel (channel) {
     channel.off('previewMessage', this._channelPreviewMessageEventListeners[channel])
     channel.off('previewNotice', this._channelPreviewNoticeEventListeners[channel])
   }
 
+  /** @private */
   previewMessage (e) {
     e.handled = this.readMessage(e, false)
   }
 
+  /** @private */
   previewNotice (e) {
     e.handled = this.readMessage(e, true)
   }
 
+  /** @private */
   readMessage (e, isNotice) {
     if (!(e.text[0] === taggedDataDelimeterChar && e.text[e.text.length - 1] === taggedDataDelimeterChar)) {
       return false
@@ -233,8 +245,7 @@ class CtcpClient extends EventEmitter {
     return true
   }
 
-  // - Message Processors
-
+  /** @private */
   processMessageAction (message) {
     if (message.isResponse) {
       return
@@ -243,6 +254,7 @@ class CtcpClient extends EventEmitter {
     message.targets.forEach(t => t.actionReceived(message.source, message.targets, message.data))
   }
 
+  /** @private */
   processMessageVersion (message) {
     if (message.isResponse) {
       let versionInfo = message.data
@@ -258,6 +270,7 @@ class CtcpClient extends EventEmitter {
     }
   }
 
+  /** @private */
   processMessagePing (message) {
     if (message.isResponse) {
       let now = new Date().getTime()
@@ -274,6 +287,7 @@ class CtcpClient extends EventEmitter {
     }
   }
 
+  /** @private */
   processMessageTime (message) {
     if (message.isResponse) {
       let dateTime = message.data
@@ -289,6 +303,7 @@ class CtcpClient extends EventEmitter {
     }
   }
 
+  /** @private */
   processMessageFinger (message) {
     if (message.isResponse) {
       /**
@@ -303,6 +318,7 @@ class CtcpClient extends EventEmitter {
     }
   }
 
+  /** @private */
   processMessageClientInfo (message) {
     if (message.isResponse) {
       /**
@@ -317,32 +333,37 @@ class CtcpClient extends EventEmitter {
     }
   }
 
-  // - Message Sending
-
+  /** @private */
   sendMessageAction (targets, text) {
     this.writeMessage(targets, 'ACTION', text)
   }
 
+  /** @private */
   sendMessageTime (targets, info, isResponse) {
     this.writeMessage(targets, 'TIME', info, isResponse)
   }
 
+  /** @private */
   sendMessageVersion (targets, info, isResponse) {
     this.writeMessage(targets, 'VERSION', info, isResponse)
   }
 
+  /** @private */
   sendMessagePing (targets, info, isResponse) {
     this.writeMessage(targets, 'PING', info, isResponse)
   }
 
+  /** @private */
   sendMessageFinger (targets, info, isResponse) {
     this.writeMessage(targets, 'FINGER', info, isResponse)
   }
 
+  /** @private */
   sendMessageClientInfo (targets, info, isResponse) {
     this.writeMessage(targets, 'CLIENTINFO', info, isResponse)
   }
 
+  /** @private */
   writeMessage (targets, tag, data = null, isResponse = false) {
     let taggedData = data == null ? tag.toUpperCase() : tag.toUpperCase() + ' ' + data
     let text = taggedDataDelimeterChar + lowLevelQuote(ctcpQuote(taggedData)) + taggedDataDelimeterChar
@@ -355,18 +376,21 @@ class CtcpClient extends EventEmitter {
   }
 }
 
+/** @private */
 function ctcpQuote (value) {
   return quote(value, ctcpQuotingEscapeChar, {
     taggedDataDelimeterChar: 'a'
   })
 }
 
+/** @private */
 function ctcpDequote (value) {
   return dequote(value, ctcpQuotingEscapeChar, {
     'a': taggedDataDelimeterChar
   })
 }
 
+/** @private */
 function lowLevelQuote (value) {
   return quote(value, lowLevelQuotingEscapeChar, {
     '\0': '0',
@@ -375,6 +399,7 @@ function lowLevelQuote (value) {
   })
 }
 
+/** @private */
 function lowLevelDequote (value) {
   return dequote(value, lowLevelQuotingEscapeChar, {
     '0': '\0',
@@ -383,6 +408,7 @@ function lowLevelDequote (value) {
   })
 }
 
+/** @private */
 function quote (value, escapeChar, quotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
@@ -400,6 +426,7 @@ function quote (value, escapeChar, quotedChars) {
   return output
 }
 
+/** @private */
 function dequote (value, escapeChar, dequotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
@@ -417,6 +444,7 @@ function dequote (value, escapeChar, dequotedChars) {
   return output
 }
 
+/** @private */
 function trimStart (chr, string) {
   let output = string
   while (output[0] === chr) {

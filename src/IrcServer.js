@@ -8,13 +8,13 @@ const { EventEmitter } = events
  * Represents an IRC server that exists on a specific {@link IrcClient}.
  *
  * @class
+ * @package
  * @extends EventEmitter
  */
 class IrcServer extends EventEmitter {
   /**
    * Constructs a new IrcServer for a given hostName.
    *
-   * @private
    * @hideconstructor
    * @param {string} hostName The server host name.
   */

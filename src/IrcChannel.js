@@ -5,6 +5,7 @@ const events = require('events')
 const { EventEmitter } = events
 const IrcUtils = require('./IrcUtils.js')
 const IrcChannelType = require('./IrcChannelType.js')
+const { ArgumentNullError } = require('./Errors.js')
 
 /**
  * Represents an IRC channel that exists on a specific IrcClient.
@@ -18,11 +19,21 @@ class IrcChannel extends EventEmitter {
    *
    * @private
    * @hideconstructor
+   * @throws {ArgumentNullError} if a parameter is null.
    * @param {IrcClient} client The IrcClient instance.
    * @param {string} name The channel name.
   */
   constructor (client, name) {
     super()
+
+    if (!client) {
+      throw new ArgumentNullError('client')
+    }
+
+    if (!name) {
+      throw new ArgumentNullError('name')
+    }
+
     this._client = client
     this._name = name
     this._topic = null
@@ -95,10 +106,14 @@ class IrcChannel extends EventEmitter {
    * Gets the IrcChannelUser in the channel that corresponds to the specified IrcUser, or null if none is found.
    *
    * @public
+   * @throws {ArgumentNullError} if a parameter is null.
    * @param {IrcUser} user The IrcUser for which to look.
    * @return {IrcChannelUser} The corresponding IrcChannelUser.
    */
   getChannelUser (user) {
+    if (!user) {
+      throw new ArgumentNullError('user')
+    }
     return this.users.find(u => u.user === user)
   }
 
@@ -117,11 +132,15 @@ class IrcChannel extends EventEmitter {
    * Sets the specified modes on the channel.
    *
    * @public
-   * @param {string} modes The mode string that specifies mode changes,
+   * @param {string} newModes The mode string that specifies mode changes,
    *  which takes the form <code>( "+" / "-" ) *( mode character )</code>
    * @param {string[]} [modeParameters=null] A array of parameters to the modes, or null for no parameters
    */
-  setModes (modes, modeParameters = null) {
+  setModes (newModes, modeParameters = null) {
+    if (!newModes) {
+      throw new ArgumentNullException('newModes')
+    }
+
     this.client.setChannelModes(this, modes, modeParameters)
   }
 
@@ -217,8 +236,7 @@ class IrcChannel extends EventEmitter {
     return this.name
   }
 
-  // - Internal Methods -
-
+  /** @package */
   userJoined (channelUser) {
     if (this.users.indexOf(channelUser) !== -1) {
       return
@@ -233,6 +251,7 @@ class IrcChannel extends EventEmitter {
     this.emit('userJoinedChannel', channelUser)
   }
 
+  /** @package */
   userParted (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
@@ -245,6 +264,7 @@ class IrcChannel extends EventEmitter {
     this.emit('userLeftChannel', channelUser, comment)
   }
 
+  /** @package */
   userQuit (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
@@ -258,6 +278,7 @@ class IrcChannel extends EventEmitter {
     this.emit('userQuit', channelUser, comment)
   }
 
+  /** @package */
   userInvited (user) {
     /**
      * @event IrcChannel#userInvite
@@ -266,6 +287,7 @@ class IrcChannel extends EventEmitter {
     this.emit('userInvite', user)
   }
 
+  /** @package */
   userKicked (channelUser, comment = null) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
@@ -279,6 +301,7 @@ class IrcChannel extends EventEmitter {
     this.emit('userKicked', channelUser, comment)
   }
 
+  /** @package */
   userNameReply (channelUser) {
     if (this.users.indexOf(channelUser) !== -1) {
       return
@@ -287,6 +310,7 @@ class IrcChannel extends EventEmitter {
     this.users.push(channelUser)
   }
 
+  /** @package */
   topicChanged (user, newTopic) {
     this._topic = newTopic
     /**
@@ -297,6 +321,7 @@ class IrcChannel extends EventEmitter {
     this.emit('topic', user, newTopic)
   }
 
+  /** @package */
   modesChanged (source, newModes, newModeParameters) {
     this._modes = IrcUtils.updateModes(this.modes,
       newModes,
@@ -312,6 +337,7 @@ class IrcChannel extends EventEmitter {
     this.emit('modes')
   }
 
+  /** @package */
   actionReceived (source, targets, messageText) {
     /**
      * @event IrcChannel#action
@@ -321,6 +347,7 @@ class IrcChannel extends EventEmitter {
     this.emit('action', source, messageText)
   }
 
+  /** @package */
   messageReceived (source, targets, messageText) {
     let previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
     /**
@@ -342,6 +369,7 @@ class IrcChannel extends EventEmitter {
     }
   }
 
+  /** @package */
   noticeReceived (source, targets, noticeText) {
     let previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
     /**
@@ -363,6 +391,7 @@ class IrcChannel extends EventEmitter {
     }
   }
 
+  /** @package */
   usersListReceived () {
     /**
      * @event IrcChannel#notice
@@ -370,6 +399,7 @@ class IrcChannel extends EventEmitter {
     this.emit('userList')
   }
 
+  /** @package */
   typeChanged (type) {
     this._type = type
     /**

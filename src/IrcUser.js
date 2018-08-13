@@ -350,8 +350,7 @@ class IrcUser extends EventEmitter {
     return this.nickName
   }
 
-  // - Internal Methods
-
+  /** @package */
   quit (comment) {
     let allChannelUsers = []
     this.client.channels.forEach(channel => {
@@ -371,6 +370,7 @@ class IrcUser extends EventEmitter {
     this.emit('quit', comment)
   }
 
+  /** @package */
   joinChannel (channel) {
     /**
      * @event IrcUser#joinedChannel
@@ -379,6 +379,7 @@ class IrcUser extends EventEmitter {
     this.emit('joinedChannel', channel)
   }
 
+  /** @package */
   partChannel (channel) {
     /**
      * @event IrcUser#partedChannel
@@ -387,6 +388,7 @@ class IrcUser extends EventEmitter {
     this.emit('partedChannel', channel)
   }
 
+  /** @package */
   inviteReceived (source, channel) {
     /**
      * @event IrcUser#invite
@@ -396,6 +398,7 @@ class IrcUser extends EventEmitter {
     this.emit('invite', channel, source)
   }
 
+  /** @package */
   actionReceived (source, targets, messageText) {
     /**
      * @event IrcUser#action
@@ -405,6 +408,7 @@ class IrcUser extends EventEmitter {
     this.emit('action', source, messageText)
   }
 
+  /** @package */
   messageReceived (source, targets, messageText) {
     let previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
     /**
@@ -426,6 +430,7 @@ class IrcUser extends EventEmitter {
     }
   }
 
+  /** @package */
   noticeReceived (source, targets, noticeText) {
     let previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
     /**

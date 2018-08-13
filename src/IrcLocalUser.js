@@ -3,6 +3,7 @@
 
 const IrcUtils = require('./IrcUtils.js')
 const IrcUser = require('./IrcUser.js')
+const { ArgumentNullError } = require('./Errors.js')
 
 /**
  * Represents an local IRC user that exists on a specific {@link IrcClient}.
@@ -20,6 +21,11 @@ class IrcLocalUser extends IrcUser {
   */
   constructor (client) {
     super(client)
+
+    if (!client) {
+      throw new ArgumentNullError('client')
+    }
+
     this._modes = []
   }
 
@@ -115,8 +121,7 @@ class IrcLocalUser extends IrcUser {
     this.client.SetLocalUserModes(this, `+${setModes.join('')}-${unsetModes.join('')}`)
   }
 
-  // - Internal Methods
-
+  /** @package */
   modesChanged (newModes) {
     this._modes = IrcUtils.updateModes(this._modes, newModes.split(''))
     /**
