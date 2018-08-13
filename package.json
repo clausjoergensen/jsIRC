@@ -15,6 +15,11 @@
     "email": "claus.joergensen@outlook.com"
   },
   "license": "MIT",
+  "repository" :
+  { 
+    "type" : "git"
+  , "url" : "https://github.com/clausjoergensen/jsIRC"
+  },
   "devDependencies": {
     "docdash": "^0.4.0",
     "electron-log": "^2.2.16",
