@@ -26,6 +26,5 @@ class ArgumentNullError extends ExtendableError {
 }
 
 module.exports = {
-  ArgumentNullError: ArgumentNullError,
-  InvalidArgumentError: InvalidArgumentError
+  ArgumentNullError: ArgumentNullError
 }
