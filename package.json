@@ -23,7 +23,6 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "long": "^4.0.0",
-    "strftime": "^0.10.0"
+    "long": "^4.0.0"
   }
 }
