@@ -9,19 +9,21 @@ const strftime = require('strftime')
 const prompt = require('electron-prompt')
 const path = require('path')
 const $ = require('jquery')
+const NetworkListController = require('./NetworkListController.js')
 
 class ClientUI {
   constructor (client, ctcpClient) {
     this.client = client
     this.ctcpClient = ctcpClient
-
+    
     this.chatInput = document.getElementById('chat-input')
     this.serverView = this.createServerView()
     this.channelViews = {}
-    this.navigationServerView = null
-    this.navigationChannelViews = {}
-    this.selectedChannel = null
     this.reconnectAttempt = 0
+
+    this.networkListController = new NetworkListController(client)
+    this.networkListController.on('viewChannel', this.viewChannel.bind(this))
+    this.networkListController.on('viewServer', this.viewServer.bind(this))
 
     this.setupEventListeners()
     this.focusInputField()
@@ -34,6 +36,10 @@ class ClientUI {
       event.preventDefault()
       shell.openExternal(this.href)
     })
+  }
+
+  get selectedChannel () {
+    return this.networkListController.selectedChannel
   }
 
   createServerView () {
@@ -128,17 +134,6 @@ class ClientUI {
       }
     })
 
-    this.client.on('serverSupportedFeatures', (serverSupportedFeatures) => {
-      let networkName = serverSupportedFeatures['NETWORK']
-      if (networkName) {
-        this.navigationServerView.firstChild.innerText = networkName
-      }
-    })
-
-    this.client.once('clientInfo', () => {
-      this.addServerToList(this.client.serverName)
-    })
-
     this.client.on('connecting', (hostName, port) => {
       this.displayServerMessage(null, `* Connecting to ${hostName} (${port})`)
     })
@@ -176,16 +171,6 @@ class ClientUI {
 
     this.ctcpClient.on('clientInfo', (source, info) => {
       this.displayServerAction(`[${source.nickName} CLIENTINFO reply]: ${info}.`)
-    })
-
-    window.addEventListener('keyup', e => {
-      if (e.ctrlKey) {
-        if (e.keyCode === 78) { // ctrl+n
-          this.viewNextChannel()
-        } else if (e.keyCode === 87) { // ctrl+w
-          this.selectedChannel.part()
-        }
-      }
     })
 
     // UI Event Listeners
@@ -246,67 +231,10 @@ class ClientUI {
     channel.on('userKicked', (_) => { this.displayChannelUsers(channel) })
 
     this.addChannelToList(channel)
-    this.viewChannel(channel)
-  }
-
-  localUserPartedChannel (channel) {
-    this.leaveChannel(channel)
-  }
-
-  showChannelModes (channel) {
-    let prompt = new BrowserWindow({
-      width: 500,
-      height: 300,
-      resizable: false,
-      parent: null,
-      skipTaskbar: true,
-      alwaysOnTop: false,
-      useContentSize: false,
-      modal: true,
-      title: `[${channel.name}] Channel Modes`
-    })
-
-    prompt.setMenu(null)
-    prompt.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
-
-    prompt.on('keyup', (e) => {
-      if (e.keyCode === 27) {
-        prompt.close()
-      }
-    })
-  }
-
-  addServerToList (serverName) {
-    let serverNavigationElement = document.createElement('div')
-    serverNavigationElement.classList.add('network')
-    serverNavigationElement.serverName = serverName
-
-    this.navigationServerView = serverNavigationElement
-
-    let title = document.createElement('div')
-    title.classList.add('network-title')
-    title.innerText = serverName
-
-    let channelListElement = document.createElement('div')
-    channelListElement.classList.add('channel-list')
-
-    serverNavigationElement.appendChild(title)
-    serverNavigationElement.appendChild(channelListElement)
-
-    let networkListElement = document.getElementById('network-list')
-    networkListElement.appendChild(serverNavigationElement)
-
-    title.addEventListener('click', (e) => {
-      e.preventDefault()
-      this.viewServer()
-    }, false)
+    this.networkListController.viewChannel(channel)
   }
 
   addChannelToList (channel) {
-    if (this.navigationChannelViews[channel.name]) {
-      return
-    }
-
     let channelTableView = document.createElement('table')
     channelTableView.style.display = 'none'
     channelTableView.cellSpacing = 0
@@ -361,153 +289,59 @@ class ClientUI {
 
     this.channelViews[channel.name] = channelTableView
     document.getElementById('right-column').appendChild(channelTableView)
+  }
 
-    let channelElement = document.createElement('div')
-    channelElement.classList.add('channel')
-    channelElement.channel = channel
-    channelElement.innerText = channel.name
+  localUserPartedChannel (channel) {
+    this.leaveChannel(channel)
+  }
 
-    const channelMenu = Menu.buildFromTemplate([{
-      label: 'Leave Channel',
-      click: () => {
-        channel.part()
+  showChannelModes (channel) {
+    let prompt = new BrowserWindow({
+      width: 500,
+      height: 300,
+      resizable: false,
+      parent: null,
+      skipTaskbar: true,
+      alwaysOnTop: false,
+      useContentSize: false,
+      modal: true,
+      title: `[${channel.name}] Channel Modes`
+    })
+
+    prompt.setMenu(null)
+    prompt.loadURL(path.join('file://', __dirname, '/channel-modes.html'))
+
+    prompt.on('keyup', (e) => {
+      if (e.keyCode === 27) {
+        prompt.close()
       }
-    }])
-
-    channelElement.addEventListener('contextmenu', (e) => {
-      e.preventDefault()
-      channelMenu.popup({ window: remote.getCurrentWindow() })
-    }, false)
-
-    channelElement.addEventListener('click', (e) => {
-      e.preventDefault()
-      this.viewChannel(channel)
-    }, false)
-
-    let serverElement = this.navigationServerView
-
-    let channelListElement = serverElement.children[1]
-    channelListElement.appendChild(channelElement)
-
-    this.navigationChannelViews[channel.name] = channelElement
+    })
   }
 
   viewServer () {
     if (this.selectedChannel) {
-      this.navigationChannelViews[this.selectedChannel.name].classList.remove('channel-selected')
       this.channelViews[this.selectedChannel.name].style.display = 'none'
     }
-
-    this.selectedChannel = null
-
-    Array.from(document.getElementsByClassName('network-title'))
-      .forEach(e => e.classList.remove('network-title-selected'))
-
-    this.navigationServerView.firstChild.classList.remove('nav-unread')
-    this.navigationServerView.firstChild.classList.add('network-title-selected')
-
     this.serverView.style.display = 'block'
-
-    this.setWindowTitleForServer()
   }
 
-  setWindowTitleForServer () {
-    let userModes = this.client.localUser.modes.join('')
-    userModes = userModes.length > 0 ? `+${userModes}` : ''
-
-    let serverName = this.client.serverSupportedFeatures['NETWORK']
-    serverName = serverName || this.client.serverName
-
-    let browserWindow = BrowserWindow.getFocusedWindow()
-    if (browserWindow) {
-      browserWindow.setTitle(`${app.getName()} - [Status: ${this.client.localUser.nickName} [${userModes}] on ${serverName} (${this.client.hostName}:${this.client.port})]`)
-    }
-  }
-
-  viewPreviousChannel (channel) {
-    let keys = Object.keys(this.navigationChannelViews)
-    let index = keys.indexOf(channel.name)
-    let previousChannelElement = this.navigationChannelViews[keys[index - 1]]
-    if (previousChannelElement) {
-      this.viewChannel(previousChannelElement.channel)
-    } else {
-      this.viewServer()
-    }
-  }
-
-  viewNextChannel () {
-    if (this.selectedChannel) {
-      let keys = Object.keys(this.navigationChannelViews)
-      let index = keys.indexOf(this.selectedChannel.name)
-      let nextChannelElement = this.navigationChannelViews[keys[index + 1]]
-      if (nextChannelElement) {
-        this.viewChannel(nextChannelElement.channel)
-      } else {
-        this.viewServer()
-      }
-    } else {
-      let keys = Object.keys(this.navigationChannelViews)
-      let firstChannelElement = this.navigationChannelViews[keys[0]]
-      if (firstChannelElement) {
-        this.viewChannel(firstChannelElement.channel)
-      } else {
-        this.viewServer()
-      }
-    }
-  }
-
-  viewChannel (channel) {
-    Array.from(document.getElementsByClassName('network-title'))
-      .forEach(e => e.classList.remove('network-title-selected'))
-
-    Object.keys(this.navigationChannelViews).forEach((key, index) => {
-      this.navigationChannelViews[key].classList.remove('channel-selected')
-    })
-
-    this.navigationChannelViews[channel.name].classList.remove('nav-unread')
-    this.navigationChannelViews[channel.name].classList.add('channel-selected')
-
+  viewChannel (oldChannel, newChannel) {
     this.serverView.style.display = 'none'
 
-    if (this.selectedChannel) {
-      this.channelViews[this.selectedChannel.name].style.display = 'none'
+    if (oldChannel) {
+      this.channelViews[oldChannel.name].style.display = 'none'
     }
 
-    this.channelViews[channel.name].style.display = 'table'
-    this.selectedChannel = channel
+    this.channelViews[newChannel.name].style.display = 'table'
 
-    this.displayChannelTopic(channel)
-    this.displayChannelUsers(channel)
-
-    this.setWindowTitleForChannel(channel)
-  }
-
-  setWindowTitleForChannel (channel) {
-    let topic = channel.topic ? `: ${channel.topic}` : ''
-
-    let serverName = this.client.serverSupportedFeatures['NETWORK']
-    serverName = serverName || this.client.serverName
-
-    let browserWindow = BrowserWindow.getFocusedWindow()
-    if (browserWindow) {
-      browserWindow.setTitle(`${app.getName()} - [${channel.name} (${serverName}, ${this.client.localUser.nickName})${topic}]`)
-    }
+    this.displayChannelTopic(newChannel)
+    this.displayChannelUsers(newChannel)
   }
 
   leaveChannel (channel) {
-    let channelElement = this.navigationChannelViews[channel.name]
-    channelElement.parentElement.removeChild(channelElement)
-
     let channelView = this.channelViews[channel.name]
     channelView.parentElement.removeChild(channelView)
 
-    if (Object.keys(this.channelViews).length === 0) {
-      this.viewServer()
-    } else {
-      this.viewPreviousChannel(channel)
-    }
-
-    delete this.navigationChannelViews[channel.name]
     delete this.channelViews[channel.name]
   }
 
@@ -524,9 +358,7 @@ class ClientUI {
     this.serverView.appendChild(paragraph)
     this.serverView.scrollTop = this.serverView.scrollHeight
 
-    if (this.serverView.style.display === 'none' && this.selectedChannel) {
-      this.navigationServerView.firstChild.classList.add('nav-unread')
-    }
+    this.navigationController.markAsUnread()
   }
 
   displayServerError (text) {
@@ -677,12 +509,6 @@ class ClientUI {
     const messageView = channelTableView.getElementsByClassName('channel-message-view')[0]
     messageView.appendChild(paragraph)
     messageView.scrollTop = messageView.scrollHeight
-
-    this.navigationServerView.firstChild.classList.remove('nav-unread')
-
-    if (this.selectedChannel !== channel) {
-      this.navigationChannelViews[channel.name].classList.add('nav-unread')
-    }
   }
 
   displayChannelTopic (channel, source = null) {
@@ -709,8 +535,6 @@ class ClientUI {
     if (source) {
       this.displayChannelAction(channel.name, source, `changed topic to '${channel.topic}'`)
     }
-
-    this.setWindowTitleForChannel(channel)
   }
 
   displayChannelUsers (channel) {
