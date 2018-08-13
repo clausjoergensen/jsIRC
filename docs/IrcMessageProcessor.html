@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>IrcChannelUser - Documentation</title>
+    <title>IrcMessageProcessor - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">IrcChannelUser</h1>
+    <h1 class="page-title">IrcMessageProcessor</h1>
     
 
     
@@ -40,45 +40,27 @@
 <header>
     
         <h2>
-        IrcChannelUser
+        IrcMessageProcessor
         </h2>
         
-            <div class="class-description">Represents an IRC user that exists on a specific channel on a specific IrcClient.</div>
+            <div class="class-description">IRC Message Processing for a given <a href="IrcClient.html">IrcClient</a>.</div>
         
     
 </header>
 
 <article>
     
-    
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li>EventEmitter</li>
-    </ul>
-
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
+        <div class="container-overview">
         
             
-<h4 class="name" id="channel"><span class="type-signature"></span>channel<span class="type-signature"></span></h4>
 
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="IrcMessageProcessor"><span class="type-signature">(package) </span>new IrcMessageProcessor<span class="signature">(client)</span><span class="type-signature"></span></h4>
+
+    
 
 
 
@@ -88,7 +70,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line51">line 51</a>
+        <a href="IrcMessageProcessor.js.html">IrcMessageProcessor.js</a>, <a href="IrcMessageProcessor.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -128,526 +110,7 @@
 
 
 <div class="description">
-    Gets the channel.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="channel"><span class="type-signature"></span>channel<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line62">line 62</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Sets the Irc Channel.
-</div>
-
-
-
-
-
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="IrcChannelUser.html#event:channel">IrcChannelUser#event:channel</a></li>
-    </ul>
-
-
-
-
-        
-            
-<h4 class="name" id="modes"><span class="type-signature"></span>modes<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line76">line 76</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Gets a read-only list of the channel modes the user currently has.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="user"><span class="type-signature"></span>user<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line41">line 41</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Gets the IrcUser that is represented by the IrcChannelUser.
-</div>
-
-
-
-
-
-
-
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id="ban"><span class="type-signature"></span>ban<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line131">line 131</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Bans the user from the channel.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="deop"><span class="type-signature"></span>deop<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line104">line 104</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Removes operator privileges from the user in the channel.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="devoice"><span class="type-signature"></span>devoice<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line122">line 122</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Devoices the user in the channel.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="kick"><span class="type-signature"></span>kick<span class="signature">(comment<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line86">line 86</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Kicks the user from the channel, giving the specified comment.
+    Initializes a new instance of the IrcMessageProcessor class.
 </div>
 
 
@@ -673,11 +136,7 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -689,39 +148,23 @@
 
         <tr>
             
-                <td class="name"><code>comment</code></td>
+                <td class="name"><code>client</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="IrcClient.html">IrcClient</a></span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    <code>null</code>
-                
-                </td>
-            
 
-            <td class="description last">The comment to give for the kick, or null for none.</td>
+            <td class="description last">The IrcClient instance.</td>
         </tr>
 
     
@@ -744,27 +187,19 @@
 
 
         
-            
-
+        </div>
     
-
-    <h4 class="name" id="modeChanged"><span class="type-signature">(package) </span>modeChanged<span class="signature">()</span><span class="type-signature"></span></h4>
-
     
-
-
-
-
-<dl class="details">
-
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line145">line 145</a>
-    </li></ul></dd>
-    
+        <h3 class="subsection-title">Extends</h3>
 
-    
+        
+
+
+    <ul>
+        <li>EventEmitter</li>
+    </ul>
+
 
     
 
@@ -772,63 +207,21 @@
 
     
 
-    
+     
 
     
 
     
 
     
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <h3 class="subsection-title">Methods</h3>
 
         
             
 
     
 
-    <h4 class="name" id="op"><span class="type-signature"></span>op<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="processMessage"><span class="type-signature"></span>processMessage<span class="signature">(message)</span><span class="type-signature"></span></h4>
 
     
 
@@ -840,7 +233,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line95">line 95</a>
+        <a href="IrcMessageProcessor.js.html">IrcMessageProcessor.js</a>, <a href="IrcMessageProcessor.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -880,7 +273,7 @@
 
 
 <div class="description">
-    Gives the user operator privileges in the channel.
+    Processes a IRC message with the appropriate message handler.
 </div>
 
 
@@ -893,282 +286,53 @@
 
 
 
+    <h5>Parameters:</h5>
+    
 
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-
-
-
-
-
-
-
-
-
-
-
+        <th>Type</th>
 
         
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
             
 
-    
-
-    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-
-    
-
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
 
 
+            
+            </td>
 
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line140">line 140</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Returns a string representation of this instance.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    A string that represents this instance.
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-        
             
 
-    
-
-    <h4 class="name" id="voice"><span class="type-signature"></span>voice<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line113">line 113</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Voices the user in the channel.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-
-    
-
-    
-        <h3 class="subsection-title">Events</h3>
-
-        
             
 
-    
-
-    <h4 class="name" id="event:channel">channel</h4>
-
-    
-
-
-
-
-<dl class="details">
+            <td class="description last">The message object.</td>
+        </tr>
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line64">line 64</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </tbody>
+</table>
 
 
 
@@ -1186,86 +350,10 @@
 
 
         
-            
-
-    
-
-    <h4 class="name" id="event:modes">modes</h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="IrcChannelUser.js.html">IrcChannelUser.js</a>, <a href="IrcChannelUser.js.html#line151">line 151</a>
-    </li></ul></dd>
     
 
     
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
     
 </article>
 
