@@ -325,6 +325,28 @@ class IrcClient extends EventEmitter {
   }
 
   /**
+   * Joins the specified channels.
+   *
+   * @public
+   * @param {string[]} channelNames A list of channel names to join.
+   * @param {string[]} [keys] A corresponding list of keys, or null if the no channels require a key.
+   */
+  joinChannel (channelNames, keys = null) {
+    this.sendMessageJoin(channelNames, keys)
+  }
+
+  /**
+   * Leaves the specified channels, giving the specified comment.
+   *
+   * @public
+   * @param {string[]} channelNames A list of channel names to leave.
+   * @param {string} [comment] The comment to send the server upon leaving the channel, or null for no comment.
+   */
+  leaveChannel (channelNames, comment) {
+    this.sendMessagePart(channelNames, comment)
+  }
+
+  /**
    * Returns a string representation of this instance.
    *
    * @public
