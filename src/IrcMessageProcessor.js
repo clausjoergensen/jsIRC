@@ -40,23 +40,23 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 
 /**
  * @typedef ServerSupportedFeatures
- * @property {string} CHANLIMIT Maximum number of channels that a client
+ * @property {number} CHANLIMIT Maximum number of channels that a client
  * @property {string} CHANMODES Modes that may be set on a channel.
- * @property {string} CHANNELLEN Maximum length of a channel name a client may create.
+ * @property {number} CHANNELLEN Maximum length of a channel name a client may create.
  * @property {string} CHANTYPES Valid channel prefixes.
- * @property {string} EXCEPTS Mode character for 'ban exceptions'
+ * @property {char} EXCEPTS Mode character for 'ban exceptions'
  * @property {string} IDCHAN Safe channel identifiers.
  * @property {string} INVEX Mode character for 'invite exceptions'.
- * @property {string} KICKLEN Maximum length of a kick message a client may provide.
- * @property {string} MAXLIST Maximum number of "list modes" a client may set on a channel at once.
+ * @property {number} KICKLEN Maximum length of a kick message a client may provide.
+ * @property {number} MAXLIST Maximum number of "list modes" a client may set on a channel at once.
  * @property {string} MODES Maximum number of modes accepting parameters that may be sent in a single MODE command.
  * @property {string} NETWORK IRC network name.
- * @property {string} NICKLEN Maximum length of a nickname the client may use.
+ * @property {number} NICKLEN Maximum length of a nickname the client may use.
  * @property {string} PREFIX Mapping of channel modes that clients may have to status flags.
- * @property {string} SAFELIST Flag indicating that a client may request a LIST without being disconnected.
+ * @property {null} SAFELIST Flag indicating that a client may request a LIST without being disconnected.
  * @property {string} STATUSMSG The server supports sending messages to only to clients on a channel with a specific status.
- * @property {string} TARGMAX Maximum number of targets allowable for commands that accept multiple targets.
- * @property {string} TOPICLEN Maximum length of a topic that may be set.
+ * @property {number} TARGMAX Maximum number of targets allowable for commands that accept multiple targets.
+ * @property {number} TOPICLEN Maximum length of a topic that may be set.
  */
 
 /**
