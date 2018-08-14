@@ -889,7 +889,7 @@ class IrcClient extends EventEmitter {
 
     let newServer = new IrcServer(hostName)
     this.servers.push(newServer)
-    
+
     return newServer
   }
 
