@@ -5,6 +5,7 @@
  * IRC Error Codes
  *
  * @readonly
+ * @package
  * @enum {number}
  */
 let IrcError = {

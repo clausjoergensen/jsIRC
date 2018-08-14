@@ -23,8 +23,8 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
  * IRC Message Processing for a given {@link IrcClient}.
  *
  * @class
- * @extends EventEmitter
  * @package
+ * @extends EventEmitter
  */
 class IrcMessageProcessor {
   /**
@@ -1359,13 +1359,15 @@ class IrcMessageProcessor {
       errorParameters.push(message.parameters[i])
     }
 
+    let errorName = IrcError[command]
+
     /**
      * @event IrcClient#protocolError
      * @property {number} command
      * @property {string[]} errorParameters
      * @property {string} errorMessage
      */
-    this.client.emit('protocolError', parseInt(message.command), errorParameters, errorMessage)
+    this.client.emit('protocolError', parseInt(message.command), errorName, errorParameters, errorMessage)
   }
 
   /** @private */

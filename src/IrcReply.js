@@ -5,6 +5,7 @@
  * IRC Reply Codes
  *
  * @readonly
+ * @package
  * @enum {number}
  */
 let IrcReply = {

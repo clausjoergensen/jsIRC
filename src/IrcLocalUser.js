@@ -9,6 +9,7 @@ const { ArgumentNullError } = require('./Errors.js')
  * Represents an local IRC user that exists on a specific {@link IrcClient}.
  *
  * @class
+ * @package
  * @extends IrcUser
  */
 class IrcLocalUser extends IrcUser {

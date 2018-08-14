@@ -5,6 +5,7 @@
  * These entry types correspond to the STATS replies described in the RFC for the IRC protocol.
  *
  * @readonly
+ * @package
  * @enum {number}
  */
 let IrcServerStatisticalEntry = {

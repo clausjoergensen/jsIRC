@@ -9,6 +9,7 @@ const { ArgumentNullError } = require('./Errors.js')
  * Represents an IRC user that exists on a specific channel on a specific IrcClient.
  *
  * @class
+ * @package
  * @extends EventEmitter
  */
 class IrcChannelUser extends EventEmitter {
