@@ -413,7 +413,10 @@ function lowLevelDequote (value) {
   })
 }
 
-/** @private */
+/**
+ * Enquotes specified string given escape character and mapping for quotation characters.
+ * @private
+ */
 function quote (value, escapeChar, quotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
@@ -431,7 +434,10 @@ function quote (value, escapeChar, quotedChars) {
   return output
 }
 
-/** @private */
+/**
+ * Dequotes specified string given escape character and mapping for quotation characters.
+ * @private
+ */
 function dequote (value, escapeChar, dequotedChars) {
   let output = ''
   for (let i = 0; i < value.length; i++) {
@@ -449,7 +455,10 @@ function dequote (value, escapeChar, dequotedChars) {
   return output
 }
 
-/** @private */
+/**
+ * Removes all occurrences of a set of characters specified in an array from the beginning of the string.
+ * @private
+ */
 function trimStart (chr, string) {
   let output = string
   while (output[0] === chr) {
