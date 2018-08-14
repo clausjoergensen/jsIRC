@@ -5,7 +5,7 @@
   "main": "./index.js",
   "scripts": {
     "test": "mocha --timeout 5000",
-    "gendocs": "jsdoc src -r -t ./node_modules/docdash/  --readme ./README.md --destination docs"
+    "gendocs": "jsdoc -c ./jsdoc.json --readme ./README.md --destination docs"
   },
   "keywords": [
     "irc"
