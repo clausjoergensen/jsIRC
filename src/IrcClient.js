@@ -367,6 +367,16 @@ class IrcClient extends EventEmitter {
     this.sendMessageChannelMode(channel.name, modes, modeParameters)
   }
 
+  getUserModes (user) {
+    console.assert(user.isLocalUser)
+    this.sendMessageUserMode(user.nickName)
+  }
+
+  setUserModes (user, modes) {
+    console.assert(user.isLocalUser)
+    this.sendMessageUserMode(user.nickName, modes) 
+  }
+
   /** @private */
   sendMessage (targets, messageText) {
     this.sendMessagePrivateMessage(targets, messageText)
