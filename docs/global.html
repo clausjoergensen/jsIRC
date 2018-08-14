@@ -1066,6 +1066,480 @@ and pretends it does not exist when responding to queries.</p></td>
 
             
                 
+<h4 class="name" id="ServerSupportedFeatures">ServerSupportedFeatures</h4>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>CHANLIMIT</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum number of channels that a client</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>CHANMODES</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Modes that may be set on a channel.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>CHANNELLEN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum length of a channel name a client may create.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>CHANTYPES</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Valid channel prefixes.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>EXCEPTS</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Mode character for 'ban exceptions'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>IDCHAN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Safe channel identifiers.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>INVEX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Mode character for 'invite exceptions'.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>KICKLEN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum length of a kick message a client may provide.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>MAXLIST</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum number of &quot;list modes&quot; a client may set on a channel at once.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>MODES</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum number of modes accepting parameters that may be sent in a single MODE command.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>NETWORK</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>IRC network name.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>NICKLEN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum length of a nickname the client may use.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>PREFIX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Mapping of channel modes that clients may have to status flags.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>SAFELIST</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Flag indicating that a client may request a LIST without being disconnected.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>STATUSMSG</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The server supports sending messages to only to clients on a channel with a specific status.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>TARGMAX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum number of targets allowable for commands that accept multiple targets.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>TOPICLEN</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Maximum length of a topic that may be set.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
 
     
 
@@ -1250,7 +1724,7 @@ and pretends it does not exist when responding to queries.</p></td>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Aug 14 2018 04:22:16 GMT+0200 (Romance Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Aug 14 2018 04:33:35 GMT+0200 (Romance Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
