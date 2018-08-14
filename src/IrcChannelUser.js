@@ -146,7 +146,7 @@ class IrcChannelUser extends EventEmitter {
     if (add) {
       this._modes.push(mode)
     } else {
-      this._modes.splice(this._modes.indexOf(mode))
+      this._modes.splice(this._modes.indexOf(mode), 1)
     }
     /**
      * @event IrcChannelUser#modes

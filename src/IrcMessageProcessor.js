@@ -214,7 +214,7 @@ class IrcMessageProcessor {
 
     let idx = this.client.users.indexOf(sourceUser)
     if (idx !== -1) {
-      this.client.users.splice(idx)
+      this.client.users.splice(idx, 1)
     }
   }
 
@@ -261,7 +261,7 @@ class IrcMessageProcessor {
       let channel = this.getChannelFromName(channelName)
       if (sourceUser === this.client.localUser) {
         this.client.localUser.partChannel(channel)
-        this.client.channels.splice(this.client.channels.indexOf(channel))
+        this.client.channels.splice(this.client.channels.indexOf(channel), 1)
       } else {
         channel.userParted(channel.getChannelUser(sourceUser), comment)
       }
@@ -333,7 +333,7 @@ class IrcMessageProcessor {
     channelUsers.forEach(channelUser => {
       if (channelUser.user === this.client.localUser) {
         let channel = channelUser.channel
-        this.client.channels.splice(this.client.channels.indexOf(channel))
+        this.client.channels.splice(this.client.channels.indexOf(channel), 1)
 
         channelUser.channel.userKicked(channelUser, comment)
         this.client.localUser.partChannel(channel)

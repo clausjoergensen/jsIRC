@@ -254,7 +254,7 @@ class IrcChannel extends EventEmitter {
   userParted (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
-      this.users.splice(idx)
+      this.users.splice(idx, 1)
     }
     /**
      * @event IrcChannel#userLeftChannel
@@ -266,7 +266,7 @@ class IrcChannel extends EventEmitter {
   userQuit (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
-      this.users.splice(idx)
+      this.users.splice(idx, 1)
     }
     /**
      * @event IrcChannel#userQuit
@@ -287,7 +287,7 @@ class IrcChannel extends EventEmitter {
   userKicked (channelUser, comment = null) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
-      this.users.splice(idx)
+      this.users.splice(idx, 1)
     }
     /**
      * @event IrcChannel#userKicked

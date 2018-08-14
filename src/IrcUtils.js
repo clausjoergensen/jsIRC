@@ -66,7 +66,7 @@ class IrcUtils {
           if (addMode) {
             result.push(mode)
           } else {
-            result.splice(result.indexOf(mode))
+            result.splice(result.indexOf(mode), 1)
           }
         }
       }

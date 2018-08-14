@@ -463,7 +463,7 @@ function dequote (value, escapeChar, dequotedChars) {
 function trimStart (chr, string) {
   let output = string
   while (output[0] === chr) {
-    output = output.splice(1)
+    output = output.splice(0, 1)
   }
   return output
 }
