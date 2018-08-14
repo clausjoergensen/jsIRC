@@ -539,12 +539,7 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   readMessage (message, line) {
-    try {
-      this._messageProcessor.processMessage(message)
-    } catch (e) {
-      log.error(e)
-      throw e
-    }
+    this._messageProcessor.processMessage(message)
   }
 
   /** @private */

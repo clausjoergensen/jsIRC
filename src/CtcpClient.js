@@ -237,12 +237,7 @@ class CtcpClient extends EventEmitter {
 
     let messageProcessor = this._messageProcessors[message.tag]
     if (messageProcessor != null) {
-      try {
-        messageProcessor(message)
-      } catch (e) {
-        log.error(e)
-        throw e
-      }
+      messageProcessor(message)
     } else {
       log.debug(`Unsupported CTCP Command '${message.tag}'`)
     }
