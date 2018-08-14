@@ -545,14 +545,17 @@ client is connected, within the network.</p>
 
 
 <div class="description">
-    <p>Gets whether the user has been been seen as away. This value is always up-to-date for the local user;
-though it is only updated for remote users when a private message is sent to them or a Who Is response
-is received for the user.</p>
+    <p>Sets wheather the user should be seen as away.</p>
 </div>
 
 
 
 
+
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="IrcUser.html#event:isAway">IrcUser#event:isAway</a></li>
+    </ul>
 
 
 
@@ -605,17 +608,14 @@ is received for the user.</p>
 
 
 <div class="description">
-    <p>Sets wheather the user should be seen as away.</p>
+    <p>Gets whether the user has been been seen as away. This value is always up-to-date for the local user;
+though it is only updated for remote users when a private message is sent to them or a Who Is response
+is received for the user.</p>
 </div>
 
 
 
 
-
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="IrcUser.html#event:isAway">IrcUser#event:isAway</a></li>
-    </ul>
 
 
 
@@ -726,17 +726,13 @@ is received for the user.</p>
 
 
 <div class="description">
-    <p>Sets whether the user is currently connected to the IRC network.</p>
+    <p>Gets whether the user is currently connected to the IRC network.
+This value may not be always be up-to-date.</p>
 </div>
 
 
 
 
-
-    <h5>Fires:</h5>
-    <ul>
-        <li>IrcUser#event:isOnline</li>
-    </ul>
 
 
 
@@ -789,71 +785,17 @@ is received for the user.</p>
 
 
 <div class="description">
-    <p>Gets whether the user is currently connected to the IRC network.
-This value may not be always be up-to-date.</p>
+    <p>Sets whether the user is currently connected to the IRC network.</p>
 </div>
 
 
 
 
 
-
-
-
-        
-            
-<h4 class="name" id="isOperator"><span class="type-signature"></span>isOperator<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Gets whether the user is a server operator.</p>
-</div>
-
-
-
-
+    <h5>Fires:</h5>
+    <ul>
+        <li>IrcUser#event:isOnline</li>
+    </ul>
 
 
 
@@ -923,7 +865,7 @@ This value may not be always be up-to-date.</p>
 
         
             
-<h4 class="name" id="nickName"><span class="type-signature"></span>nickName<span class="type-signature"></span></h4>
+<h4 class="name" id="isOperator"><span class="type-signature"></span>isOperator<span class="type-signature"></span></h4>
 
 
 
@@ -969,17 +911,12 @@ This value may not be always be up-to-date.</p>
 
 
 <div class="description">
-    <p>Sets the current nick name of the user</p>
+    <p>Gets whether the user is a server operator.</p>
 </div>
 
 
 
 
-
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="IrcUser.html#event:nickName">IrcUser#event:nickName</a></li>
-    </ul>
 
 
 
@@ -1044,7 +981,7 @@ This value may not be always be up-to-date.</p>
 
         
             
-<h4 class="name" id="realName"><span class="type-signature"></span>realName<span class="type-signature"></span></h4>
+<h4 class="name" id="nickName"><span class="type-signature"></span>nickName<span class="type-signature"></span></h4>
 
 
 
@@ -1090,12 +1027,17 @@ This value may not be always be up-to-date.</p>
 
 
 <div class="description">
-    <p>Gets the host name of the user.</p>
+    <p>Sets the current nick name of the user</p>
 </div>
 
 
 
 
+
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="IrcUser.html#event:nickName">IrcUser#event:nickName</a></li>
+    </ul>
 
 
 
@@ -1159,6 +1101,64 @@ This value may not be always be up-to-date.</p>
     <ul>
         <li><a href="IrcUser.html#event:realName">IrcUser#event:realName</a></li>
     </ul>
+
+
+
+
+        
+            
+<h4 class="name" id="realName"><span class="type-signature"></span>realName<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Gets the host name of the user.</p>
+</div>
+
+
+
+
 
 
 
@@ -1332,12 +1332,17 @@ This value may not be always be up-to-date.</p>
 
 
 <div class="description">
-    <p>Gets the name of the server to which the user is connected.</p>
+    <p>Sets the name of the server to which the user is connected.</p>
 </div>
 
 
 
 
+
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="IrcUser.html#event:serverName">IrcUser#event:serverName</a></li>
+    </ul>
 
 
 
@@ -1390,70 +1395,7 @@ This value may not be always be up-to-date.</p>
 
 
 <div class="description">
-    <p>Sets the name of the server to which the user is connected.</p>
-</div>
-
-
-
-
-
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="IrcUser.html#event:serverName">IrcUser#event:serverName</a></li>
-    </ul>
-
-
-
-
-        
-            
-<h4 class="name" id="userName"><span class="type-signature"></span>userName<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Gets the current user name of the user. This value never changes until the user reconnects.</p>
+    <p>Gets the name of the server to which the user is connected.</p>
 </div>
 
 
@@ -1522,6 +1464,64 @@ This value may not be always be up-to-date.</p>
     <ul>
         <li><a href="IrcUser.html#event:userName">IrcUser#event:userName</a></li>
     </ul>
+
+
+
+
+        
+            
+<h4 class="name" id="userName"><span class="type-signature"></span>userName<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Gets the current user name of the user. This value never changes until the user reconnects.</p>
+</div>
+
+
+
+
 
 
 
@@ -4093,7 +4093,7 @@ Each IrcChannelUser represents a channel of which the user is currently a member
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Aug 14 2018 04:01:01 GMT+0200 (Romance Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Aug 14 2018 04:20:24 GMT+0200 (Romance Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

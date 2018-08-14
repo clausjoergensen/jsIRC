@@ -54,7 +54,7 @@ class IrcChannelUser extends EventEmitter {
   }
 
   /**
-   * Sets the Irc Channel.
+   * Sets the Channel.
    *
    * @public
    * @fires IrcChannelUser#channel
