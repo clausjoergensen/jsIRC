@@ -205,9 +205,9 @@ class IrcMessageProcessor {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
 
-    console.assert(message.parameters[0])
-
     let sourceUser = message.source
+
+    console.assert(message.parameters[0] !== null) // Empty string is allowed.
     let comment = message.parameters[0]
 
     sourceUser.quit(comment)
@@ -227,9 +227,9 @@ class IrcMessageProcessor {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
 
-    console.assert(message.parameters[0])
-
     let sourceUser = message.source
+
+    console.assert(message.parameters[0])
     let channelList = message.parameters[0].split(',')
 
     channelList.forEach(channelName => {
@@ -251,10 +251,12 @@ class IrcMessageProcessor {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
 
-    console.assert(message.parameters[0])
-
     let sourceUser = message.source
+
+    console.assert(message.parameters[0])
     let channelList = message.parameters[0].split(',')
+
+    console.assert(message.parameters[1] !== null) // Empty string is allowed.
     let comment = message.parameters[1]
 
     channelList.forEach(channelName => {
@@ -308,7 +310,7 @@ class IrcMessageProcessor {
   processMessageTopic (message) {
     console.assert(message.parameters[0])
     let channel = this.getChannelFromName(message.parameters[0])
-    console.assert(message.parameters[1])
+    console.assert(message.parameters[1] !== null) // Empty string is allowed.
     channel.topicChanged(message.source, message.parameters[1])
   }
 
@@ -321,7 +323,7 @@ class IrcMessageProcessor {
     let channels = message.parameters[0].split(',').map(n => this.getChannelFromName(n))
     console.assert(message.parameters[1])
     let users = message.parameters[1].split(',').map(n => this.client.getUserFromNickName(n))
-    console.assert(message.parameters[2])
+    console.assert(message.parameters[2] !== null) // Empty string is allowed.
     let comment = message.parameters[2]
 
     let channelUsers = channels
