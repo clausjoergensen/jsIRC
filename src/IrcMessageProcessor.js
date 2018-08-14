@@ -33,13 +33,13 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
  */
 
 /**
- * @typedef ServerStatistics
+ * @typedef ServerStatistic
  * @property {IrcServerStatisticalEntry} type
  * @property {string} message
  */
 
 /**
- * @typedef ServerSupportedFeatures
+ * @typedef ServerSupportedFeature
  * @property {number} CHANLIMIT Maximum number of channels that a client
  * @property {string} CHANMODES Modes that may be set on a channel.
  * @property {number} CHANNELLEN Maximum length of a channel name a client may create.
@@ -554,7 +554,7 @@ class IrcMessageProcessor {
 
       /**
        * @event IrcClient#serverSupportedFeatures
-       * @property {ServerSupportedFeatures} serverSupportedFeatures
+       * @property {ServerSupportedFeature} serverSupportedFeatures
        */
       this.client.emit('serverSupportedFeatures', this.client.serverSupportedFeatures)
     }
@@ -652,7 +652,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     /**
      * @event IrcClient#serverStatistics
-     * @property {ServerStatistics[]} serverStatistics
+     * @property {ServerStatistic[]} serverStatistics
      */
     this.client.emit('serverStatistics', this.listedStatsEntries)
     this.listedStatsEntries = []
