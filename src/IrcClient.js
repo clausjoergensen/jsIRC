@@ -4,6 +4,7 @@
 const net = require('net')
 const events = require('events')
 const log = require('electron-log')
+const uuidv4 = require('uuid/v4')
 
 const { EventEmitter } = events
 
@@ -48,6 +49,7 @@ class IrcClient extends EventEmitter {
   constructor () {
     super()
 
+    this._id = uuidv4()
     this._messageProcessor = new IrcMessageProcessor(this)
     this._sendTimer = null
     this._floodPreventer = null
@@ -107,6 +109,10 @@ class IrcClient extends EventEmitter {
     this.emit('connecting', hostName, port)
 
     this._socket.connect(port, hostName)
+  }
+
+  get id () {
+    return this._id
   }
 
   /**
