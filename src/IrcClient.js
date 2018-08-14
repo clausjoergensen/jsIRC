@@ -332,7 +332,7 @@ class IrcClient extends EventEmitter {
    * @param {string} [key] The channel key, or null if no key is required.
    */
   joinChannel (channelName, key = null) {
-    this.joinChannels([channelName], key)
+    this.joinChannels([channelName], key == null ? null : [key])
   }
 
   /**
