@@ -177,6 +177,16 @@ class IrcChannel extends EventEmitter {
   }
 
   /**
+   * Sets the channel topic
+   *
+   * @public
+   * @param {string} [topic] The new channel topic; null to refresh the topic.
+   */
+  setTopic (topic = null) {
+    this.client.setTopic(this, topic)
+  }
+
+  /**
    * Bans a hostMask from the channel.
    *
    * @public
