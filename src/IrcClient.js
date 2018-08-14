@@ -389,7 +389,7 @@ class IrcClient extends EventEmitter {
 
   setUserModes (user, modes) {
     console.assert(user.isLocalUser)
-    this.sendMessageUserMode(user.nickName, modes) 
+    this.sendMessageUserMode(user.nickName, modes)
   }
 
   /** @private */
