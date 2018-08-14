@@ -334,10 +334,14 @@ class IrcChannel extends EventEmitter {
         let channelUser = this.users.find(u => u.user.nickName === parameter)
         channelUser.modeChanged(add, mode)
       })
+    
     /**
      * @event IrcChannel#modes
+     * @param {IrcUser} source
+     * @param {string[]} modes
+     * @param {string[]} parameters
      */
-    this.emit('modes')
+    this.emit('modes', source, newModes, newModeParameters)
   }
 
   actionReceived (source, targets, messageText) {
