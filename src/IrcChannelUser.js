@@ -29,7 +29,7 @@ class IrcChannelUser extends EventEmitter {
     }
 
     this._user = user
-    this._modes = modes || []
+    this._modes = new Set(modes || [])
     this._channel = null
   }
 
@@ -75,7 +75,7 @@ class IrcChannelUser extends EventEmitter {
    * @return {string[]} The list of channel modes.
    */
   get modes () {
-    return this._modes
+    return Array.from(this._modes)
   }
 
   /**
@@ -144,9 +144,9 @@ class IrcChannelUser extends EventEmitter {
 
   modeChanged (add, mode) {
     if (add) {
-      this._modes.push(mode)
+      this._modes.add(mode)
     } else {
-      this._modes.splice(this._modes.indexOf(mode), 1)
+      this._modes.delete(this._modes)
     }
     /**
      * @event IrcChannelUser#modes

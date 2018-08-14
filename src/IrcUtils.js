@@ -26,12 +26,12 @@ class IrcUtils {
    *
    * @package
    * @static
-   * @param {string[]} existingModes
+   * @param {Set.<string>} existingModes
    * @param {string[]} newModes
    * @param {string[]} [newModeParameters]
    * @param {string[]} [modesWithParameters]
    * @param {UpdateModes} [callback]
-   * @return {IrcChannelUser} The corresponding IrcChannelUser.
+   * @return {Set.<string>} The updated set of modes.
    */
   static updateModes (existingModes, newModes, newModeParameters = null, modesWithParameters = null, callback = null) {
     if (!existingModes) {
@@ -51,7 +51,7 @@ class IrcUtils {
       }
     }
 
-    let result = existingModes
+    let result = new Set(existingModes)
     let i = 0
     let addMode = null
     newModes.forEach(mode => {
@@ -64,9 +64,9 @@ class IrcUtils {
           callback(addMode, mode, newModeParameters[i++])
         } else {
           if (addMode) {
-            result.push(mode)
+            result.add(mode)
           } else {
-            result.splice(result.indexOf(mode), 1)
+            result.delete(mode)
           }
         }
       }

@@ -322,14 +322,6 @@ describe('IRC Tests', function () {
       client1.kick(client1.channels[0], [nickName2], 'Tourist, Rincewind had decided, meant "idiot"')
     })
 
-    it('leaveChannel', function (done) {
-      client1.localUser.once('partedChannel', (channel) => {
-        done()
-      })
-
-      client1.leaveChannel(client1.channels[0].name)
-    })
-
     it('invite', function (done) {
       client1.joinChannel('#unseenuniversity')
 
@@ -340,6 +332,14 @@ describe('IRC Tests', function () {
 
         client1.channels[0].invite(nickName2)
       }, 2000)
+    })
+
+    it('leaveChannel', function (done) {
+      client1.localUser.once('partedChannel', (channel) => {
+        done()
+      })
+
+      client1.leaveChannel(client1.channels[0].name)
     })
 
     it('who', function (done) {

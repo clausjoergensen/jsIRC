@@ -27,7 +27,7 @@ class IrcLocalUser extends IrcUser {
       throw new ArgumentNullError('client')
     }
 
-    this._modes = []
+    this._modes = new Set([])
   }
 
   /**
@@ -46,7 +46,7 @@ class IrcLocalUser extends IrcUser {
    * @public
    */
   get modes () {
-    return this._modes
+    return Array.from(this._modes)
   }
 
   /**
@@ -119,7 +119,8 @@ class IrcLocalUser extends IrcUser {
   setModes (newModes) {
     var setModes = newModes.filter(x => !this.modes.include(x))
     var unsetModes = this.modes.filter(x => !newModes.include(x))
-    this.client.SetLocalUserModes(this, `+${setModes.join('')}-${unsetModes.join('')}`)
+    
+    this.client.setUserModes(this, `+${setModes.join('')}-${unsetModes.join('')}`)
   }
 
   modesChanged (newModes) {

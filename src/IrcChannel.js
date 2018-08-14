@@ -39,8 +39,8 @@ class IrcChannel extends EventEmitter {
     this._name = name
     this._topic = null
     this._channelType = IrcChannelType.unspecified
-    this._modes = []
-    this._users = []
+    this._modes = new Set([])
+    this._users = new Set([])
   }
 
   /**
@@ -70,7 +70,7 @@ class IrcChannel extends EventEmitter {
    * @return {string[]} List of the modes the channel currently has.
    */
   get modes () {
-    return this._modes
+    return Array.from(this._modes)
   }
 
   /*
@@ -80,7 +80,7 @@ class IrcChannel extends EventEmitter {
    * @return {IrcChannelUser[]} list of all channel users currently in the channel
    */
   get users () {
-    return this._users
+    return Array.from(this._users)
   }
 
   /*
@@ -139,7 +139,7 @@ class IrcChannel extends EventEmitter {
    */
   setModes (newModes, modeParameters = null) {
     if (!newModes) {
-      throw new ArgumentNullException('newModes')
+      throw new ArgumentNullError('newModes')
     }
 
     this.client.setChannelModes(this, newModes, modeParameters)
@@ -248,11 +248,11 @@ class IrcChannel extends EventEmitter {
   }
 
   userJoined (channelUser) {
-    if (this.users.indexOf(channelUser) !== -1) {
+    if (this._users.has(channelUser)) {
       return
     }
     channelUser.channel = this
-    this.users.push(channelUser)
+    this._users.add(channelUser)
 
     /**
      * @event IrcChannel#userJoinedChannel
@@ -262,10 +262,7 @@ class IrcChannel extends EventEmitter {
   }
 
   userParted (channelUser, comment) {
-    let idx = this.users.indexOf(channelUser)
-    if (idx !== -1) {
-      this.users.splice(idx, 1)
-    }
+    this._users.delete(channelUser)
     /**
      * @event IrcChannel#userLeftChannel
      * @param {IrcChannelUser} channelUser
@@ -274,10 +271,7 @@ class IrcChannel extends EventEmitter {
   }
 
   userQuit (channelUser, comment) {
-    let idx = this.users.indexOf(channelUser)
-    if (idx !== -1) {
-      this.users.splice(idx, 1)
-    }
+    this._users.delete(channelUser)
     /**
      * @event IrcChannel#userQuit
      * @param {IrcChannelUser} channelUser
@@ -295,10 +289,7 @@ class IrcChannel extends EventEmitter {
   }
 
   userKicked (channelUser, comment = null) {
-    let idx = this.users.indexOf(channelUser)
-    if (idx !== -1) {
-      this.users.splice(idx, 1)
-    }
+    this._users.delete(channelUser)
     /**
      * @event IrcChannel#userKicked
      * @param {IrcChannelUser} channelUser
@@ -308,11 +299,11 @@ class IrcChannel extends EventEmitter {
   }
 
   userNameReply (channelUser) {
-    if (this.users.indexOf(channelUser) !== -1) {
+    if (this._users.has(channelUser)) {
       return
     }
     channelUser.channel = this
-    this.users.push(channelUser)
+    this._users.add(channelUser)
   }
 
   topicChanged (user, newTopic) {
@@ -326,7 +317,7 @@ class IrcChannel extends EventEmitter {
   }
 
   modesChanged (source, newModes, newModeParameters) {
-    this._modes = IrcUtils.updateModes(this.modes,
+    this._modes = IrcUtils.updateModes(this._modes,
       newModes,
       newModeParameters,
       this.client.channelUserModes,
@@ -334,7 +325,7 @@ class IrcChannel extends EventEmitter {
         let channelUser = this.users.find(u => u.user.nickName === parameter)
         channelUser.modeChanged(add, mode)
       })
-    
+
     /**
      * @event IrcChannel#modes
      * @param {IrcUser} source
