@@ -286,15 +286,6 @@ class IrcMessageProcessor {
       let channel = this.getChannelFromName(message.parameters[0])
       let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
       channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
-      /**
-       * @event IrcClient#channelMode
-       * @param {IrcChannel} channel
-       * @param {IrcChannel|IrcUser} source
-       * @param {string[]} modes
-       * @param {string[]} parameters
-       */
-      this.client.emit('channelMode',
-        channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
     } else if (message.parameters[0] === this.client.localUser.nickName) {
       console.assert(message.parameters[1])
       this.client.localUser.modesChanged(message.parameters[1])
@@ -1072,16 +1063,6 @@ class IrcMessageProcessor {
     let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
 
     channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
-
-    /**
-     * @event IrcClient#channelMode
-     * @param {IrcChannel} channel
-     * @param {IrcChannel|IrcUser} channel
-     * @param {string[]} modes
-     * @param {string[]} parameters
-     */
-    this.client.emit('channelMode',
-      channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
   }
 
   /**
