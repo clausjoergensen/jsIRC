@@ -878,17 +878,27 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   getServerFromHostName (hostName) {
+    if (!hostName) {
+      throw new ArgumentNullError('hostName')
+    }
+
     let existingServer = this.servers.find(s => s.hostName === hostName)
     if (existingServer != null) {
       return existingServer
     }
+
     let newServer = new IrcServer(hostName)
     this.servers.push(newServer)
+    
     return newServer
   }
 
   /** @private */
   getUserFromNickName (nickName, isOnline = true) {
+    if (!nickName) {
+      throw new ArgumentNullError('nickName')
+    }
+
     let existingUser = this.users.find(u => u.nickName === nickName)
     if (existingUser != null) {
       return existingUser

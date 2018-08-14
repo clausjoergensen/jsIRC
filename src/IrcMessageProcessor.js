@@ -145,6 +145,9 @@ class IrcMessageProcessor {
     if (!(message.source instanceof IrcUser)) {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
+
+    console.assert(message.parameters[0])
+
     let sourceUser = message.source
     let newNickName = message.parameters[0]
     sourceUser.nickName = newNickName
@@ -158,6 +161,9 @@ class IrcMessageProcessor {
     if (!(message.source instanceof IrcUser)) {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
+
+    console.assert(message.parameters[0])
+
     let sourceUser = message.source
     let comment = message.parameters[0]
 
@@ -177,6 +183,9 @@ class IrcMessageProcessor {
     if (!(message.source instanceof IrcUser)) {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
+
+    console.assert(message.parameters[0])
+
     let sourceUser = message.source
     let channelList = message.parameters[0].split(',')
 
@@ -198,6 +207,9 @@ class IrcMessageProcessor {
     if (!(message.source instanceof IrcUser)) {
       throw new ProtocolViolationError(`The message source '${message.source.name}' is not a user.`)
     }
+
+    console.assert(message.parameters[0])
+
     let sourceUser = message.source
     let channelList = message.parameters[0].split(',')
     let comment = message.parameters[1]
@@ -222,7 +234,10 @@ class IrcMessageProcessor {
       return regexChannelName.test(channelName)
     }
 
+    console.assert(message.parameters[0])
+
     if (isChannelName(message.parameters[0])) {
+      console.assert(message.parameters[1])
       let channel = this.getChannelFromName(message.parameters[0])
       let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
       channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
@@ -236,6 +251,7 @@ class IrcMessageProcessor {
       this.client.emit('channelMode',
         channel, message.source, modesAndParameters.modes, modesAndParameters.parameters)
     } else if (message.parameters[0] === this.client.localUser.nickName) {
+      console.assert(message.parameters[1])
       this.client.localUser.modesChanged(message.parameters[1])
     } else {
       throw new ProtocolViolationException(`Cannot set user mode for '${message.parameters[0]}'`)
@@ -247,7 +263,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageTopic (message) {
+    console.assert(message.parameters[0])
     let channel = this.getChannelFromName(message.parameters[0])
+    console.assert(message.parameters[1])
     channel.topicChanged(message.source, message.parameters[1])
   }
 
@@ -256,8 +274,11 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageKick (message) {
+    console.assert(message.parameters[0])
     let channels = message.parameters[0].split(',').map(n => this.getChannelFromName(n))
+    console.assert(message.parameters[1])
     let users = message.parameters[1].split(',').map(n => this.client.getUserFromNickName(n))
+    console.assert(message.parameters[2])
     let comment = message.parameters[2]
 
     let channelUsers = channels
@@ -284,7 +305,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageInvite (message) {
+    console.assert(message.parameters[0])
     let user = this.client.getUserFromNickName(message.parameters[0])
+    console.assert(message.parameters[1])
     let channel = this.getChannelFromName(message.parameters[1])
     user.inviteReceived(message.source, channel)
   }
@@ -294,7 +317,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessagePrivateMessage (message) {
+    console.assert(message.parameters[0])
     let targetNames = message.parameters[0].split(',')
+    console.assert(message.parameters[1])
     let messageText = message.parameters[1]
 
     let targets = targetNames.map(x => this.getMessageTarget(x))
@@ -312,7 +337,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageNotice (message) {
+    console.assert(message.parameters[0])
     let targetNames = message.parameters[0].split(',')
+    console.assert(message.parameters[1])
     let noticeText = message.parameters[1]
 
     if (targetNames[0] === 'AUTH') {
@@ -339,6 +366,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessagePing (message) {
+    console.assert(message.parameters[0])
     let server = message.parameters[0]
     let targetServer = message.parameters[1]
 
@@ -358,6 +386,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessagePong (message) {
+    console.assert(message.parameters[0])
     let server = message.parameters[0]
     /**
      * @event IrcClient#pong
@@ -371,6 +400,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageError (message) {
+    console.assert(message.parameters[0])
     let errorMessage = message.parameters[0]
     /**
      * @event IrcClient#error
@@ -384,6 +414,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWelcome (message) {
+    console.assert(message.parameters[0])
+    console.assert(message.parameters[1])
+
     let welcomeMessage = message.parameters[1].split(' ')
     let hostMask = welcomeMessage[welcomeMessage.length - 1]
 
@@ -403,6 +436,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyYourHost (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     this.client.yourHostMessage = message.parameters[1]
   }
 
@@ -411,6 +447,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyCreated (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     this.client.serverCreatedMessage = message.parameters[1]
   }
 
@@ -419,9 +458,15 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyMyInfo (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+
+    console.assert(message.parameters[1])
     this.client.serverName = message.parameters[1]
+    console.assert(message.parameters[2])
     this.client.serverVersion = message.parameters[2]
+    console.assert(message.parameters[3])
     this.client.serverAvailableUserModes = message.parameters[3].split('')
+    console.assert(message.parameters[4])
     this.client.serverAvailableChannelModes = message.parameters[4].split('')
 
     /**
@@ -435,6 +480,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyBounceOrISupport (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     if (message.parameters[1].startsWith('Try Server')) {
       // RPL_BOUNCE
       let textParts = message.parameters[0].split(' ', ',')
@@ -473,6 +521,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsLinkInfo (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.connection,
       'message': message
@@ -484,6 +533,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsCommands (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.command,
       'message': message
@@ -495,6 +545,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsCLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedServerConnect,
       'message': message
@@ -506,6 +557,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsNLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedServerAccept,
       'message': message
@@ -517,6 +569,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsILine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedClient,
       'message': message
@@ -528,6 +581,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsKLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.bannedClient,
       'message': message
@@ -539,6 +593,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsYLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.connectionClass,
       'message': message
@@ -550,6 +605,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageEndOfStats (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     /**
      * @event IrcClient#serverStatistics
      */
@@ -562,6 +618,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsLLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.leafDepth,
       'message': message
@@ -573,6 +630,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsUpTime (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.uptime,
       'message': message
@@ -584,6 +642,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsOLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.allowedOperator,
       'message': message
@@ -595,6 +654,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageStatsHLine (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.listedStatsEntries.push({
       'type': IrcServerStatisticalEntry.hubServer,
       'message': message
@@ -606,8 +666,13 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageLUserClient (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[0])
+
     let info = message.parameters[1]
     let infoParts = info.split(' ')
+    console.assert(infoParts.length === 10)
+
     let networkInfo = {
       'visibleUsersCount': parseInt(infoParts[2]),
       'invisibleUsersCount': parseInt(infoParts[5]),
@@ -625,6 +690,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageLUserOp (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
     /**
      * @event IrcClient#networkInfo
@@ -637,6 +705,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageLUserUnknown (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
     /**
      * @event IrcClient#networkInfo
@@ -649,6 +720,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageLUserChannels (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
     /**
      * @event IrcClient#networkInfo
@@ -661,6 +735,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageLUserMe (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let networkInfo = {}
     let info = message.parameters[1]
     let infoParts = info.split(' ')
@@ -693,7 +770,12 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyAway (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     user.awayMessage = message.parameters[2]
     user.isAway = true
   }
@@ -703,6 +785,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyIsOn (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let onlineUserNames = message.parameters[1].split(' ')
     onlineUserNames.forEach(name => {
       let onlineUser = this.client.getUserFromNickName(name)
@@ -715,6 +800,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyUnAway (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.client.localUser.isAway = false
   }
 
@@ -723,6 +809,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyNowAway (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     this.client.localUser.isAway = true
   }
 
@@ -731,9 +818,19 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoIsUser (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     user.userName = message.parameters[2]
+
+    console.assert(message.parameters[3])
     user.hostName = message.parameters[3]
+
+    console.assert(message.parameters[4])
+    console.assert(message.parameters[5])
     user.realName = message.parameters[5]
   }
 
@@ -742,8 +839,15 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoIsServer (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     user.serverName = message.parameters[2]
+
+    console.assert(message.parameters[3])
     user.serverInfo = message.parameters[3]
   }
 
@@ -752,6 +856,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoIsOperator (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
     user.isOperator = true
   }
@@ -761,9 +868,19 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoWasUser (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1], false)
+
+    console.assert(message.parameters[2])
     user.userName = message.parameters[2]
+
+    console.assert(message.parameters[3])
     user.hostName = message.parameters[3]
+
+    console.assert(message.parameters[4])
+    console.assert(message.parameters[5])
     user.realName = message.parameters[5]
   }
 
@@ -772,6 +889,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyEndOfWho (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let mask = message.parameters[1]
     /**
      * @event IrcClient#whoReply
@@ -785,7 +905,12 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoIsIdle (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     user.idleDuration = parseInt(message.parameters[2])
   }
 
@@ -794,6 +919,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyEndOfWhoIs (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
     /**
      * @event IrcClient#whoIsReply
@@ -807,7 +935,12 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoIsChannels (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let user = this.client.getUserFromNickName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     let channelIds = message.parameters[2].split(' ')
     channelIds.forEach(channelId => {
       if (channelId.length === 0) {
@@ -826,8 +959,15 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyList (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channelName = message.parameters[1]
+
+    console.assert(message.parameters[2])
     let visibleUsersCount = parseInt(message.parameters[2])
+
+    console.assert(message.parameters[3])
     let topic = message.parameters[3]
 
     this.client.listedChannels.push({
@@ -842,6 +982,7 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyListEnd (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
     /**
      * @event IrcClient#channelList
      * @param {Object[]} listedChannels
@@ -855,6 +996,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyChannelModes (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channel = this.getChannelFromName(message.parameters[0])
     let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
 
@@ -876,6 +1020,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyNoTopic (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channel = this.getChannelFromName(message.parameters[1])
     channel.topicChanged(null, null)
   }
@@ -885,7 +1032,12 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyTopic (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channel = this.getChannelFromName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     channel.topicChanged(null, message.parameters[2])
   }
 
@@ -894,7 +1046,12 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyInviting (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let invitedUser = this.client.getUserFromNickName(message.parameters[1])
+
+    console.assert(message.parameters[2])
     let channel = this.getChannelFromName(message.parameters[2])
     channel.userInvited(invitedUser)
   }
@@ -904,11 +1061,18 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyVersion (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let versionInfo = message.parameters[1]
     let versionSplitIndex = versionInfo.lastIndexOf('.')
     let version = versionInfo.substr(0, versionSplitIndex)
     let debugLevel = versionInfo.substr(versionSplitIndex + 1)
+
+    console.assert(message.parameters[2])
     let server = message.parameters[2]
+
+    console.assert(message.parameters[3])
     let comments = message.parameters[3]
 
     /**
@@ -931,13 +1095,24 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyWhoReply (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channel = message.parameters[1] === '*' ? null : this.getChannelFromName(message.parameters[1])
+
+    console.assert(message.parameters[5])
     let user = this.client.getUserFromNickName(message.parameters[5])
 
+    console.assert(message.parameters[3])
     user.hostName = message.parameters[3]
+
+    console.assert(message.parameters[4])
     user.serverName = message.parameters[4]
 
+    console.assert(message.parameters[6])
     let userModeFlags = message.parameters[6]
+
+    console.assert(userModeFlags.length > 0)
     if (userModeFlags.includes('H')) {
       user.IsAway = false
     } else if (userModeFlags.includes('G')) {
@@ -963,6 +1138,7 @@ class IrcMessageProcessor {
       }
     }
 
+    console.assert(message.parameters[7])
     let lastParamParts = message.parameters[7].split(' ')
     user.hopCount = parseInt(lastParamParts[0])
     if (lastParamParts.length > 1) {
@@ -988,10 +1164,16 @@ class IrcMessageProcessor {
       }
     }
 
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[2])
+
     let channel = this.getChannelFromName(message.parameters[2])
     if (channel) {
+      console.assert(message.parameters[1])
+      console.assert(message.parameters[1].length === 1)
       channel.typeChanged(getChannelType(message.parameters[1][0]))
 
+      console.assert(message.parameters[3])
       let userIds = message.parameters[3].split(' ')
       userIds.forEach(userId => {
         if (userId.length === 0) {
@@ -1010,8 +1192,15 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyLinks (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let hostName = message.parameters[1]
+
+    console.assert(message.parameters[3])
     let infoParts = message.parameters[3].split(' ')
+
+    console.assert(infoParts.length >= 2)
     let hopCount = parseInt(infoParts[0])
     let info = infoParts[1]
 
@@ -1023,6 +1212,8 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyEndOfLinks (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+
     /**
      * @event IrcClient#serverLinks
      * @property {object[]} serverLinks
@@ -1036,6 +1227,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyEndOfNames (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channel = this.getChannelFromName(message.parameters[1])
     channel.usersListReceived()
   }
@@ -1045,6 +1239,8 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyBanList (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+
     if (!(this.banList)) {
       this.banList = []
     }
@@ -1064,6 +1260,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyBanListEnd (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     let channel = this.getChannelFromName(message.parameters[1])
     /**
      * @event IrcClient#banList
@@ -1078,6 +1277,8 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyEndOfWhoWas (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
     /**
      * @event IrcClient#whoWasReply
      * @property {IrcUser} user
@@ -1090,6 +1291,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyMotd (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+    
     this.client.messageOfTheDay += message.parameters[1] + '\r\n'
   }
 
@@ -1098,6 +1302,8 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyMotdStart (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    
     this.client.messageOfTheDay = ''
   }
 
@@ -1106,6 +1312,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyMotdEnd (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
     this.client.messageOfTheDay += message.parameters[1]
     /**
      * @event IrcClient#motd
@@ -1119,6 +1328,10 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageReplyTime (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+    console.assert(message.parameters[2])
+
     let [server, dateTime] = message.parameters
     /**
      * @event IrcClient#serverTime
@@ -1133,6 +1346,9 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageNumericError (message) {
+    console.assert(message.parameters[0])
+    console.assert(message.parameters[1])
+
     let errorParameters = []
     let errorMessage = null
     for (let i = 1; i < message.parameters.length; i++) {
@@ -1154,12 +1370,18 @@ class IrcMessageProcessor {
 
   /** @private */
   getChannelFromName (channelName) {
+    if (!channelName) {
+      throw new ArgumentNullError('channelName')
+    }
+
     let existingChannel = this.client.channels.find(c => c.name === channelName)
     if (existingChannel) {
       return existingChannel
     }
+    
     let newChannel = new IrcChannel(this.client, channelName)
     this.client.channels.push(newChannel)
+
     return newChannel
   }
 
@@ -1245,6 +1467,10 @@ class IrcMessageProcessor {
 
   /** @private */
   getUserModeAndIdentifier (identifier) {
+    if (!identifier) {
+      throw new ArgumentNullError('identifier')
+    }
+
     let mode = identifier[0]
     let channelUserMode = this.client.channelUserModesPrefixes[mode]
     if (channelUserMode) {
@@ -1255,6 +1481,10 @@ class IrcMessageProcessor {
 
   /** @private */
   handleISupportParameter (name, value) {
+    if (!name) {
+      throw new ArgumentNullError('name')
+    }
+
     if (name.toLowerCase() === 'prefix') {
       let prefixValueMatch = value.match(regexISupportPrefix)
       let prefixes = prefixValueMatch[2]
