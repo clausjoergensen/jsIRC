@@ -335,8 +335,8 @@ class IrcClient extends EventEmitter {
 
   // - Proxy Methods
 
-  joinChannel (channelName) {
-    this.sendMessageJoin([channelName])
+  joinChannel (channelName, key) {
+    this.sendMessageJoin([channelName], [key])
   }
 
   leaveChannel (channelName, comment) {
@@ -667,8 +667,8 @@ class IrcClient extends EventEmitter {
   }
 
   /** @private */
-  sendMessageJoin (channels) {
-    this.writeMessage(null, 'JOIN', [channels.join(',')])
+  sendMessageJoin (channels, keys = null) {
+    this.writeMessage(null, 'JOIN', [channels.join(','), keys == null ? null : keys.join(',')])
   }
 
   /** @private */
