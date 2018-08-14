@@ -77,17 +77,17 @@ class IrcClient extends EventEmitter {
     }
 
     if (!registrationInfo.nickName) {
-     throw new ArgumentError('registrationInfo nickName is missing.') 
+      throw new ArgumentError('registrationInfo nickName is missing.')
     }
-    
+
     if (!registrationInfo.userName) {
-     throw new ArgumentError('registrationInfo userName is missing.') 
+      throw new ArgumentError('registrationInfo userName is missing.')
     }
 
     if (!registrationInfo.realName) {
-     throw new ArgumentError('registrationInfo realName is missing.') 
+      throw new ArgumentError('registrationInfo realName is missing.')
     }
-    
+
     if (!registrationInfo.userModes) {
       log.warn('No userModes was specified in the registrationInfo.')
       registrationInfo.userModes = []
@@ -549,7 +549,12 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   readMessage (message, line) {
-    this._messageProcessor.processMessage(message)
+    try {
+      this._messageProcessor.processMessage(message)
+    } catch (e) {
+      log.error(e.message)
+      this.emit('error', e.message)
+    }
   }
 
   /** @private */
@@ -566,7 +571,13 @@ class IrcClient extends EventEmitter {
 
       let message = this._messageSendQueue.shift()
       log.verbose('-> ' + message)
-      this._socket.write(message)
+
+      try {
+        this._socket.write(message)
+      } catch (e) {
+        log.error(e.message)
+        this.emit('error', e.message)
+      }
 
       if (this.floodPreventer) {
         this.floodPreventer.messageSent()

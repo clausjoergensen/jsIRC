@@ -4,7 +4,7 @@
 const events = require('events')
 const { EventEmitter } = events
 const log = require('electron-log')
-const { ArgumentNullError } = require('./Errors.js')
+const { ArgumentNullError, InvalidOperationError } = require('./Errors.js')
 
 const taggedDataDelimeterChar = String.fromCharCode(0x01)
 const lowLevelQuotingEscapeChar = String.fromCharCode(0x10)
@@ -237,7 +237,12 @@ class CtcpClient extends EventEmitter {
 
     let messageProcessor = this._messageProcessors[message.tag]
     if (messageProcessor != null) {
-      messageProcessor(message)
+      try {
+        messageProcessor(message)
+      } catch (e) {
+        log.error(e.message)
+        this.emit('error', e.message)
+      }
     } else {
       log.debug(`Unsupported CTCP Command '${message.tag}'`)
     }
