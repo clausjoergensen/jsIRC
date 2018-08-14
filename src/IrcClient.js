@@ -542,8 +542,8 @@ class IrcClient extends EventEmitter {
     try {
       this._messageProcessor.processMessage(message)
     } catch (e) {
-      log.error(e.message)
-      this.emit('error', e.message)
+      log.error(e)
+      throw e
     }
   }
 

@@ -240,8 +240,8 @@ class CtcpClient extends EventEmitter {
       try {
         messageProcessor(message)
       } catch (e) {
-        log.error(e.message)
-        this.emit('error', e.message)
+        log.error(e)
+        throw e
       }
     } else {
       log.debug(`Unsupported CTCP Command '${message.tag}'`)
