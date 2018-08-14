@@ -6,7 +6,8 @@
  *
  * @readonly
  * @package
- * @enum {number}
+ * @ignore
+ * @enum {string}
  */
 let IrcError = {
   '400': 'ERR_UNKNOWNERROR',

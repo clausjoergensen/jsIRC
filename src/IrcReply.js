@@ -6,7 +6,8 @@
  *
  * @readonly
  * @package
- * @enum {number}
+ * @ignore
+ * @enum {string}
  */
 let IrcReply = {
   '001': 'RPL_WELCOME',
