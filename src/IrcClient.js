@@ -111,6 +111,11 @@ class IrcClient extends EventEmitter {
     this._socket.connect(port, hostName)
   }
 
+  /**
+   * Gets a uuid representing the current IRC client
+   *
+   * @return {String} A uuid representing the current IRC client
+   */
   get id () {
     return this._id
   }
