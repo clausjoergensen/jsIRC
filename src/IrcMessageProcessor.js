@@ -1106,7 +1106,7 @@ class IrcMessageProcessor {
 
     let channel = this.getChannelFromName(message.parameters[1])
 
-    console.assert(message.parameters[2])
+    console.assert(message.parameters[2] !== null) // Empty string is allowed.
     channel.topicChanged(null, message.parameters[2])
   }
 
