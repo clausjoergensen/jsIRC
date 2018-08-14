@@ -58,6 +58,9 @@ describe('IRC Tests', function () {
       })
     })
 
+    client1.on('error', () => {})
+    client2.on('error', () => {})
+
     client1.connect('127.0.0.1', 6667, {
       'nickName': nickName1,
       'password': null,
