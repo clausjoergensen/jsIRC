@@ -2,6 +2,11 @@
 'use strict'
 
 /**
+ * @external Error
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error|Error} 
+ */
+
+/**
  * @private
  */
 class ExtendableError extends Error {
@@ -20,7 +25,7 @@ class ExtendableError extends Error {
  * The error that is thrown when null is passed to a function that does not accept it as a valid argument.
  *
  * @package
- * @extends Error
+ * @extends external:Error
  */
 class ArgumentNullError extends ExtendableError {
   /**
@@ -47,7 +52,7 @@ class ArgumentNullError extends ExtendableError {
  * The error that is thrown when one of the arguments provided to a function is not valid.
  *
  * @package
- * @extends Error
+ * @extends external:Error
  */
 class ArgumentError extends ExtendableError {
   /**
@@ -74,7 +79,7 @@ class ArgumentError extends ExtendableError {
  * The error that is thrown when a function call is invalid for the object's current state.
  *
  * @package
- * @extends Error
+ * @extends external:Error
  */
 class InvalidOperationError extends ExtendableError {
   /**
@@ -101,7 +106,7 @@ class InvalidOperationError extends ExtendableError {
  * The error that is thrown when an error is made while using a network protocol.
  *
  * @package
- * @extends Error
+ * @extends external:Error
  */
 class ProtocolViolationError extends ExtendableError {
   /**
