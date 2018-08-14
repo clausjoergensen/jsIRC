@@ -10,7 +10,7 @@ const IrcChannelUser = require('./IrcChannelUser.js')
 const IrcReply = require('./IrcReply.js')
 const IrcError = require('./IrcError.js')
 const IrcServerStatisticalEntry = require('./IrcServerStatisticalEntry.js')
-const { ArgumentException, ProtocolViolationException } =  require('./Errors.js')
+const { ArgumentError, ArgumentNullError, ProtocolViolationError } = require('./Errors.js')
 
 const regexHostName = new RegExp(/([^%@]+)/)
 const regexChannelName = new RegExp(/([#+!&].+)/)
@@ -254,7 +254,7 @@ class IrcMessageProcessor {
       console.assert(message.parameters[1])
       this.client.localUser.modesChanged(message.parameters[1])
     } else {
-      throw new ProtocolViolationException(`Cannot set user mode for '${message.parameters[0]}'`)
+      throw new ProtocolViolationError(`Cannot set user mode for '${message.parameters[0]}'`)
     }
   }
 
@@ -1160,7 +1160,7 @@ class IrcMessageProcessor {
         case '@':
           return IrcChannelType.secret
         default:
-          throw new ArgumentException(`The channel type '${type}' sent by the server is invalid.`)
+          throw new ArgumentError(`The channel type '${type}' sent by the server is invalid.`)
       }
     }
 
@@ -1293,7 +1293,7 @@ class IrcMessageProcessor {
   processMessageReplyMotd (message) {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
-    
+
     this.client.messageOfTheDay += message.parameters[1] + '\r\n'
   }
 
@@ -1303,7 +1303,7 @@ class IrcMessageProcessor {
    */
   processMessageReplyMotdStart (message) {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
-    
+
     this.client.messageOfTheDay = ''
   }
 
@@ -1378,7 +1378,7 @@ class IrcMessageProcessor {
     if (existingChannel) {
       return existingChannel
     }
-    
+
     let newChannel = new IrcChannel(this.client, channelName)
     this.client.channels.push(newChannel)
 
@@ -1491,7 +1491,7 @@ class IrcMessageProcessor {
       let modes = prefixValueMatch[1]
 
       if (prefixes.length !== modes.length) {
-        throw new ProtocolViolationException(
+        throw new ProtocolViolationError(
           'The ISUPPORT message sent by the server contains an invalid PREFIX parameter.')
       }
 
