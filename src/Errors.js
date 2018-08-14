@@ -28,30 +28,21 @@ class ArgumentNullError extends ExtendableError {
 /**
  * @private
  */
-class ArgumentError extends ExtendableError {
-  constructor (message) {
-    super(message)
-  }
-} 
+class ArgumentError extends ExtendableError {}
 
 /**
  * @private
  */
-class InvalidOperationError extends ExtendableError {
- constructor (message) {
-    super(message)
-  } 
-} 
+class InvalidOperationError extends ExtendableError {}
 
 /**
  * @private
  */
-class ProtocolViolationError extends ExtendableError {
- constructor (message) {
-    super(message)
-  } 
-} 
+class ProtocolViolationError extends ExtendableError {}
 
 module.exports = {
-  ArgumentNullError: ArgumentNullError
+  ArgumentError: ArgumentError,
+  ArgumentNullError: ArgumentNullError,
+  InvalidOperationError: InvalidOperationError,
+  ProtocolViolationError: ProtocolViolationError
 }
