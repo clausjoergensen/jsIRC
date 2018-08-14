@@ -142,7 +142,6 @@ class IrcChannelUser extends EventEmitter {
     return `${this._channel.name}/${this._user.nickName}`
   }
 
-  /** @package */
   modeChanged (add, mode) {
     if (add) {
       this._modes.push(mode)

@@ -324,53 +324,43 @@ class IrcClient extends EventEmitter {
 
   // - Proxy Methods
 
-  /** @package */
   joinChannel (channelName) {
     this.sendMessageJoin([channelName])
   }
 
-  /** @package */
   leaveChannel (channelName, comment) {
     this.sendMessagePart([channelName], comment)
   }
 
-  /** @package */
   setNickName (nickName) {
     this.sendMessageNick(nickName)
   }
 
-  /** @package */
   setTopic (channelName, topic) {
     this.sendMessageTopic(channelName, topic)
   }
 
-  /** @package */
   kick (channel, usersNickNames, reason) {
     this.sendMessageKick(channel.name, usersNickNames, reason)
   }
 
-  /** @package */
   invite (channel, nickName) {
     this.sendMessageInvite(channel.name, nickName)
   }
 
-  /** @package */
   getChannelModes (channel, modes = null) {
     this.sendMessageChannelMode(channel.name, modes)
   }
 
-  /** @package */
   setChannelModes (channel, modes, modeParameters) {
     this.sendMessageChannelMode(channel.name, modes, modeParameters)
   }
 
-  /** @package */
   /** @private */
   sendMessage (targets, messageText) {
     this.sendMessagePrivateMessage(targets, messageText)
   }
 
-  /** @package */
   sendNotice (targets, noticeText) {
     this.sendMessagePrivateMessage(targets, noticeText)
   }

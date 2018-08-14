@@ -252,6 +252,8 @@ class CtcpClient extends EventEmitter {
 
   /** @private */
   processMessageAction (message) {
+    console.assert(message.data)
+
     if (message.isResponse) {
       return
     }
@@ -277,6 +279,8 @@ class CtcpClient extends EventEmitter {
 
   /** @private */
   processMessagePing (message) {
+    console.assert(message.data)
+
     if (message.isResponse) {
       let now = new Date().getTime()
       let sendTime = parseInt(message.data)
@@ -370,7 +374,9 @@ class CtcpClient extends EventEmitter {
 
   /** @private */
   writeMessage (targets, tag, data = null, isResponse = false) {
-    let taggedData = data == null ? tag.toUpperCase() : tag.toUpperCase() + ' ' + data
+    let taggedData = !(data) ? tag.toUpperCase() : tag.toUpperCase() + ' ' + data
+    console.assert(taggedData)
+
     let text = taggedDataDelimeterChar + lowLevelQuote(ctcpQuote(taggedData)) + taggedDataDelimeterChar
 
     if (isResponse) {

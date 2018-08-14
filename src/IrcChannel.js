@@ -237,7 +237,6 @@ class IrcChannel extends EventEmitter {
     return this.name
   }
 
-  /** @package */
   userJoined (channelUser) {
     if (this.users.indexOf(channelUser) !== -1) {
       return
@@ -252,7 +251,6 @@ class IrcChannel extends EventEmitter {
     this.emit('userJoinedChannel', channelUser)
   }
 
-  /** @package */
   userParted (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
@@ -265,7 +263,6 @@ class IrcChannel extends EventEmitter {
     this.emit('userLeftChannel', channelUser, comment)
   }
 
-  /** @package */
   userQuit (channelUser, comment) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
@@ -279,7 +276,6 @@ class IrcChannel extends EventEmitter {
     this.emit('userQuit', channelUser, comment)
   }
 
-  /** @package */
   userInvited (user) {
     /**
      * @event IrcChannel#userInvite
@@ -288,7 +284,6 @@ class IrcChannel extends EventEmitter {
     this.emit('userInvite', user)
   }
 
-  /** @package */
   userKicked (channelUser, comment = null) {
     let idx = this.users.indexOf(channelUser)
     if (idx !== -1) {
@@ -302,7 +297,6 @@ class IrcChannel extends EventEmitter {
     this.emit('userKicked', channelUser, comment)
   }
 
-  /** @package */
   userNameReply (channelUser) {
     if (this.users.indexOf(channelUser) !== -1) {
       return
@@ -311,7 +305,6 @@ class IrcChannel extends EventEmitter {
     this.users.push(channelUser)
   }
 
-  /** @package */
   topicChanged (user, newTopic) {
     this._topic = newTopic
     /**
@@ -322,7 +315,6 @@ class IrcChannel extends EventEmitter {
     this.emit('topic', user, newTopic)
   }
 
-  /** @package */
   modesChanged (source, newModes, newModeParameters) {
     this._modes = IrcUtils.updateModes(this.modes,
       newModes,
@@ -338,7 +330,6 @@ class IrcChannel extends EventEmitter {
     this.emit('modes')
   }
 
-  /** @package */
   actionReceived (source, targets, messageText) {
     /**
      * @event IrcChannel#action
@@ -348,7 +339,6 @@ class IrcChannel extends EventEmitter {
     this.emit('action', source, messageText)
   }
 
-  /** @package */
   messageReceived (source, targets, messageText) {
     let previewMessageEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': messageText }
     /**
@@ -370,7 +360,6 @@ class IrcChannel extends EventEmitter {
     }
   }
 
-  /** @package */
   noticeReceived (source, targets, noticeText) {
     let previewNoticeEventArgs = { 'handled': false, 'source': source, 'targets': targets, 'text': noticeText }
     /**
@@ -392,7 +381,6 @@ class IrcChannel extends EventEmitter {
     }
   }
 
-  /** @package */
   usersListReceived () {
     /**
      * @event IrcChannel#notice
@@ -400,7 +388,6 @@ class IrcChannel extends EventEmitter {
     this.emit('userList')
   }
 
-  /** @package */
   typeChanged (type) {
     this._type = type
     /**
