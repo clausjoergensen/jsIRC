@@ -39,6 +39,27 @@ const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
  */
 
 /**
+ * @typedef ServerSupportedFeatures
+ * @property {string} CHANLIMIT Maximum number of channels that a client
+ * @property {string} CHANMODES Modes that may be set on a channel.
+ * @property {string} CHANNELLEN Maximum length of a channel name a client may create.
+ * @property {string} CHANTYPES Valid channel prefixes.
+ * @property {string} EXCEPTS Mode character for 'ban exceptions'
+ * @property {string} IDCHAN Safe channel identifiers.
+ * @property {string} INVEX Mode character for 'invite exceptions'.
+ * @property {string} KICKLEN Maximum length of a kick message a client may provide.
+ * @property {string} MAXLIST Maximum number of "list modes" a client may set on a channel at once.
+ * @property {string} MODES Maximum number of modes accepting parameters that may be sent in a single MODE command.
+ * @property {string} NETWORK IRC network name.
+ * @property {string} NICKLEN Maximum length of a nickname the client may use.
+ * @property {string} PREFIX Mapping of channel modes that clients may have to status flags.
+ * @property {string} SAFELIST Flag indicating that a client may request a LIST without being disconnected.
+ * @property {string} STATUSMSG The server supports sending messages to only to clients on a channel with a specific status.
+ * @property {string} TARGMAX Maximum number of targets allowable for commands that accept multiple targets.
+ * @property {string} TOPICLEN Maximum length of a topic that may be set.
+ */
+
+/**
  * IRC Message Processing for a given {@link IrcClient}.
  *
  * @class
@@ -533,7 +554,7 @@ class IrcMessageProcessor {
 
       /**
        * @event IrcClient#serverSupportedFeatures
-       * @property {Object.<string, string>} serverSupportedFeatures
+       * @property {ServerSupportedFeatures} serverSupportedFeatures
        */
       this.client.emit('serverSupportedFeatures', this.client.serverSupportedFeatures)
     }
@@ -724,7 +745,7 @@ class IrcMessageProcessor {
       this.client.networkInfo = {}
     }
 
-    this.client.networkInfo.operatorsCount = parseInt(message.parameters[1]) 
+    this.client.networkInfo.operatorsCount = parseInt(message.parameters[1])
     /**
      * @event IrcClient#networkInfo
      * @property {NetworkInfo} networkInfo
