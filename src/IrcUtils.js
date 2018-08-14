@@ -4,7 +4,7 @@
 const { ArgumentNullError } = require('./Errors.js')
 
 /**
- * @callback updateModesCallback
+ * @callback UpdateModes
  * @param {boolean} add True if adding the mode; otherwise false.
  * @param {string} mode The mode to add/remove.
  * @param {string} parameter The mode parameter.
@@ -30,7 +30,7 @@ class IrcUtils {
    * @param {string[]} newModes
    * @param {string[]} [newModeParameters]
    * @param {string[]} [modesWithParameters]
-   * @param {updateModesCallback} [callback]
+   * @param {UpdateModes} [callback]
    * @return {IrcChannelUser} The corresponding IrcChannelUser.
    */
   static updateModes (existingModes, newModes, newModeParameters = null, modesWithParameters = null, callback = null) {
