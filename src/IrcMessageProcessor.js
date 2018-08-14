@@ -1405,7 +1405,7 @@ class IrcMessageProcessor {
       errorParameters.push(message.parameters[i])
     }
 
-    let errorName = IrcError[command]
+    let errorName = IrcError[message.command]
 
     /**
      * @event IrcClient#protocolError
