@@ -327,21 +327,14 @@ class IrcClient extends EventEmitter {
   /**
    * Returns a string representation of this instance.
    *
+   * @public
    * @return {string} A string that represents this instance.
    */
   toString () {
     return `(${this.registrationInfo.nickName}, ${this.hostName}:${this.port})`
   }
 
-  // - Proxy Methods
-
-  joinChannel (channelName, key) {
-    this.sendMessageJoin([channelName], [key])
-  }
-
-  leaveChannel (channelName, comment) {
-    this.sendMessagePart([channelName], comment)
-  }
+  // - Proxy Functions
 
   setNickName (nickName) {
     this.sendMessageNick(nickName)

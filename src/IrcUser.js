@@ -345,6 +345,7 @@ class IrcUser extends EventEmitter {
   /**
    * Returns a string representation of this instance.
    *
+   * @public
    * @return {string} A string that represents this instance.
    */
   toString () {
