@@ -76,6 +76,23 @@ class IrcClient extends EventEmitter {
       throw new ArgumentNullError('registrationInfo')
     }
 
+    if (!registrationInfo.nickName) {
+     throw new ArgumentError('registrationInfo nickName is missing.') 
+    }
+    
+    if (!registrationInfo.userName) {
+     throw new ArgumentError('registrationInfo userName is missing.') 
+    }
+
+    if (!registrationInfo.realName) {
+     throw new ArgumentError('registrationInfo realName is missing.') 
+    }
+    
+    if (!registrationInfo.userModes) {
+      log.warn('No userModes was specified in the registrationInfo.')
+      registrationInfo.userModes = []
+    }
+
     this.hostName = hostName
     this.port = port
     this.registrationInfo = registrationInfo
@@ -458,7 +475,7 @@ class IrcClient extends EventEmitter {
   /** @private */
   dataReceived (data) {
     let str = data.toString()
-    if (str === null) {
+    if (!str) {
       return
     }
 
@@ -566,11 +583,11 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   writeMessage (prefix, command, parameters = []) {
-    if (command === null) {
-      throw new Error('Invalid Command.')
+    if (!command) {
+      throw new ArgumentNullError(`The message command '${command}' is invalid.`)
     }
     if (parameters.length > maxParamsCount) {
-      throw new Error('Too many parameters.')
+      throw new ArgumentError('No more than 15 command parameters may be specified.')
     }
 
     let message = ''
@@ -827,7 +844,7 @@ class IrcClient extends EventEmitter {
   /** @private */
   getNumericUserMode (modes) {
     let value = 0
-    if (modes === null) {
+    if (!modes) {
       return value
     }
     if (modes.includes('w')) {
