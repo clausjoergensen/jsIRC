@@ -30,6 +30,7 @@ class IrcMessageProcessor {
   /**
    * Initializes a new instance of the IrcMessageProcessor class.
    *
+   * @hideconstructor
    * @param {IrcClient} client The IrcClient instance.
   */
   constructor (client) {
@@ -104,6 +105,7 @@ class IrcMessageProcessor {
     }
   }
 
+  /** @private */
   get client () {
     return this._client
   }
@@ -111,6 +113,7 @@ class IrcMessageProcessor {
   /**
    * Processes a IRC message with the appropriate message handler.
    *
+   * @package
    * @param {Object} message The message object.
    */
   processMessage (message) {
