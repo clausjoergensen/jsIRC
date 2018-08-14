@@ -20,6 +20,25 @@ const regexUserNameId = new RegExp(/([^!@]+)(?:(?:%[^%@]+)?@([^%@]+?\.[^%@]*)|%(
 const regexISupportPrefix = new RegExp(/\((.*)\)(.*)/)
 
 /**
+ * @typedef NetworkInfo
+ * @type {object}
+ * @property {number} serverClientsCount
+ * @property {number} serverServersCount
+ * @property {number} channelsCount
+ * @property {number} unknownConnectionsCount
+ * @property {number} operatorsCount
+ * @property {number} visibleUsersCount
+ * @property {number} invisibleUsersCount
+ * @property {number} serversCount
+ */
+
+/**
+ * @typedef ServerStatistics
+ * @property {IrcServerStatisticalEntry} type
+ * @property {string} message
+ */
+
+/**
  * IRC Message Processing for a given {@link IrcClient}.
  *
  * @class
@@ -514,6 +533,7 @@ class IrcMessageProcessor {
 
       /**
        * @event IrcClient#serverSupportedFeatures
+       * @property {Object.<string, string>} serverSupportedFeatures
        */
       this.client.emit('serverSupportedFeatures', this.client.serverSupportedFeatures)
     }
@@ -611,6 +631,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     /**
      * @event IrcClient#serverStatistics
+     * @property {ServerStatistics[]} serverStatistics
      */
     this.client.emit('serverStatistics', this.listedStatsEntries)
     this.listedStatsEntries = []
@@ -676,16 +697,19 @@ class IrcMessageProcessor {
     let infoParts = info.split(' ')
     console.assert(infoParts.length === 10)
 
-    let networkInfo = {
-      'visibleUsersCount': parseInt(infoParts[2]),
-      'invisibleUsersCount': parseInt(infoParts[5]),
-      'serversCount': parseInt(infoParts[8])
+    if (!this.client.networkInfo) {
+      this.client.networkInfo = {}
     }
+
+    this.client.networkInfo.visibleUsersCount = parseInt(infoParts[2])
+    this.client.networkInfo.invisibleUsersCount = parseInt(infoParts[5])
+    this.client.networkInfo.serversCount = parseInt(infoParts[8])
 
     /**
      * @event IrcClient#networkInfo
+     * @property {NetworkInfo} networkInfo
      */
-    this.client.emit('networkInfo', networkInfo)
+    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -696,11 +720,16 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    let networkInfo = { 'operatorsCount': parseInt(message.parameters[1]) }
+    if (!this.client.networkInfo) {
+      this.client.networkInfo = {}
+    }
+
+    this.client.networkInfo.operatorsCount = parseInt(message.parameters[1]) 
     /**
      * @event IrcClient#networkInfo
+     * @property {NetworkInfo} networkInfo
      */
-    this.client.emit('networkInfo', networkInfo)
+    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -711,11 +740,16 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    let networkInfo = { 'unknownConnectionsCount': parseInt(message.parameters[1]) }
+    if (!this.client.networkInfo) {
+      this.client.networkInfo = {}
+    }
+
+    this.client.networkInfo.unknownConnectionsCount = parseInt(message.parameters[1])
     /**
      * @event IrcClient#networkInfo
+     * @property {NetworkInfo} networkInfo
      */
-    this.client.emit('networkInfo', networkInfo)
+    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -726,11 +760,16 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    let networkInfo = { 'channelsCount': parseInt(message.parameters[1]) }
+    if (!this.client.networkInfo) {
+      this.client.networkInfo = {}
+    }
+
+    this.client.networkInfo.channelsCount = parseInt(message.parameters[1])
     /**
      * @event IrcClient#networkInfo
+     * @property {NetworkInfo} networkInfo
      */
-    this.client.emit('networkInfo', networkInfo)
+    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -741,7 +780,10 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    let networkInfo = {}
+    if (!this.client.networkInfo) {
+      this.client.networkInfo = {}
+    }
+
     let info = message.parameters[1]
     let infoParts = info.split(' ')
 
@@ -749,23 +791,24 @@ class IrcMessageProcessor {
       switch (infoParts[i].toLowerCase()) {
         case 'user':
         case 'users':
-          networkInfo['serverClientsCount'] = parseInt(infoParts[i - 1])
+          this.client.networkInfo.serverClientsCount = parseInt(infoParts[i - 1])
           break
         case 'server':
         case 'servers':
-          networkInfo['serverServersCount'] = parseInt(infoParts[i - 1])
+          this.client.networkInfo.serverServersCount = parseInt(infoParts[i - 1])
           break
         case 'service':
         case 'services':
-          networkInfo['serverClientsCount'] = parseInt(infoParts[i - 1])
+          this.client.networkInfo.serverClientsCount = parseInt(infoParts[i - 1])
           break
       }
     }
 
     /**
      * @event IrcClient#networkInfo
+     * @property {NetworkInfo} networkInfo
      */
-    this.client.emit('networkInfo', networkInfo)
+    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
