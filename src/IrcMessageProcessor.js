@@ -1337,7 +1337,7 @@ class IrcMessageProcessor {
      * @event IrcClient#banList
      * @property {object[]} banList
      */
-    channel.emit('banList', this.banList)
+    channel.emit('banList', this.banList || [])
     this.banList = []
   }
 
