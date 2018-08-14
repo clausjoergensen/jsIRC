@@ -461,6 +461,8 @@ class IrcMessageProcessor {
     this.client.localUser.userName = nickNameMatch[2] || this.client.localUser.userName
     this.client.localUser.hostName = nickNameMatch[3] || this.client.localUser.hostName
 
+    this.client.welcomeMessage = message.parameters[1]
+    
     /**
      * @event IrcClient#registered
      */
@@ -803,17 +805,13 @@ class IrcMessageProcessor {
 
     for (let i = 0; i < infoParts.length; i++) {
       switch (infoParts[i].toLowerCase()) {
-        case 'user':
-        case 'users':
+        case 'client':
+        case 'clients':
           this.client.networkInfo.serverClientsCount = parseInt(infoParts[i - 1])
           break
         case 'server':
         case 'servers':
           this.client.networkInfo.serverServersCount = parseInt(infoParts[i - 1])
-          break
-        case 'service':
-        case 'services':
-          this.client.networkInfo.serverClientsCount = parseInt(infoParts[i - 1])
           break
       }
     }
