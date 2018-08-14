@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>IrcChannelUser.js - Documentation</title>
+    <title>Errors.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">IrcChannelUser.js</h1>
+    <h1 class="page-title">Errors.js</h1>
     
 
     
@@ -40,162 +40,135 @@
             <pre class="prettyprint source linenums"><code>// Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const events = require('events')
-const { EventEmitter } = events
-const { ArgumentNullError } = require('./Errors.js')
-
 /**
- * Represents an IRC user that exists on a specific channel on a specific IrcClient.
- *
- * @class
- * @package
- * @extends EventEmitter
+ * @private
  */
-class IrcChannelUser extends EventEmitter {
-  /**
-   * Constructs a new IrcChannelUser for a given {@link IrcUser}.
-   *
-   * @hideconstructor
-   * @throws {ArgumentNullError} if a parameter is null.
-   * @param {IrcUser} user The IrcUser on the channel.
-   * @param {string[]} [modes] Array of channel modes.
-  */
-  constructor (user, modes = null) {
-    super()
-
-    if (!user) {
-      throw new ArgumentNullError('user')
-    }
-
-    this._user = user
-    this._modes = modes || []
-    this._channel = null
-  }
-
-  /**
-   * Gets the IrcUser that is represented by the IrcChannelUser.
-   *
-   * @public
-   * @return {IrcUser} The IrcUser on the channel
-   */
-  get user () {
-    return this._user
-  }
-
-  /**
-   * Gets the channel.
-   *
-   * @public
-   * @return {IrcUser} The Irc Channel.
-   */
-  get channel () {
-    return this._channel
-  }
-
-  /**
-   * Sets the Irc Channel.
-   *
-   * @public
-   * @fires IrcChannelUser#channel
-   * @param {IrcChannel} The Irc Channel.
-   */
-  set channel (value) {
-    this._channel = value
-    /**
-     * @event IrcChannelUser#channel
-     */
-    this.emit('channel')
-  }
-
-  /**
-   * Gets a read-only list of the channel modes the user currently has.
-   *
-   * @public
-   * @return {string[]} The list of channel modes.
-   */
-  get modes () {
-    return this._modes
-  }
-
-  /**
-   * Kicks the user from the channel, giving the specified comment.
-   *
-   * @public
-   * @param {string} [comment=null] The comment to give for the kick, or null for none.
-   */
-  kick (comment = null) {
-    this.channel.kick(this.user.nickName, comment)
-  }
-
-  /**
-   * Gives the user operator privileges in the channel.
-   *
-   * @public
-   */
-  op () {
-    this.channel.setModes('+o', [this.user.nickName])
-  }
-
-  /**
-   * Removes operator privileges from the user in the channel.
-   *
-   * @public
-   */
-  deop () {
-    this.channel.setModes('-o', [this.user.nickName])
-  }
-
-  /**
-   * Voices the user in the channel.
-   *
-   * @public
-   */
-  voice () {
-    this.channel.setModes('+v', [this.user.nickName])
-  }
-
-  /**
-   * Devoices the user in the channel.
-   *
-   * @public
-   */
-  devoice () {
-    this.channel.setModes('-v', [this.user.nickName])
-  }
-
-  /**
-   * Bans the user from the channel.
-   *
-   * @public
-   */
-  ban () {
-    this.channel.setModes('+b', [this.user.nickName])
-  }
-
-  /**
-   * Returns a string representation of this instance.
-   *
-   * @return {string} A string that represents this instance.
-   */
-  toString () {
-    return `${this._channel.name}/${this._user.nickName}`
-  }
-
-  /** @package */
-  modeChanged (add, mode) {
-    if (add) {
-      this._modes.push(mode)
+class ExtendableError extends Error {
+  constructor (message) {
+    super(message)
+    this.name = this.constructor.name
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor)
     } else {
-      this._modes.splice(this._modes.indexOf(mode))
+      this.stack = (new Error(message)).stack
     }
-    /**
-     * @event IrcChannelUser#modes
-     */
-    this.emit('modes')
   }
 }
 
-module.exports = IrcChannelUser
+/**
+ * The error that is thrown when null is passed to a function that does not accept it as a valid argument.
+ *
+ * @package
+ * @extends Error
+ */
+class ArgumentNullError extends ExtendableError {
+  /**
+   * A human-readable description of the error.
+   * @hideconstructor
+   * @param {String} paramName The name of the parameter that caused the error.
+   */
+  constructor (paramName) {
+    super(`Argument '${paramName}' is null.`)
+  }
+
+  /** Error message. */
+  get message () {
+    return super.message
+  }
+
+  /** Error name. */
+  get name () {
+    return super.name
+  }
+}
+
+/**
+ * The error that is thrown when one of the arguments provided to a function is not valid.
+ *
+ * @package
+ * @extends Error
+ */
+class ArgumentError extends ExtendableError {
+  /**
+   * A human-readable description of the error.
+   * @hideconstructor
+   * @param {String} message A human-readable description of the error.
+   */
+  constructor (message) { // eslint-disable-line no-useless-constructor
+    super(message)
+  }
+
+  /** Error message. */
+  get message () {
+    return super.message
+  }
+
+  /** Error name. */
+  get name () {
+    return super.name
+  }
+}
+
+/**
+ * The error that is thrown when a function call is invalid for the object's current state.
+ *
+ * @package
+ * @extends Error
+ */
+class InvalidOperationError extends ExtendableError {
+  /**
+   * A human-readable description of the error.
+   * @hideconstructor
+   * @param {String} message A human-readable description of the error.
+   */
+  constructor (message) { // eslint-disable-line no-useless-constructor
+    super(message)
+  }
+
+  /** Error message. */
+  get message () {
+    return super.message
+  }
+
+  /** Error name. */
+  get name () {
+    return super.name
+  }
+}
+
+/**
+ * The error that is thrown when an error is made while using a network protocol.
+ *
+ * @package
+ * @extends Error
+ */
+class ProtocolViolationError extends ExtendableError {
+  /**
+   * A human-readable description of the error.
+   * @hideconstructor
+   * @param {String} message A human-readable description of the error.
+   */
+  constructor (message) { // eslint-disable-line no-useless-constructor
+    super(message)
+  }
+
+  /** Error message. */
+  get message () {
+    return super.message
+  }
+
+  /** Error name. */
+  get name () {
+    return super.name
+  }
+}
+
+module.exports = {
+  ArgumentError: ArgumentError,
+  ArgumentNullError: ArgumentNullError,
+  InvalidOperationError: InvalidOperationError,
+  ProtocolViolationError: ProtocolViolationError
+}
 </code></pre>
         </article>
     </section>

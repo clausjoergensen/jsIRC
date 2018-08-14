@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>IrcChannelUser.js - Documentation</title>
+    <title>InvalidOperationError - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,178 +27,191 @@
 
 <div id="main">
     
-    <h1 class="page-title">IrcChannelUser.js</h1>
+    <h1 class="page-title">InvalidOperationError</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>// Copyright (c) 2018 Claus Jørgensen
-'use strict'
+        <h2>
+        InvalidOperationError
+        </h2>
+        
+            <div class="class-description">The error that is thrown when a function call is invalid for the object's current state.</div>
+        
+    
+</header>
 
-const events = require('events')
-const { EventEmitter } = events
-const { ArgumentNullError } = require('./Errors.js')
+<article>
+    
+    
+    
+        <h3 class="subsection-title">Extends</h3>
 
-/**
- * Represents an IRC user that exists on a specific channel on a specific IrcClient.
- *
- * @class
- * @package
- * @extends EventEmitter
- */
-class IrcChannelUser extends EventEmitter {
-  /**
-   * Constructs a new IrcChannelUser for a given {@link IrcUser}.
-   *
-   * @hideconstructor
-   * @throws {ArgumentNullError} if a parameter is null.
-   * @param {IrcUser} user The IrcUser on the channel.
-   * @param {string[]} [modes] Array of channel modes.
-  */
-  constructor (user, modes = null) {
-    super()
+        
 
-    if (!user) {
-      throw new ArgumentNullError('user')
-    }
 
-    this._user = user
-    this._modes = modes || []
-    this._channel = null
-  }
+    <ul>
+        <li>Error</li>
+    </ul>
 
-  /**
-   * Gets the IrcUser that is represented by the IrcChannelUser.
-   *
-   * @public
-   * @return {IrcUser} The IrcUser on the channel
-   */
-  get user () {
-    return this._user
-  }
 
-  /**
-   * Gets the channel.
-   *
-   * @public
-   * @return {IrcUser} The Irc Channel.
-   */
-  get channel () {
-    return this._channel
-  }
+    
 
-  /**
-   * Sets the Irc Channel.
-   *
-   * @public
-   * @fires IrcChannelUser#channel
-   * @param {IrcChannel} The Irc Channel.
-   */
-  set channel (value) {
-    this._channel = value
-    /**
-     * @event IrcChannelUser#channel
-     */
-    this.emit('channel')
-  }
+    
 
-  /**
-   * Gets a read-only list of the channel modes the user currently has.
-   *
-   * @public
-   * @return {string[]} The list of channel modes.
-   */
-  get modes () {
-    return this._modes
-  }
+    
 
-  /**
-   * Kicks the user from the channel, giving the specified comment.
-   *
-   * @public
-   * @param {string} [comment=null] The comment to give for the kick, or null for none.
-   */
-  kick (comment = null) {
-    this.channel.kick(this.user.nickName, comment)
-  }
+     
 
-  /**
-   * Gives the user operator privileges in the channel.
-   *
-   * @public
-   */
-  op () {
-    this.channel.setModes('+o', [this.user.nickName])
-  }
+    
 
-  /**
-   * Removes operator privileges from the user in the channel.
-   *
-   * @public
-   */
-  deop () {
-    this.channel.setModes('-o', [this.user.nickName])
-  }
+    
+        <h3 class="subsection-title">Members</h3>
 
-  /**
-   * Voices the user in the channel.
-   *
-   * @public
-   */
-  voice () {
-    this.channel.setModes('+v', [this.user.nickName])
-  }
+        
+            
+<h4 class="name" id="message"><span class="type-signature"></span>message<span class="type-signature"></span></h4>
 
-  /**
-   * Devoices the user in the channel.
-   *
-   * @public
-   */
-  devoice () {
-    this.channel.setModes('-v', [this.user.nickName])
-  }
 
-  /**
-   * Bans the user from the channel.
-   *
-   * @public
-   */
-  ban () {
-    this.channel.setModes('+b', [this.user.nickName])
-  }
 
-  /**
-   * Returns a string representation of this instance.
-   *
-   * @return {string} A string that represents this instance.
-   */
-  toString () {
-    return `${this._channel.name}/${this._user.nickName}`
-  }
 
-  /** @package */
-  modeChanged (add, mode) {
-    if (add) {
-      this._modes.push(mode)
-    } else {
-      this._modes.splice(this._modes.indexOf(mode))
-    }
-    /**
-     * @event IrcChannelUser#modes
-     */
-    this.emit('modes')
-  }
-}
 
-module.exports = IrcChannelUser
-</code></pre>
-        </article>
-    </section>
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Errors.js.html">Errors.js</a>, <a href="Errors.js.html#line90">line 90</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Error message.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Errors.js.html">Errors.js</a>, <a href="Errors.js.html#line95">line 95</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Error name.
+</div>
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
