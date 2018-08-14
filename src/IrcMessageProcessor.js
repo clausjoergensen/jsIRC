@@ -1059,7 +1059,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    let channel = this.getChannelFromName(message.parameters[0])
+    let channel = this.getChannelFromName(message.parameters[1])
     let modesAndParameters = this.getModeAndParameters(message.parameters.slice(1))
 
     channel.modesChanged(message.source, modesAndParameters.modes, modesAndParameters.parameters)
