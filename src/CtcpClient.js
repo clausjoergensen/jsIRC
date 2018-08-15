@@ -379,6 +379,13 @@ class CtcpClient extends EventEmitter {
     } else {
       this.client.sendMessagePrivateMessage(targets, text)
     }
+
+    this.emit('rawMessageSent', {
+      'targets': targets,
+      'tag': tag,
+      'data': data,
+      'isResponse': isResponse
+    })
   }
 }
 
