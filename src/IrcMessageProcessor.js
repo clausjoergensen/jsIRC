@@ -1,8 +1,6 @@
 // Copyright (c) 2018 Claus Jørgensen
 'use strict'
 
-const log = require('electron-log')
-
 const IrcUser = require('./IrcUser.js')
 const IrcChannel = require('./IrcChannel.js')
 const IrcChannelType = require('./IrcChannelType.js')
@@ -168,15 +166,15 @@ class IrcMessageProcessor {
       } else {
         let replyId = IrcReply[message.command]
         if (replyId !== undefined) {
-          log.debug(`Unsupported command ${replyId} (${message.command})`)
+          console.debug(`Unsupported command ${replyId} (${message.command})`)
           return
         }
         let errorId = IrcError[message.command]
         if (errorId !== undefined) {
-          log.debug(`Unsupported command ${errorId} (${message.command})`)
+          console.debug(`Unsupported command ${errorId} (${message.command})`)
           return
         }
-        log.debug(`Unsupported command '${message.command}'`)
+        console.debug(`Unsupported command '${message.command}'`)
       }
     }
   }

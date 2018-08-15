@@ -3,7 +3,6 @@
 
 const events = require('events')
 const { EventEmitter } = events
-const log = require('electron-log')
 const { ArgumentNullError, InvalidOperationError } = require('./Errors.js')
 
 const taggedDataDelimeterChar = String.fromCharCode(0x01)
@@ -239,7 +238,7 @@ class CtcpClient extends EventEmitter {
     if (messageProcessor != null) {
       messageProcessor(message)
     } else {
-      log.debug(`Unsupported CTCP Command '${message.tag}'`)
+      console.debug(`Unsupported CTCP Command '${message.tag}'`)
     }
 
     return true

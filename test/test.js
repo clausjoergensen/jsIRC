@@ -2,10 +2,8 @@
 'use strict'
 
 const { IrcClient, IrcFloodPreventer, CtcpClient } = require('./../index.js')
-const log = require('electron-log')
 
-log.transports.file.level = false
-log.transports.console.level = false
+console.debug = (m) => {}
 
 describe('IRC Tests', function () {
   let nickName1 = 'Rincewind'

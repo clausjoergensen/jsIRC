@@ -3,7 +3,6 @@
 
 const net = require('net')
 const events = require('events')
-const log = require('electron-log')
 const uuidv4 = require('uuid/v4')
 
 const { EventEmitter } = events
@@ -91,7 +90,7 @@ class IrcClient extends EventEmitter {
     }
 
     if (!registrationInfo.userModes) {
-      log.warn('No userModes was specified in the registrationInfo.')
+      console.debug('No userModes was specified in the registrationInfo.')
       registrationInfo.userModes = []
     }
 
@@ -584,7 +583,7 @@ class IrcClient extends EventEmitter {
       }
     }
 
-    log.verbose('<- ' + line)
+    this.emit('in', line)
 
     this.readMessage({
       'client': this,
@@ -613,12 +612,12 @@ class IrcClient extends EventEmitter {
       }
 
       let message = this._messageSendQueue.shift()
-      log.verbose('-> ' + message)
+      this.emit('out', message)
 
       try {
         this._socket.write(message)
       } catch (e) {
-        log.error(e.message)
+        console.error(e.message)
         this.emit('error', e.message)
       }
 

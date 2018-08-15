@@ -28,7 +28,6 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "electron-log": "^2.2.16",
     "long": "^4.0.0",
     "uuid": "^3.3.2"
   }
