@@ -1412,8 +1412,8 @@ class IrcMessageProcessor {
    * @private
    */
   processMessageNumericError (message) {
-    console.assert(message.parameters[0])
-    console.assert(message.parameters[1])
+    console.assert(message.parameters[0] !== undefined) // Empty string is allowed.
+    console.assert(message.parameters[1] !== undefined) // Empty string is allowed.
 
     let errorParameters = []
     let errorMessage = null
