@@ -141,7 +141,8 @@ class IrcMessageProcessor {
       '372': this.processMessageReplyMotd.bind(this),
       '375': this.processMessageReplyMotdStart.bind(this),
       '376': this.processMessageReplyMotdEnd.bind(this),
-      '391': this.processMessageReplyTime.bind(this)
+      '391': this.processMessageReplyTime.bind(this),
+      '396': this.processMessageHostHidden.bind(this)
     }
   }
 
@@ -1387,6 +1388,23 @@ class IrcMessageProcessor {
      * @property {string} dateTime
      */
     this.client.emit('serverTime', server, dateTime)
+  }
+
+  /**
+   * Process RPL_HOSTHIDDEN responses from the server.
+   * @private
+   */
+  processMessageHostHidden (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+
+    let [, hostName] = message.parameters
+
+    /**
+     * @event IrcClient#hostHidden
+     * @property {string} host
+     */
+    this.client.emit('hostHidden', hostName) 
   }
 
   /**
