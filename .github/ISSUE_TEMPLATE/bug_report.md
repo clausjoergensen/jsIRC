@@ -46,14 +46,3 @@ If you have screen shots or gifs that demonstrate the issue, please include them
 If the issue involves a specific IRC network, including the information about it will make it easier to recreate the issue.
 
 -->
-
-### Logs
-<!--
-Attach your log file (You can simply drag your file here to insert it) to this issue. Please make sure the generated link to your log file is **below** this comment section otherwise it will not appear when you submit your issue.
-
-Linux logs location: `~/.config/jsIRC/*.log`
-macOS logs location: `~/Library/Logs/jsIRC/*.log`
-Windows logs location: `%USERPROFILE%\AppData\Roaming\jsIRC\*.log`
-
-The log files are organized by date, so see if anything was generated for today's date.
--->
