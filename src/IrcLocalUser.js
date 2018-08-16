@@ -117,10 +117,7 @@ class IrcLocalUser extends IrcUser {
    * which takes the form <code>( "+" / "-" ) *( mode character )</code>
    */
   setModes (newModes) {
-    var setModes = newModes.filter(x => !this.modes.include(x))
-    var unsetModes = this.modes.filter(x => !newModes.include(x))
-    
-    this.client.setUserModes(this, `+${setModes.join('')}-${unsetModes.join('')}`)
+    this.client.setUserModes(this, newModes)
   }
 
   modesChanged (newModes) {
