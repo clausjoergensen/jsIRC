@@ -14,6 +14,5 @@ Documentation is published at https://clausjoergensen.github.io/jsIRC
 
 The project uses a range of Open Source components. 
 
-[long](https://github.com/dcodeIO/long)
-[uuid](https://github.com/kelektiv/node-uuid)
-
+- [long](https://github.com/dcodeIO/long)
+- [uuid](https://github.com/kelektiv/node-uuid)
