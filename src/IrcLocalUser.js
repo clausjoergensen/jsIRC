@@ -125,7 +125,7 @@ class IrcLocalUser extends IrcUser {
     /**
      * @event IrcLocalUser#modes
      */
-    this.emit('modes)')
+    this.emit('modes')
   }
 }
 
