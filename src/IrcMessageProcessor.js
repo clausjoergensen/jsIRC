@@ -461,7 +461,7 @@ class IrcMessageProcessor {
     this.client.localUser.hostName = nickNameMatch[3] || this.client.localUser.hostName
 
     this.client.welcomeMessage = message.parameters[1]
-    
+
     /**
      * @event IrcClient#registered
      */
@@ -1084,7 +1084,7 @@ class IrcMessageProcessor {
 
     let channel = this.getChannelFromName(message.parameters[1])
 
-    console.assert(message.parameters[2] !== undefinedf) // Empty string is allowed.
+    console.assert(message.parameters[2] !== undefined) // Empty string is allowed.
     channel.topicChanged(null, message.parameters[2])
   }
 
@@ -1402,7 +1402,7 @@ class IrcMessageProcessor {
      * @event IrcClient#hostHidden
      * @property {string} host
      */
-    this.client.emit('hostHidden', hostName) 
+    this.client.emit('hostHidden', hostName)
   }
 
   /**
