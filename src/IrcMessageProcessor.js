@@ -255,8 +255,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0])
     let channelList = message.parameters[0].split(',')
 
-    console.assert(message.parameters[1] !== undefined) // Empty string is allowed.
-    let comment = message.parameters[1]
+    let comment = message.parameters[1] || ""
 
     channelList.forEach(channelName => {
       let channel = this.getChannelFromName(channelName)
