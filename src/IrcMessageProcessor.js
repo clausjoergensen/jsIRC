@@ -1023,12 +1023,8 @@ class IrcMessageProcessor {
     console.assert(message.parameters[1])
 
     let channelName = message.parameters[1]
-
-    console.assert(message.parameters[2])
-    let visibleUsersCount = parseInt(message.parameters[2])
-
-    console.assert(message.parameters[3])
-    let topic = message.parameters[3]
+    let visibleUsersCount = parseInt(message.parameters[2]) || 0
+    let topic = message.parameters[3] || ''
 
     this.client.listedChannels.push({
       'channelName': channelName,
