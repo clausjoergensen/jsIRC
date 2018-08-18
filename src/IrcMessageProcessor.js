@@ -128,6 +128,7 @@ class IrcMessageProcessor {
       '324': this.processMessageReplyChannelModes.bind(this),
       '331': this.processMessageReplyNoTopic.bind(this),
       '332': this.processMessageReplyTopic.bind(this),
+      '333': this.processMessageReplyTopicWhoTime.bind(this),
       '341': this.processMessageReplyInviting.bind(this),
       '351': this.processMessageReplyVersion.bind(this),
       '352': this.processMessageReplyWhoReply.bind(this),
@@ -1085,6 +1086,25 @@ class IrcMessageProcessor {
 
     console.assert(message.parameters[2] !== undefined) // Empty string is allowed.
     channel.topicChanged(null, message.parameters[2])
+  }
+
+  /**
+   * Process RPL_TOPICWHOTIME responses from the server.
+   * @private
+   */
+  processMessageReplyTopicWhoTime (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+
+    console.assert(message.parameters[1])
+    let channel = this.getChannelFromName(message.parameters[1])
+
+    console.assert(message.parameters[2])
+    let nickName = this.client.getUserFromNickName(message.parameters[2])
+
+    console.assert(message.parameters[3])
+    let time = parseInt(message.parameters[3])
+
+    channel.emit('topicSetBy', nickName, new Date(time * 1000))
   }
 
   /**
