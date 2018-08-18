@@ -8,7 +8,7 @@ const { EventEmitter } = events
  * Represents an IRC server that exists on a specific {@link IrcClient}.
  *
  * @class
- * @package
+ * @public
  * @extends EventEmitter
  */
 class IrcServer extends EventEmitter {

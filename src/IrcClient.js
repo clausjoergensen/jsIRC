@@ -111,6 +111,14 @@ class IrcClient extends EventEmitter {
   }
 
   /**
+   * Half-closes the socket. i.e., it sends a FIN packet. 
+   * It is possible the server will still send some data
+   */
+  disconnect () {
+    this._socket.end()
+  }
+
+  /**
    * Gets a uuid representing the current IRC client
    *
    * @return {String} A uuid representing the current IRC client
@@ -365,6 +373,51 @@ class IrcClient extends EventEmitter {
    */
   leaveChannels (channelNames, comment) {
     this.sendMessagePart(channelNames, comment)
+  }
+
+  /** 
+   * Gets a corresponding @{link IrcServer} for a given hostName.
+   *
+   * * @param {string} hostName The servers hostname.
+   */
+  getServerFromHostName (hostName) {
+    if (!hostName) {
+      throw new ArgumentNullError('hostName')
+    }
+
+    let existingServer = this.servers.find(s => s.hostName === hostName)
+    if (existingServer != null) {
+      return existingServer
+    }
+
+    let newServer = new IrcServer(hostName)
+    this.servers.push(newServer)
+
+    return newServer
+  }
+
+  /**
+   * Gets a corresponding @{link IrcUser} for a given nickname.
+   *
+   * @param {string} nickName The users nickname.
+   */
+  getUserFromNickName (nickName, isOnline = true) {
+    if (!nickName) {
+      throw new ArgumentNullError('nickName')
+    }
+
+    let existingUser = this.users.find(u => u.nickName === nickName)
+    if (existingUser != null) {
+      return existingUser
+    }
+
+    let newUser = new IrcUser(this)
+    newUser.nickName = nickName
+    newUser.isOnline = isOnline
+
+    this.users.push(newUser)
+
+    return newUser
   }
 
   /**
@@ -944,43 +997,6 @@ class IrcClient extends EventEmitter {
     }
 
     throw new ArgumentError('The source of the message was not recognised as either a server or user.')
-  }
-
-  /** @private */
-  getServerFromHostName (hostName) {
-    if (!hostName) {
-      throw new ArgumentNullError('hostName')
-    }
-
-    let existingServer = this.servers.find(s => s.hostName === hostName)
-    if (existingServer != null) {
-      return existingServer
-    }
-
-    let newServer = new IrcServer(hostName)
-    this.servers.push(newServer)
-
-    return newServer
-  }
-
-  /** @private */
-  getUserFromNickName (nickName, isOnline = true) {
-    if (!nickName) {
-      throw new ArgumentNullError('nickName')
-    }
-
-    let existingUser = this.users.find(u => u.nickName === nickName)
-    if (existingUser != null) {
-      return existingUser
-    }
-
-    let newUser = new IrcUser(this)
-    newUser.nickName = nickName
-    newUser.isOnline = isOnline
-
-    this.users.push(newUser)
-
-    return newUser
   }
 }
 
