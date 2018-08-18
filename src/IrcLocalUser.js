@@ -127,6 +127,13 @@ class IrcLocalUser extends IrcUser {
      */
     this.emit('modes', newModes)
   }
+
+  kicked (source, channel, comment) {
+   /**
+     * @event IrcLocalUser#kicked
+     */
+    this.emit('kicked', source, channel, comment) 
+  }
 }
 
 module.exports = IrcLocalUser

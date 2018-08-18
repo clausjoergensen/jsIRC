@@ -289,14 +289,14 @@ class IrcChannel extends EventEmitter {
     this.emit('userInvite', user)
   }
 
-  userKicked (channelUser, comment = null) {
+  userKicked (source, channelUser, comment = null) {
     this._users.delete(channelUser)
     /**
      * @event IrcChannel#userKicked
      * @param {IrcChannelUser} channelUser
      * @param {string} comment
      */
-    this.emit('userKicked', channelUser, comment)
+    this.emit('userKicked', source, channelUser, comment)
   }
 
   userNameReply (channelUser) {

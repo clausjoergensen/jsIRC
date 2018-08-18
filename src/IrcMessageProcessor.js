@@ -326,10 +326,11 @@ class IrcMessageProcessor {
         let channel = channelUser.channel
         this.client.channels.splice(this.client.channels.indexOf(channel), 1)
 
-        channelUser.channel.userKicked(channelUser, comment)
+        channelUser.channel.userKicked(message.source, channelUser, comment)
+        this.client.localUser.kicked(message.source, channelUser.channel, comment)
         this.client.localUser.partChannel(channel)
       } else {
-        channelUser.channel.userKicked(channelUser, comment)
+        channelUser.channel.userKicked(message.source, channelUser, comment)
       }
     })
   }
