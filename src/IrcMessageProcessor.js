@@ -536,6 +536,7 @@ class IrcMessageProcessor {
       this.client.emit('bounce', serverAddress, serverPort)
     } else {
       // RPL_ISUPPORT
+      let newParameters = {}
       for (let i = 1; i < message.parameters.length - 1; i++) {
         if (!(message.parameters[i + 1])) {
           break
@@ -544,15 +545,17 @@ class IrcMessageProcessor {
         let paramName = paramParts[0]
         let paramValue = paramParts.length === 1 ? null : paramParts[1]
 
+        newParameters[paramName] = paramValue
+
         this.handleISupportParameter(paramName, paramValue)
         this.client.serverSupportedFeatures[paramName] = paramValue
       }
 
       /**
        * @event IrcClient#serverSupportedFeatures
-       * @property {ServerSupportedFeature} serverSupportedFeatures
+       * @property {ServerSupportedFeature} serverSupportedFeatures All or subset of the supported features.
        */
-      this.client.emit('serverSupportedFeatures', this.client.serverSupportedFeatures)
+      this.client.emit('serverSupportedFeatures', newParameters)
     }
   }
 
