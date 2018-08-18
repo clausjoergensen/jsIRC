@@ -109,6 +109,8 @@ class IrcMessageProcessor {
       '253': this.processMessageLUserUnknown.bind(this),
       '254': this.processMessageLUserChannels.bind(this),
       '255': this.processMessageLUserMe.bind(this),
+      '265': this.processMessageLocalUsers.bind(this),
+      '266': this.processMessageGlobalUsers.bind(this),
       '301': this.processMessageReplyAway.bind(this),
       '303': this.processMessageReplyIsOn.bind(this),
       '305': this.processMessageReplyUnAway.bind(this),
@@ -713,18 +715,21 @@ class IrcMessageProcessor {
     console.assert(infoParts.length === 10)
 
     if (!this.client.networkInfo) {
-      this.client.networkInfo = {}
+      this.client.networkInfo = {
+        visibleUsersCount: 0,
+        invisibleUsersCount: 0,
+        serversCount: 0,
+        operatorsCount: 0,
+        unknownConnectionsCount: 0,
+        channelsCount: 0,
+        serverClientsCount: 0,
+        serverServersCount: 0
+      }
     }
 
     this.client.networkInfo.visibleUsersCount = parseInt(infoParts[2])
     this.client.networkInfo.invisibleUsersCount = parseInt(infoParts[5])
     this.client.networkInfo.serversCount = parseInt(infoParts[8])
-
-    /**
-     * @event IrcClient#networkInfo
-     * @property {NetworkInfo} networkInfo
-     */
-    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -735,16 +740,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    if (!this.client.networkInfo) {
-      this.client.networkInfo = {}
-    }
-
     this.client.networkInfo.operatorsCount = parseInt(message.parameters[1])
-    /**
-     * @event IrcClient#networkInfo
-     * @property {NetworkInfo} networkInfo
-     */
-    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -755,16 +751,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    if (!this.client.networkInfo) {
-      this.client.networkInfo = {}
-    }
-
     this.client.networkInfo.unknownConnectionsCount = parseInt(message.parameters[1])
-    /**
-     * @event IrcClient#networkInfo
-     * @property {NetworkInfo} networkInfo
-     */
-    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -775,16 +762,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    if (!this.client.networkInfo) {
-      this.client.networkInfo = {}
-    }
-
     this.client.networkInfo.channelsCount = parseInt(message.parameters[1])
-    /**
-     * @event IrcClient#networkInfo
-     * @property {NetworkInfo} networkInfo
-     */
-    this.client.emit('networkInfo', this.client.networkInfo)
   }
 
   /**
@@ -794,10 +772,6 @@ class IrcMessageProcessor {
   processMessageLUserMe (message) {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
-
-    if (!this.client.networkInfo) {
-      this.client.networkInfo = {}
-    }
 
     let info = message.parameters[1]
     let infoParts = info.split(' ')
@@ -820,6 +794,32 @@ class IrcMessageProcessor {
      * @property {NetworkInfo} networkInfo
      */
     this.client.emit('networkInfo', this.client.networkInfo)
+  }
+
+  /**
+   * Process RPL_LOCALUSERS responses from the server.
+   * @private
+   */
+  processMessageLocalUsers (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+    console.assert(message.parameters[2])
+
+    let [,current,max,] = message.parameters
+    this.client.emit('localUsers', parseInt(current), parseInt(max))
+  }
+
+  /**
+   * Process RPL_GLOBALUSERS responses from the server.
+   * @private
+   */
+  processMessageGlobalUsers (message) {
+    console.assert(message.parameters[0] === this.client.localUser.nickName)
+    console.assert(message.parameters[1])
+    console.assert(message.parameters[2])
+
+    let [,current,max,] = message.parameters
+    this.client.emit('globalUsers', parseInt(current), parseInt(max))
   }
 
   /**
