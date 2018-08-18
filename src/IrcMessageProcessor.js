@@ -1342,7 +1342,7 @@ class IrcMessageProcessor {
    */
   processMessageReplyMotd (message) {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
-    console.assert(message.parameters[1])
+    console.assert(message.parameters[1] !== undefined) // Empty string is allowed.
 
     this.client.messageOfTheDay += message.parameters[1] + '\r\n'
   }
