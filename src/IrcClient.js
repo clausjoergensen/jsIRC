@@ -385,10 +385,14 @@ class IrcClient extends EventEmitter {
       throw new ArgumentNullError('hostName')
     }
 
-    let existingServer = this.servers.find(s => s.hostName === hostName)
-    if (existingServer != null) {
+    let existingServer = this.servers.find(
+      s => s.hostName.localeCompare(hostName, undefined, { sensitivity: 'base' }) === 0)
+    
+    if (existingServer) {
       return existingServer
     }
+
+    console.debug(`Creating new server with hostname '${hostName}'`)
 
     let newServer = new IrcServer(hostName)
     this.servers.push(newServer)
@@ -406,10 +410,14 @@ class IrcClient extends EventEmitter {
       throw new ArgumentNullError('nickName')
     }
 
-    let existingUser = this.users.find(u => u.nickName === nickName)
-    if (existingUser != null) {
+    let existingUser = this.users.find(
+      u => u.nickName.localeCompare(nickName, undefined, { sensitivity: 'base' }) === 0)
+    
+    if (existingUser) {
       return existingUser
     }
+
+    console.debug(`Creating new user with nickname '${nickName}'`)
 
     let newUser = new IrcUser(this)
     newUser.nickName = nickName

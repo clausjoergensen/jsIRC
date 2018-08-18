@@ -323,8 +323,11 @@ class IrcChannel extends EventEmitter {
       newModeParameters,
       this.client.channelUserModes,
       (add, mode, parameter) => {
-        let channelUser = this.users.find(u => u.user.nickName === parameter)
-        channelUser.modeChanged(add, mode)
+        let channelUser = this.users.find(
+          u => u.user.nickName.localeCompare(parameter, undefined, { sensitivity: 'base' }) === 0)
+        if (channelUser) {
+          channelUser.modeChanged(add, mode)          
+        }
       })
 
     /**
