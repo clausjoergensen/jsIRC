@@ -392,8 +392,6 @@ class IrcClient extends EventEmitter {
       return existingServer
     }
 
-    console.debug(`Creating new server with hostname '${hostName}'`)
-
     let newServer = new IrcServer(hostName)
     this.servers.push(newServer)
 
@@ -416,8 +414,6 @@ class IrcClient extends EventEmitter {
     if (existingUser) {
       return existingUser
     }
-
-    console.debug(`Creating new user with nickname '${nickName}'`)
 
     let newUser = new IrcUser(this)
     newUser.nickName = nickName
