@@ -496,7 +496,7 @@ class IrcClient extends EventEmitter {
     localUser.isOnline = true
     localUser.nickName = this.registrationInfo.nickName
     localUser.userName = this.registrationInfo.userName
-    localUser.realName = this.registrationInfo.userName
+    localUser.realName = this.registrationInfo.realName
     localUser.userModes = this.registrationInfo.userModes
 
     this.localUser = localUser
