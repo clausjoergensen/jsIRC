@@ -1,6 +1,6 @@
 {
   "name": "jsirc",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "JavaScript IRC Client",
   "main": "./index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   ],
   "author": {
     "name": "Claus Jørgensen",
-    "email": "claus.joergensen@outlook.com"
+    "email": "claus.joergensen+npm@outlook.com"
   },
   "license": "MIT",
   "repository": {

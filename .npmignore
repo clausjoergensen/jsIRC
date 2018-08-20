@@ -3,3 +3,10 @@
 
 # Documentation
 docs
+jsdoc.json
+
+# Tests
+test
+
+# eslint
+.eslintrc
