@@ -8,7 +8,7 @@ Documentation is published at https://clausjoergensen.github.io/jsIRC
 
 # License
 
-[MIT License](LICENSE.md)
+[MIT License](LICENSE.txt)
 
 # Acknowledgements
 
