@@ -578,8 +578,19 @@ class IrcClient extends EventEmitter {
 
   /** @private */
   dataReceived (data) {
-    let str = data.toString()
+    let str = this.incompleteData || ""
+    str += data.toString()
+
     if (!str) {
+      return
+    }
+
+    if (this.incompleteData) {
+      this.incompleteData = null
+    }
+
+    if (str[str.length - 2] !== '\r' && str[str.length - 1] !== '\n') {
+      this.incompleteData = str
       return
     }
 
