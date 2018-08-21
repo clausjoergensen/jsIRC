@@ -495,15 +495,17 @@ class IrcClient extends EventEmitter {
       this.getNumericUserMode(this.registrationInfo.userModes),
       this.registrationInfo.realName)
 
-    let localUser = new IrcLocalUser(this)
-    localUser.isOnline = true
-    localUser.nickName = this.registrationInfo.nickName
-    localUser.userName = this.registrationInfo.userName
-    localUser.realName = this.registrationInfo.realName
-    localUser.userModes = this.registrationInfo.userModes
+    if (!this.localUser) {
+      let localUser = new IrcLocalUser(this)
+      localUser.isOnline = true
+      localUser.nickName = this.registrationInfo.nickName
+      localUser.userName = this.registrationInfo.userName
+      localUser.realName = this.registrationInfo.realName
+      localUser.userModes = this.registrationInfo.userModes
 
-    this.localUser = localUser
-    this.users.push(localUser)
+      this.localUser = localUser
+      this.users.push(localUser)
+    }
 
     this._sendTimer = setInterval(() => this.writePendingMessages(), 0)
 
@@ -560,7 +562,7 @@ class IrcClient extends EventEmitter {
     this._socket.on('connect', this.connected.bind(this))
     this._socket.on('disconnect', this.disconnected.bind(this))
     this._socket.on('close', this.connectionClosed.bind(this))
-    this.localUser = null
+    this.localUser = isReconnecting ? this.localUser : null
     this.messageOfTheDay = null
     this.yourHostMessage = null
     this.serverCreatedMessage = null
