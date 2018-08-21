@@ -41,7 +41,7 @@ class IrcChannel extends EventEmitter {
     this._topic = null
     this._channelType = IrcChannelType.unspecified
     this._modes = new Set([])
-    this._users = new Set([])
+    this._users = []
   }
 
   /**
@@ -81,7 +81,7 @@ class IrcChannel extends EventEmitter {
    * @return {IrcChannelUser[]} list of all channel users currently in the channel
    */
   get users () {
-    return Array.from(this._users)
+    return this._users
   }
 
   /*
@@ -250,11 +250,15 @@ class IrcChannel extends EventEmitter {
   }
 
   userJoined (channelUser) {
-    if (this._users.has(channelUser)) {
+    let existingChannelUser = this._users.find(
+      cu => cu.user.nickName.localeCompare(channelUser.user.nickName, undefined, { sensitivity: 'base' }) === 0)
+    
+    if (existingChannelUser) {
       return
     }
+    
     channelUser.channel = this
-    this._users.add(channelUser)
+    this._users.push(channelUser)
 
     /**
      * @event IrcChannel#userJoinedChannel
@@ -264,22 +268,34 @@ class IrcChannel extends EventEmitter {
   }
 
   userParted (channelUser, comment) {
-    this._users.delete(channelUser)
+    let existingChannelUser = this._users.find(
+      cu => cu.user.nickName.localeCompare(channelUser.user.nickName, undefined, { sensitivity: 'base' }) === 0)
+
+    if (existingChannelUser) {
+      this._users.splice(this._users.indexOf(existingChannelUser))      
+    }
+
     /**
      * @event IrcChannel#userLeftChannel
      * @param {IrcChannelUser} channelUser
      */
-    this.emit('userLeftChannel', channelUser, comment)
+    this.emit('userLeftChannel', existingChannelUser, comment)
   }
 
   userQuit (channelUser, comment) {
-    this._users.delete(channelUser)
+    let existingChannelUser = this._users.find(
+      cu => cu.user.nickName.localeCompare(channelUser.user.nickName, undefined, { sensitivity: 'base' }) === 0)
+
+    if (existingChannelUser) {
+      this._users.splice(this._users.indexOf(existingChannelUser))
+    }
+
     /**
      * @event IrcChannel#userQuit
      * @param {IrcChannelUser} channelUser
      * @param {string} comment
      */
-    this.emit('userQuit', channelUser, comment)
+    this.emit('userQuit', existingChannelUser, comment)
   }
 
   userInvited (user) {
@@ -291,21 +307,31 @@ class IrcChannel extends EventEmitter {
   }
 
   userKicked (source, channelUser, comment = null) {
-    this._users.delete(channelUser)
+    let existingChannelUser = this._users.find(
+      cu => cu.user.nickName.localeCompare(channelUser.user.nickName, undefined, { sensitivity: 'base' }) === 0)
+
+    if (existingChannelUser) {
+      this._users.splice(this._users.indexOf(existingChannelUser))
+    }
+
     /**
      * @event IrcChannel#userKicked
      * @param {IrcChannelUser} channelUser
      * @param {string} comment
      */
-    this.emit('userKicked', source, channelUser, comment)
+    this.emit('userKicked', source, existingChannelUser, comment)
   }
 
   userNameReply (channelUser) {
-    if (this._users.has(channelUser)) {
+    let existingChannelUser = this._users.find(
+      cu => cu.user.nickName.localeCompare(channelUser.user.nickName, undefined, { sensitivity: 'base' }) === 0)
+
+    if (existingChannelUser) {
       return
     }
+
     channelUser.channel = this
-    this._users.add(channelUser)
+    this._users.push(channelUser)
   }
 
   topicChanged (user, newTopic) {
