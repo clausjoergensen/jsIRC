@@ -95,11 +95,13 @@ class IrcClient extends EventEmitter {
       registrationInfo.userModes = []
     }
 
+    let isReconnecting = this.hostName == hostName && this.port == port
+
     this.hostName = hostName
     this.port = port
     this.registrationInfo = registrationInfo
 
-    this.resetState()
+    this.resetState(isReconnecting)
 
     /**
      * @event IrcClient#connecting
@@ -548,7 +550,7 @@ class IrcClient extends EventEmitter {
   }
 
   /** @private */
-  resetState () {
+  resetState (isReconnecting = false) {
     this._messageSendQueue = []
     this._socket = new net.Socket()
     this._socket.setKeepAlive(true, 5000)
@@ -562,11 +564,11 @@ class IrcClient extends EventEmitter {
     this.messageOfTheDay = null
     this.yourHostMessage = null
     this.serverCreatedMessage = null
+    this.users = isReconnecting ? this.users : []
+    this.channels = isReconnecting ? this.channels : []
+    this.servers = isReconnecting ? this.servers : []
     this.serverName = null
-    this.serverVersion = null
-    this.users = []
-    this.channels = []
-    this.servers = []
+    this.serverVersion = null    
     this.serverAvailableUserModes = []
     this.serverAvailableChannelModes = []
     this.serverSupportedFeatures = {}
