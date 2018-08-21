@@ -1460,7 +1460,7 @@ class IrcMessageProcessor {
       throw new ArgumentNullError('channelName')
     }
 
-    let existingChannel = this.client.channels.find(c => c.name === channelName)
+    let existingChannel = this.client.channels.find(c => c.name.localeCompare(channelName, undefined, { sensitivity: 'base' }) === 0)
     if (existingChannel) {
       return existingChannel
     }
