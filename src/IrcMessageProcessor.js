@@ -1399,7 +1399,7 @@ class IrcMessageProcessor {
     console.assert(message.parameters[1])
     console.assert(message.parameters[2])
 
-    let [server, dateTime] = message.parameters
+    let [,server, dateTime] = message.parameters
     /**
      * @event IrcClient#serverTime
      * @property {string} server
