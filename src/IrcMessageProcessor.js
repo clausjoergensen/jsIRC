@@ -954,12 +954,13 @@ class IrcMessageProcessor {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
     console.assert(message.parameters[1])
 
-    let mask = message.parameters[1]
     /**
      * @event IrcClient#whoReply
-     * @param {string} mask
+     * @param {Object} users
      */
-    this.client.emit('whoReply', mask)
+    this.client.emit('whoReply', this.whoReplyUsers)
+
+    this.whoReplyUsers = []
   }
 
   /**
@@ -1181,9 +1182,9 @@ class IrcMessageProcessor {
 
     console.assert(userModeFlags.length > 0)
     if (userModeFlags.includes('H')) {
-      user.IsAway = false
+      user.isAway = false
     } else if (userModeFlags.includes('G')) {
-      user.IsAway = true
+      user.isAway = true
     }
 
     user.IsOperator = userModeFlags.includes('*')
@@ -1211,6 +1212,12 @@ class IrcMessageProcessor {
     if (lastParamParts.length > 1) {
       user.realName = lastParamParts[1]
     }
+
+    if (!this.whoReplyUsers) {
+      this.whoReplyUsers = []
+    }
+
+    this.whoReplyUsers.push({ channel: channel, user: user })
   }
 
   /**
