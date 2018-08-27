@@ -473,7 +473,6 @@ class IrcClient extends EventEmitter {
     this.sendMessageUserMode(user.nickName, modes)
   }
 
-  /** @private */
   sendMessage (targets, messageText) {
     this.sendMessagePrivateMessage(targets, messageText)
   }
@@ -656,19 +655,21 @@ class IrcClient extends EventEmitter {
       }
     }
 
-    this.emit('in', line)
-
-    this.readMessage({
+    let message = {
       'client': this,
       'prefix': prefix,
       'command': command,
       'parameters': parameters,
       'source': this.getSourceFromPrefix(prefix)
-    }, line)
+    }
+
+    this.emit('in', line)
+    
+    this.readMessage(message)
   }
 
   /** @private */
-  readMessage (message, line) {
+  readMessage (message) {
     this._messageProcessor.processMessage(message)
   }
 
