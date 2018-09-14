@@ -3,6 +3,7 @@
 'use strict'
 
 const net = require('net')
+const tls = require('tls')
 const events = require('events')
 const uuidv4 = require('uuid/v4')
 
@@ -553,7 +554,7 @@ class IrcClient extends EventEmitter {
   /** @private */
   resetState (isReconnecting = false) {
     this._messageSendQueue = []
-    this._socket = new net.Socket()
+    this._socket = new tls.TLSSocket()
     this._socket.setKeepAlive(true, 5000)
     this._socket.setEncoding('utf8')
     this._socket.on('data', this.dataReceived.bind(this))
