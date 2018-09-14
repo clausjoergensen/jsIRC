@@ -807,11 +807,11 @@ class IrcMessageProcessor {
    */
   processMessageLocalUsers (message) {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
-    console.assert(message.parameters[1])
-    console.assert(message.parameters[2])
-
-    let [,current,max,] = message.parameters
-    this.client.emit('localUsers', parseInt(current), parseInt(max))
+    
+    if (message.parameters.length == 3) {
+      let [,current,max,] = message.parameters
+      this.client.emit('localUsers', parseInt(current), parseInt(max))
+    }
   }
 
   /**
@@ -820,11 +820,14 @@ class IrcMessageProcessor {
    */
   processMessageGlobalUsers (message) {
     console.assert(message.parameters[0] === this.client.localUser.nickName)
-    console.assert(message.parameters[1])
-    console.assert(message.parameters[2])
+    
+    if (message.parameters.length == 3) {
+      console.assert(message.parameters[1])
+      console.assert(message.parameters[2])
 
-    let [,current,max,] = message.parameters
-    this.client.emit('globalUsers', parseInt(current), parseInt(max))
+      let [,current,max,] = message.parameters
+      this.client.emit('globalUsers', parseInt(current), parseInt(max))
+    }
   }
 
   /**
