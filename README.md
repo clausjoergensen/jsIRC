@@ -37,5 +37,5 @@ client.connect('irc.quakenet.org', 6667, {
 
 ## Acknowledgements
 
-- [dcodeIO/long](https://github.com/dcodeIO/long)
+- [dcodeIO/long](https://github.com/dcodeIO/long.js)
 - [kelektiv/node-uuid](https://github.com/kelektiv/node-uuid)
